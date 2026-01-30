@@ -72,7 +72,7 @@ const projects = [
     tech: ["Go", "Telegram Bot API", "Cron", "Docker"],
     image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1470&auto=format&fit=crop",
     github: "https://github.com/swajan-75/telegram-message-scheduler", // ADDED
-    live: null,
+    live: "#",
     color: "from-sky-500 to-blue-400",
   },
   {
