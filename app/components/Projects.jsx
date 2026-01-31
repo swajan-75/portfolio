@@ -21,7 +21,7 @@ const projects = [
     description: "Full-stack system for automating personal transaction tracking. Integrates SMS parsing, CRUD operations, and secure JWT authentication.",
     tech: ["NestJS", "Next.js", "PostgreSQL", "Android"],
     image: "https://images.unsplash.com/photo-1563986768494-4dee2763ff3f?q=80&w=1470&auto=format&fit=crop",
-    github: null,
+    github: "#",
     live: null,
     color: "from-pink-600 to-rose-500",
   },
