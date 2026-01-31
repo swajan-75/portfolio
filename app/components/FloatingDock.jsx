@@ -3,33 +3,79 @@ import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { 
   FiHome, FiTerminal, FiBox, FiFileText, 
-  FiGithub, FiArrowLeft, FiX, FiMinus, FiMaximize2 
+  FiGithub, FiArrowLeft
 } from "react-icons/fi";
 import logo from "../images/logo.jpg";
 
 // --- 1. CONFIGURATION ---
 const dockItems = [
-  { icon: <FiHome />, label: "Home", id: "home", href: "#" },
-  { icon: <FiTerminal />, label: "Console", id: "console" }, // No href, handled by ID
-  { icon: <FiBox />, label: "Projects", id: "projects", href: "#" },
+  { icon: <FiHome />, label: "Home", id: "home" },
+  { icon: <FiTerminal />, label: "Console", id: "console" }, 
+  { icon: <FiBox />, label: "Projects", id: "projects" }, // Ensure your Projects section has id="projects"
   { 
     type: "avatar", 
     img: logo.src,
     label: "Profile",
-    id: "profile"
+    id: "profile" // Will scroll to top
   },
-  { icon: <FiFileText />, label: "Resume", id: "resume", href: "#" },
-  { icon: <FiGithub />, label: "GitHub", id: "github", href: "#" },
-  { icon: <FiArrowLeft />, label: "Back", id: "back", href: "#" },
+  { 
+    icon: <FiFileText />, 
+    label: "Resume", 
+    id: "resume", 
+    href: "https://drive.google.com/file/d/1HcpJ-93fosvSuRz69NXa0XPFB1CxX4N_/view?usp=sharing" 
+  },
+  { 
+    icon: <FiGithub />, 
+    label: "GitHub", 
+    id: "github", 
+    href: "https://github.com/swajan-75" 
+  },
+  { icon: <FiArrowLeft />, label: "Back", id: "back" },
 ];
 
 export default function FloatingDock() {
   const [isTerminalOpen, setIsTerminalOpen] = useState(false);
 
-  // Handle dock item clicks
-  const handleItemClick = (id) => {
-    if (id === "console") {
-      setIsTerminalOpen(true);
+  // --- LOGIC TO HANDLE ALL CLICKS ---
+  const handleItemClick = (item) => {
+    switch (item.id) {
+      case "console":
+        setIsTerminalOpen(true);
+        break;
+
+      case "home":
+      case "profile":
+        // Scroll to top of the page smoothly
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        break;
+
+      case "projects":
+        // Find the element with id="projects" and scroll to it
+        const projectsSection = document.getElementById("projects");
+        if (projectsSection) {
+          projectsSection.scrollIntoView({ behavior: "smooth" });
+        } else {
+          console.warn("Element with id='projects' not found");
+        }
+        break;
+
+      case "resume":
+      case "github":
+        // Open external link in new tab
+        if (item.href) {
+          window.open(item.href, "_blank", "noopener,noreferrer");
+        }
+        break;
+
+      case "back":
+        // Go back in browser history
+        if (typeof window !== "undefined") {
+          window.history.back();
+        }
+        break;
+
+      default:
+        break;
     }
   };
 
@@ -47,7 +93,7 @@ export default function FloatingDock() {
             <DockItem 
               key={index} 
               item={item} 
-              onClick={() => handleItemClick(item.id)} 
+              onClick={() => handleItemClick(item)} 
             />
           ))}
         </motion.div>
@@ -71,6 +117,7 @@ function DockItem({ item, onClick }) {
     return (
       <motion.div 
         whileHover={{ scale: 1.2 }}
+        whileTap={{ scale: 0.9 }}
         onClick={onClick}
         className={`${baseClass} w-10 h-10 rounded-full bg-cyan-400 overflow-hidden border-2 border-neutral-800`}
       >
@@ -110,7 +157,6 @@ function TerminalWindow({ onClose }) {
   ]);
   const bottomRef = useRef(null);
 
-  // Auto-scroll to bottom when history changes
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [history]);
@@ -122,7 +168,6 @@ function TerminalWindow({ onClose }) {
       
       let response = "";
       
-      // FUNNY COMMAND LOGIC
       switch (cmd) {
         case "help":
           response = "Available commands: about, skills, contact, clear, hack, sudo, coffee, whoami";
@@ -166,7 +211,6 @@ function TerminalWindow({ onClose }) {
         exit={{ opacity: 0, scale: 0.9, y: 20 }}
         className="w-full max-w-2xl bg-[#1e1e1e] rounded-lg shadow-2xl border border-gray-700 overflow-hidden font-mono text-sm"
       >
-        {/* Terminal Header */}
         <div className="bg-[#2d2d2d] px-4 py-2 flex items-center justify-between border-b border-gray-700">
           <div className="flex gap-2">
             <button onClick={onClose} className="w-3 h-3 rounded-full bg-red-500 hover:bg-red-600 transition-colors" />
@@ -174,10 +218,9 @@ function TerminalWindow({ onClose }) {
             <div className="w-3 h-3 rounded-full bg-green-500" />
           </div>
           <div className="text-gray-400 text-xs">guest@portfolio:~</div>
-          <div className="w-10"></div> {/* Spacer for centering */}
+          <div className="w-10"></div>
         </div>
 
-        {/* Terminal Body */}
         <div className="p-4 h-80 overflow-y-auto text-green-400 custom-scrollbar" onClick={() => document.getElementById('terminal-input').focus()}>
           {history.map((line, i) => (
             <div key={i} className={`mb-1 ${line.type === "command" ? "text-white" : "text-green-400"}`}>
@@ -189,7 +232,6 @@ function TerminalWindow({ onClose }) {
             </div>
           ))}
           
-          {/* Input Area */}
           <div className="flex items-center gap-2 mt-2">
             <span className="text-blue-400">➜</span>
             <span className="text-white">~</span>
