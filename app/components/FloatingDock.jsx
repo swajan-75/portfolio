@@ -11,12 +11,12 @@ import logo from "../images/logo.jpg";
 const dockItems = [
   { icon: <FiHome />, label: "Home", id: "home" },
   { icon: <FiTerminal />, label: "Console", id: "console" }, 
-  { icon: <FiBox />, label: "Projects", id: "projects" }, // Ensure your Projects section has id="projects"
+  { icon: <FiBox />, label: "Projects", id: "projects" }, 
   { 
     type: "avatar", 
     img: logo.src,
     label: "Profile",
-    id: "profile" // Will scroll to top
+    id: "profile"
   },
   { 
     icon: <FiFileText />, 
@@ -36,44 +36,32 @@ const dockItems = [
 export default function FloatingDock() {
   const [isTerminalOpen, setIsTerminalOpen] = useState(false);
 
-  // --- LOGIC TO HANDLE ALL CLICKS ---
   const handleItemClick = (item) => {
     switch (item.id) {
       case "console":
         setIsTerminalOpen(true);
         break;
-
       case "home":
       case "profile":
-        // Scroll to top of the page smoothly
         window.scrollTo({ top: 0, behavior: "smooth" });
         break;
-
       case "projects":
-        // Find the element with id="projects" and scroll to it
         const projectsSection = document.getElementById("projects");
         if (projectsSection) {
           projectsSection.scrollIntoView({ behavior: "smooth" });
-        } else {
-          console.warn("Element with id='projects' not found");
         }
         break;
-
       case "resume":
       case "github":
-        // Open external link in new tab
         if (item.href) {
           window.open(item.href, "_blank", "noopener,noreferrer");
         }
         break;
-
       case "back":
-        // Go back in browser history
         if (typeof window !== "undefined") {
           window.history.back();
         }
         break;
-
       default:
         break;
     }
@@ -84,10 +72,11 @@ export default function FloatingDock() {
       {/* THE DOCK */}
       <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-40">
         <motion.div
-          initial={{ y: 100, opacity: 0 }}
+          initial={{ y: 50, opacity: 0 }} // Reduced y distance so it arrives faster
           animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.5, type: "spring", stiffness: 260, damping: 20 }}
-          className="flex items-center gap-3 px-4 py-2 bg-neutral-900/90 backdrop-blur-sm border border-white/10 rounded-full shadow-2xl"
+          // CHANGED: 0 delay, super high stiffness for instant snap
+          transition={{ delay: 0, type: "spring", stiffness: 500, damping: 25 }}
+          className="flex items-center gap-3 px-4 py-2 bg-neutral-900/40 backdrop-blur-2xl border border-white/10 rounded-full shadow-2xl"
         >
           {dockItems.map((item, index) => (
             <DockItem 
@@ -111,13 +100,17 @@ export default function FloatingDock() {
 
 // --- 2. DOCK ITEM COMPONENT ---
 function DockItem({ item, onClick }) {
-  const baseClass = "relative flex items-center justify-center transition-all duration-200 cursor-pointer group";
+  const baseClass = "relative flex items-center justify-center cursor-pointer group"; 
   
+  // CHANGED: Fixed duration of 0.1s for lightning fast hover
+  const ultraFast = { duration: 0.1 };
+
   if (item.type === "avatar") {
     return (
       <motion.div 
         whileHover={{ scale: 1.2 }}
         whileTap={{ scale: 0.9 }}
+        transition={ultraFast} // Applied fast transition
         onClick={onClick}
         className={`${baseClass} w-10 h-10 rounded-full bg-cyan-400 overflow-hidden border-2 border-neutral-800`}
       >
@@ -131,6 +124,7 @@ function DockItem({ item, onClick }) {
     <motion.div
       whileHover={{ scale: 1.2, backgroundColor: "rgba(255, 255, 255, 0.1)" }}
       whileTap={{ scale: 0.9 }}
+      transition={ultraFast} // Applied fast transition
       onClick={onClick}
       className={`${baseClass} w-8 h-8 rounded-full text-neutral-400 hover:text-white`}
     >
@@ -142,7 +136,8 @@ function DockItem({ item, onClick }) {
 
 function Tooltip({ label }) {
   return (
-    <span className="absolute -top-10 left-1/2 -translate-x-1/2 px-2 py-1 bg-neutral-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap border border-white/10">
+    // CHANGED: duration-75 for instant tooltip appearance
+    <span className="absolute -top-10 left-1/2 -translate-x-1/2 px-2 py-1 bg-neutral-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-75 pointer-events-none whitespace-nowrap border border-white/10">
       {label}
     </span>
   );
@@ -206,9 +201,11 @@ function TerminalWindow({ onClose }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
       <motion.div 
-        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+        initial={{ opacity: 0, scale: 0.95, y: 10 }} // Reduced distance
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.9, y: 20 }}
+        exit={{ opacity: 0, scale: 0.95, y: 10 }}
+        // CHANGED: 0.1s duration (100ms) - almost instant
+        transition={{ duration: 0.1, ease: "easeOut" }}
         className="w-full max-w-2xl bg-[#1e1e1e] rounded-lg shadow-2xl border border-gray-700 overflow-hidden font-mono text-sm"
       >
         <div className="bg-[#2d2d2d] px-4 py-2 flex items-center justify-between border-b border-gray-700">
