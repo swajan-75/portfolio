@@ -7,7 +7,7 @@ export default function AIChat() {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState([
-    { role: "bot", text: "I'm Mr. Meeseeks! Look at me! I'm here to help you explore Swajan Barua! What do you want to know? Ooh, yeah!" }
+    { role: "bot", text: "I'm Mr. Meeseeks! Look at me! I'm here to help you explore Swajan Barua! How Can you Help You ?" }
   ]);
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef(null);
@@ -32,7 +32,7 @@ export default function AIChat() {
       const data = await res.json();
       setMessages(prev => [...prev, { role: "bot", text: data.text }]);
     } catch (error) {
-      setMessages(prev => [...prev, { role: "bot", text: "Jarves is offline. Try again later?" }]);
+      setMessages(prev => [...prev, { role: "bot", text: "Mr. Meeseeks is offline. Try again later?" }]);
     } finally {
       setLoading(false);
     }
@@ -71,7 +71,7 @@ export default function AIChat() {
                   {msg.text}
                 </div>
               ))}
-              {loading && <div className="text-purple-400 text-xs animate-pulse">Jarves is thinking...</div>}
+              {loading && <div className="text-purple-400 text-xs animate-pulse">Mr. Meeseeks is thinking...</div>}
               <div ref={scrollRef} />
             </div>
 
