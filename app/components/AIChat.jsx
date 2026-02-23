@@ -54,7 +54,7 @@ export default function AIChat() {
             <div className="bg-purple-600/80 p-4 flex justify-between items-center text-white backdrop-blur-md">
               <div className="flex items-center gap-2">
                 <FiCpu className="animate-pulse" />
-                <span className="font-bold text-sm">Swajan AI</span>
+                <span className="font-bold text-sm">Mr. Meeseeks</span>
               </div>
               <button onClick={() => setIsOpen(false)} className="hover:bg-white/20 p-1.5 rounded-full transition-colors">
                 <FiX size={20} />
