@@ -7,7 +7,7 @@ export default function AIChat() {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState([
-    { role: "bot", text: "Hi! I'm Jarves. Want to know about Swajan's tech stack or projects?" }
+    { role: "bot", text: "I'm Mr. Meeseeks! Look at me! I'm here to help you explore Swajan Barua! What do you want to know? Ooh, yeah!" }
   ]);
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef(null);
