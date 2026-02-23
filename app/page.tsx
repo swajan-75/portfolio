@@ -5,18 +5,19 @@ import Projects from "./components/Projects";
 import About from "./components/About";
 import Contact from "./components/Contact";
 import ThemeToggle from "./components/ThemeToggle";
+import AIChat from "./components/AIChat";
 
 export default function Home() {
   return (
    <>
-   <ThemeToggle />
    <Hero />
    <About/>
    <Skills />
    <FloatingDock />
    <Projects />
-   
    <Contact />
+   <AIChat />
+   
    </>
   );
 }
