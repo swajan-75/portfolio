@@ -39,7 +39,7 @@ const projects = [
     category: "CLI Tool",
     description: "A robust CLI tool written in Go to track competitive programming activity. Features rating filters, daily stats, and Telegram bot notifications.",
     tech: ["Go", "Telegram API", "Codeforces API"],
-    image: "<projects/codeforces.jpg",
+    image: "projects/codeforces.jpg",
     github: "https://github.com/swajan-75/Codeforces-Tracker.git", 
     live: null,
     color: "from-gray-700 to-black",
