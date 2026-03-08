@@ -7,7 +7,7 @@ export default function AIChat() {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState([
-    { role: "bot", text: "I'm Mr. Meeseeks! Look at me! I'm here to help you explore Swajan Barua! How Can you Help You ?" }
+    { role: "bot", text: "I'm Rick! I'm here to help you explore Swajan Barua! How Can you Help You ?" }
   ]);
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef(null);
@@ -32,7 +32,7 @@ export default function AIChat() {
       const data = await res.json();
       setMessages(prev => [...prev, { role: "bot", text: data.text }]);
     } catch (error) {
-      setMessages(prev => [...prev, { role: "bot", text: "Mr. Meeseeks is offline. Try again later?" }]);
+      setMessages(prev => [...prev, { role: "bot", text: "Rick is offline. Try again later?" }]);
     } finally {
       setLoading(false);
     }
@@ -54,7 +54,7 @@ export default function AIChat() {
             <div className="bg-purple-600/80 p-4 flex justify-between items-center text-white backdrop-blur-md">
               <div className="flex items-center gap-2">
                 <FiCpu className="animate-pulse" />
-                <span className="font-bold text-sm">Mr. Meeseeks</span>
+                <span className="font-bold text-sm">Rick</span>
               </div>
               <button onClick={() => setIsOpen(false)} className="hover:bg-white/20 p-1.5 rounded-full transition-colors">
                 <FiX size={20} />
@@ -71,7 +71,7 @@ export default function AIChat() {
                   {msg.text}
                 </div>
               ))}
-              {loading && <div className="text-purple-400 text-xs animate-pulse">Mr. Meeseeks is thinking...</div>}
+              {loading && <div className="text-purple-400 text-xs animate-pulse">Rick is thinking...</div>}
               <div ref={scrollRef} />
             </div>
 
