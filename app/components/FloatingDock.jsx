@@ -22,7 +22,7 @@ const dockItems = [
     icon: <FiFileText />, 
     label: "Resume", 
     id: "resume", 
-    href: "https://drive.google.com/file/d/1yk4rf9pmIrbkmIZhts9S_MDPZyIDNaYu/view?usp=sharing" 
+    href: "https://drive.google.com/file/d/1gY0DfrOQkm0py9kRNrQAxyr422W3jQyU/view?usp=sharing" 
   },
   { 
     icon: <FiGithub />, 

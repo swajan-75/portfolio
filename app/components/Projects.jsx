@@ -89,7 +89,7 @@ const projects = [
 export default function Projects() {
   const [showAll, setShowAll] = useState(false);
 
-  // Logic to show all or just 6
+
   const visibleProjects = showAll ? projects : projects.slice(0, 6);
 
   return (
@@ -115,7 +115,7 @@ export default function Projects() {
           <AnimatePresence mode="popLayout">
             {visibleProjects.map((project, index) => (
               <ProjectCard 
-                key={project.title} // Using title as key is better for layout animations than index
+                key={project.title} 
                 project={project} 
                 index={index} 
                 isExpanded={showAll}
