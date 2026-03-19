@@ -36,7 +36,6 @@ export default function AdminDashboard() {
     try {
       await api.get("/admin/checkAuth");
       setAuthorized(true);
-    
       const response = await api.get("/projects");
       const data = response.data;
       const transformedData = (data && typeof data === 'object' && !Array.isArray(data)) 
