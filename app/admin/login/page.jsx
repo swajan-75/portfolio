@@ -24,7 +24,10 @@ export default function AdminLogin() {
     const data = await res.json();
     setLoading(false);
     if (res.ok) setStep(2);
-    alert(data.error || "Login Failed");
+    else{
+        alert("Login Failed");
+    }
+    
   };
 
   const handleVerify = async () => {
