@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import api from "@/lib/axios";
 import AdminHome from "../../components/AdminHome";
 import AdminProjects from "../../components/AdminProjects";
+import AdminCV from "../../components/AdminCV";
 import {
   FiLogOut, FiShield, FiLayers,
   FiHome, FiBox, FiCpu, FiFileText, FiPhone,
@@ -142,7 +143,11 @@ export default function AdminDashboard() {
               />
             )}
 
-            {activeSection !== "home" && activeSection !== "projects" && (
+            {activeSection === "cv" && (
+              <AdminCV />
+            )}
+
+            {activeSection !== "home" && activeSection !== "projects" && activeSection !== "cv" && (
               <div className="h-[60vh] flex flex-col items-center justify-center text-gray-600 select-none">
                 <FiLayers size={40} className="mb-4 opacity-20" />
                 <p className="font-mono text-xs uppercase tracking-widest">
