@@ -2,6 +2,7 @@
 import { useState } from "react";
 import api from "@/lib/axios";
 import { Project } from "./ProjectCard";
+import ImageUpload from "./ImageUpload";
 
 interface EditProjectFormProps {
   project: Project;
@@ -42,6 +43,7 @@ export default function EditProjectForm({ project, onRefresh, onCancel }: EditPr
         description: (form.description ?? "").trim(),
         github_url:  (form.github_url  ?? "").trim(),
         live_url:    (form.live_url    ?? "").trim(),
+        image_link:  (form.image_link  ?? "").trim(),
         tech_stack:  (form.tech_stack  ?? "").split(",").map((t) => t.trim()).filter(Boolean),
       });
       onRefresh();
@@ -73,6 +75,7 @@ export default function EditProjectForm({ project, onRefresh, onCancel }: EditPr
       <h2 className="text-xs font-semibold text-purple-400 uppercase tracking-widest">
         Editing — {project.title}
       </h2>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {fields.map(({ key, label, placeholder, span, textarea }) => (
           <div key={key} className={span ? "sm:col-span-2" : ""}>
@@ -96,7 +99,16 @@ export default function EditProjectForm({ project, onRefresh, onCancel }: EditPr
             )}
           </div>
         ))}
+
+        {/* Image Upload — full width */}
+        <div className="sm:col-span-2">
+          <ImageUpload
+            value={form.image_link}
+            onChange={(url) => setForm((f) => ({ ...f, image_link: url }))}
+          />
+        </div>
       </div>
+
       <div className="flex justify-end gap-3 pt-1">
         <button
           onClick={onCancel}
