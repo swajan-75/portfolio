@@ -3,7 +3,6 @@ import { useState } from "react";
 import api from "@/lib/axios";
 import { Project } from "./ProjectCard";
 
-
 interface EditProjectFormProps {
   project: Project;
   onRefresh: () => void;
@@ -19,26 +18,30 @@ function titleToSlug(title: string): string {
 
 export default function EditProjectForm({ project, onRefresh, onCancel }: EditProjectFormProps) {
   const [form, setForm] = useState({
-    title:       project.title,
-    category:    project.category,
-    description: project.description,
+    title:       project.title       ?? "",
+    category:    project.category    ?? "",
+    description: project.description ?? "",
     tech_stack:  project.tech_stack?.join(", ") ?? "",
-    github_url:  project.github_url ?? "",
-    live_url:    project.live_url ?? "",
+    github_url:  project.github_url  ?? "",
+    live_url:    project.live_url    ?? "",
   });
   const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async () => {
-    if (!form.title.trim() || !form.category.trim()) {
+    if (!(form.title ?? "").trim() || !(form.category ?? "").trim()) {
       alert("Title and category are required.");
       return;
     }
     try {
       setSubmitting(true);
-      const slug = titleToSlug(project.title); // use original title as slug key
+      const slug = titleToSlug(project.title);
       await api.put(`/admin/projects/${slug}`, {
-        ...form,
-        tech_stack: form.tech_stack.split(",").map((t) => t.trim()).filter(Boolean),
+        title:       (form.title       ?? "").trim(),
+        category:    (form.category    ?? "").trim(),
+        description: (form.description ?? "").trim(),
+        github_url:  (form.github_url  ?? "").trim(),
+        live_url:    (form.live_url    ?? "").trim(),
+        tech_stack:  (form.tech_stack  ?? "").split(",").map((t) => t.trim()).filter(Boolean),
       });
       onRefresh();
       onCancel();
@@ -58,7 +61,7 @@ export default function EditProjectForm({ project, onRefresh, onCancel }: EditPr
   }[] = [
     { key: "title",       label: "Title",       placeholder: "My Awesome Project" },
     { key: "category",    label: "Category",    placeholder: "Web / Mobile / AI ..." },
-    { key: "description", label: "Description", placeholder: "What does it do?", span: true, textarea: true },
+    { key: "description", label: "Description", placeholder: "What does it do?",               span: true, textarea: true },
     { key: "tech_stack",  label: "Tech Stack",  placeholder: "React, Node, Postgres (comma-separated)", span: true },
     { key: "github_url",  label: "GitHub URL",  placeholder: "https://github.com/..." },
     { key: "live_url",    label: "Live URL",    placeholder: "https://yourproject.com" },
