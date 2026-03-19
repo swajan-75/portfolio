@@ -24,7 +24,7 @@ interface Project {
 type Section = "home" | "projects" | "skills" | "cv" | "contacts";
 
 export default function AdminDashboard() {
-  const [activeSection, setActiveSection] = useState<Section>("projects");
+  const [activeSection, setActiveSection] = useState<Section>("home");
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [authorized, setAuthorized] = useState(false);
