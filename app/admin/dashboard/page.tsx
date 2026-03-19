@@ -36,6 +36,7 @@ export default function AdminDashboard() {
     try {
       await api.get("/admin/checkAuth");
       setAuthorized(true);
+    
       const response = await api.get("/projects");
       const data = response.data;
       const transformedData = (data && typeof data === 'object' && !Array.isArray(data)) 
@@ -80,7 +81,7 @@ export default function AdminDashboard() {
         </nav>
 
         <button 
-          onClick={async () => { await api.post("/admin/logout"); window.location.href = "/admin/login"; }}
+          onClick={async () => { await api.post("/admin/logout"); window.location.replace("/admin/login"); }}
           className="mt-auto flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/10 rounded-xl transition-all"
         >
           <FiLogOut /> <span>Logout</span>
