@@ -6,10 +6,13 @@ import About from "./components/About";
 import Contact from "./components/Contact";
 import ThemeToggle from "./components/ThemeToggle";
 import AIChat from "./components/AIChat";
+import AnalyticsTracker from "./components/Tracker";
 
 export default function Home() {
+  
   return (
    <>
+   <AnalyticsTracker />
    <Hero />
    <About/>
    <Skills />

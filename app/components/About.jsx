@@ -5,8 +5,19 @@ import { FiDownload, FiUser, FiCpu, FiBookOpen, FiAward, FiTarget, FiTrendingUp 
 import logo from "../images/logo.jpg";
 import aiubLogo from "../images/aiub.png";
 import swajanDP from "../images/swajan_1.jpg"
+import api from "@/lib/axios";
 
 export default function About() {
+    const handleDownloadTrack = async () => {
+        try {
+            
+            await api.post("/track/downloads");
+        } catch (err) {
+            // Silent fail to ensure the user can still download the file 
+            // even if the tracking server is down
+            console.error("Download tracking failed:", err.response?.status, err.message);
+        }
+    };
     return (
         <section className="py-24 px-6 bg-black text-white" id="about">
             <div className="max-w-6xl mx-auto">
@@ -40,6 +51,7 @@ export default function About() {
                             href="/resume.pdf"               // 1. Points to public/resume.pdf
                             download="Swajan_Resume.pdf"     // 2. The name of the file when downloaded
                             whileHover={{ scale: 1.05 }}
+                            onClick={handleDownloadTrack}
                             whileTap={{ scale: 0.95 }}
                             className="w-fit flex items-center gap-2 px-6 py-3 bg-white text-black font-semibold rounded-full hover:bg-gray-200 transition-colors cursor-pointer"
                         >
