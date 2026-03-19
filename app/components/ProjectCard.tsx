@@ -10,6 +10,7 @@ export interface Project {
   tech_stack: string[];
   github_url?: string;
   live_url?: string;
+  image_link?: string;
 }
 
 interface ProjectCardProps {

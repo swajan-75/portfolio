@@ -24,6 +24,7 @@ export default function EditProjectForm({ project, onRefresh, onCancel }: EditPr
     tech_stack:  project.tech_stack?.join(", ") ?? "",
     github_url:  project.github_url  ?? "",
     live_url:    project.live_url    ?? "",
+    image_link:  project.image_link  ?? "",
   });
   const [submitting, setSubmitting] = useState(false);
 
