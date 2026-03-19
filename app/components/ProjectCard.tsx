@@ -2,23 +2,31 @@
 import api from "@/lib/axios";
 import { FiEdit2, FiTrash2 } from "react-icons/fi";
 
-interface Project {
+export interface Project {
   id: string;
   title: string;
   category: string;
+  description: string;
   tech_stack: string[];
+  github_url?: string;
+  live_url?: string;
 }
 
 interface ProjectCardProps {
   project: Project;
   onRefresh: () => void;
+  onEdit: (project: Project) => void;
 }
 
-export default function ProjectCard({ project, onRefresh }: ProjectCardProps) {
+function titleToSlug(title: string): string {
+  return title.toLowerCase().replace(/\s+/g, "-");
+}
+
+export default function ProjectCard({ project, onRefresh, onEdit }: ProjectCardProps) {
   const handleDelete = async () => {
     if (!confirm(`Delete "${project.title}"?`)) return;
     try {
-      await api.delete(`/projects/${project.id}`);
+      await api.delete(`/admin/projects/${titleToSlug(project.title)}`);
       onRefresh();
     } catch {
       alert("Failed to delete project.");
@@ -39,7 +47,10 @@ export default function ProjectCard({ project, onRefresh }: ProjectCardProps) {
         </div>
       </div>
       <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ml-4">
-        <button className="p-2 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white rounded-lg transition-colors">
+        <button
+          onClick={() => onEdit(project)}
+          className="p-2 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white rounded-lg transition-colors"
+        >
           <FiEdit2 size={14} />
         </button>
         <button

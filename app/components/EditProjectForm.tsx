@@ -1,8 +1,11 @@
 "use client";
 import { useState } from "react";
 import api from "@/lib/axios";
+import { Project } from "./ProjectCard";
 
-interface AddProjectFormProps {
+
+interface EditProjectFormProps {
+  project: Project;
   onRefresh: () => void;
   onCancel: () => void;
 }
@@ -10,14 +13,18 @@ interface AddProjectFormProps {
 const inputClass =
   "w-full bg-black/40 border border-white/[0.07] rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-purple-500/50 transition-colors";
 
-export default function AddProjectForm({ onRefresh, onCancel }: AddProjectFormProps) {
+function titleToSlug(title: string): string {
+  return title.toLowerCase().replace(/\s+/g, "-");
+}
+
+export default function EditProjectForm({ project, onRefresh, onCancel }: EditProjectFormProps) {
   const [form, setForm] = useState({
-    title: "",
-    category: "",
-    description: "",
-    tech_stack: "",
-    github_url: "",
-    live_url: "",
+    title:       project.title,
+    category:    project.category,
+    description: project.description,
+    tech_stack:  project.tech_stack?.join(", ") ?? "",
+    github_url:  project.github_url ?? "",
+    live_url:    project.live_url ?? "",
   });
   const [submitting, setSubmitting] = useState(false);
 
@@ -28,14 +35,15 @@ export default function AddProjectForm({ onRefresh, onCancel }: AddProjectFormPr
     }
     try {
       setSubmitting(true);
-      await api.post("/admin/projects", {
+      const slug = titleToSlug(project.title); // use original title as slug key
+      await api.put(`/admin/projects/${slug}`, {
         ...form,
         tech_stack: form.tech_stack.split(",").map((t) => t.trim()).filter(Boolean),
       });
       onRefresh();
       onCancel();
     } catch {
-      alert("Failed to create project.");
+      alert("Failed to update project.");
     } finally {
       setSubmitting(false);
     }
@@ -57,9 +65,9 @@ export default function AddProjectForm({ onRefresh, onCancel }: AddProjectFormPr
   ];
 
   return (
-    <div className="p-6 bg-neutral-900/50 border border-white/[0.07] rounded-2xl space-y-5">
-      <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-widest">
-        New Project
+    <div className="p-6 bg-neutral-900/50 border border-purple-500/20 rounded-2xl space-y-5">
+      <h2 className="text-xs font-semibold text-purple-400 uppercase tracking-widest">
+        Editing — {project.title}
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {fields.map(({ key, label, placeholder, span, textarea }) => (
@@ -97,7 +105,7 @@ export default function AddProjectForm({ onRefresh, onCancel }: AddProjectFormPr
           disabled={submitting}
           className="px-5 py-2 text-sm font-semibold bg-purple-600 hover:bg-purple-500 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl transition-colors"
         >
-          {submitting ? "Saving..." : "Save Project"}
+          {submitting ? "Updating..." : "Update Project"}
         </button>
       </div>
     </div>
