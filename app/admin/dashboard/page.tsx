@@ -42,23 +42,9 @@ export default function AdminDashboard() {
         ? Object.values(data) 
         : (Array.isArray(data) ? data : []);
       setProjects(transformedData as Project[]);
-    } catch (err: any) {
-      // 🚀 THE DEBUG LOGS: Open F12 in Chrome to see these
-      console.error("❌ API Fetch Error:", {
-        message: err.message,
-        status: err.response?.status,
-        data: err.response?.data, // This contains your Go "error" JSON
-      });
-
-      // 3. Conditional Redirect
-      // Only redirect if it's a 401 (Not Logged In) or 403 (Forbidden)
-      if (err.response?.status === 401 || err.response?.status === 403) {
-        console.warn("Redirecting to login due to auth failure.");
-        router.push("/admin/login");
-      } else {
-        // If it's a 500 error, don't redirect! Stay here so you can debug.
-        alert(`Server Error: ${err.response?.data?.error || "Unknown error"}`);
-      }
+    } catch (err) {
+        
+      router.push("/admin/login");
     } finally {
       setLoading(false);
     }

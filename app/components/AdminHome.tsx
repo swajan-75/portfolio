@@ -26,7 +26,7 @@ export default function AdminHome({ projectsCount }: AdminHomeProps) {
   const fetchRealStats = useCallback(async () => {
     setSyncing(true);
     try {
-      const res = await api.get("/track/stats");
+      const res = await api.get("/admin/track/stats");
       
 
       setStatsData({
