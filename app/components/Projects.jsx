@@ -1,102 +1,62 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiGithub, FiExternalLink, FiChevronDown, FiChevronUp } from "react-icons/fi";
+import { FiGithub, FiExternalLink, FiChevronDown, FiChevronUp, FiDownload } from "react-icons/fi";
+import api from "@/lib/axios";
 
-const projects = [
-  {
-    title: "ArkPlay Zone",
-    category: "Booking System",
-    description: "A complete indoor playzone booking system. Built a RESTful API for slot booking, tracking, and cancellation with role-based access control.",
-    tech: ["NestJS", "PostgreSQL", "JWT", "SMTP", "OTP"],
-    image: "projects/arkplay.jpg",
-    github: "https://github.com/swajan-75/ArkPlayZone", 
-    live: null,
-    color: "from-orange-500 to-red-500",
-  },
-  {
-    title: "Bkash Transaction Tracker",
-    category: "Fintech / Automation",
-    description: "Full-stack system for automating personal transaction tracking. Integrates SMS parsing, CRUD operations, and secure JWT authentication.",
-    tech: ["NestJS", "Next.js", "PostgreSQL", "Android"],
-    image: "projects/bkash.jpg",
-    github: "#",
-    live: null,
-    color: "from-pink-600 to-rose-500",
-  },
-  {
-    title: "Smart Student Assistant",
-    category: "Android App",
-    description: "Mobile assistant for university students managing class routines and notices. Features real-time FCM notifications and secure auth.",
-    tech: ["Kotlin", "Firebase", "Room DB", "NestJS"],
-    image: "projects/student_assistant.jpg",
-    github: "https://github.com/swajan-75/Aiub_buddy.git",
-    live: null,
-    color: "from-teal-500 to-cyan-500",
-  },
-  {
-    title: "Codeforces Tracker (cf)",
-    category: "CLI Tool",
-    description: "A robust CLI tool written in Go to track competitive programming activity. Features rating filters, daily stats, and Telegram bot notifications.",
-    tech: ["Go", "Telegram API", "Codeforces API"],
-    image: "projects/codeforces.jpg",
-    github: "https://github.com/swajan-75/Codeforces-Tracker.git", 
-    live: null,
-    color: "from-gray-700 to-black",
-  },
-  {
-    title: "AIUB API",
-    category: "Open Source API",
-    description: "Open-source REST API exposing university data like faculty info and notices. Designed for developers to build dashboards and automation tools.",
-    tech: ["NestJS", "RESTful API", "JSON", "Scraping"],
-    image: "projects/aiub_api.jpg",
-    github: "https://github.com/swajan-75/aiub-public-api.git",
-    live: "https://aiub-public-api.vercel.app/",
-    color: "from-blue-600 to-indigo-600",
-  },
-  {
-   title: "Rangeer",
-    category: "Rust CLI Tool",
-    description: "A high-performance text extraction tool built in Rust. Uses Regex to search, filter, and extract data from streams with maximum speed and efficiency.",
-    tech: ["Rust", "Regex", "CLI", "Systems Programming"],
-    image: "projects/rangeer.jpg", 
-    github: "https://github.com/swajan-75/rangeer",
-    live: null,
-    color: "from-orange-600 to-amber-600",
-  },
-  {
-    title: "Telegram Msg Scheduler",
-    category: "Bot Automation",
-    description: "An automated bot service to schedule and manage Telegram messages, ensuring timely delivery for community announcements.",
-    tech: ["Go", "Telegram Bot API", "Cron", "Docker"],
-    image: "projects/scheduler.jpg",
-    github: "https://github.com/swajan-75/telegram-message-scheduler",
-    live: "#",
-    color: "from-sky-500 to-blue-400",
-  },
-  {
-    title: "AIUB Captcha Solver",
-    category: "Machine Learning / Automation",
-    description: "An automated script utilizing computer vision techniques to solve CAPTCHAs for the university portal, streamlining login processes.",
-    tech: ["Python", "OpenCV", "TensorFlow", "Selenium"],
-    image: "projects/captcha.jpg",
-    github: "https://github.com/swajan-75/aiub_captcha_solver",
-    live: null,
-    color: "from-emerald-500 to-green-600",
-  },
+const COLORS = [
+  "from-orange-500 to-red-500",
+  "from-pink-600 to-rose-500",
+  "from-teal-500 to-cyan-500",
+  "from-gray-700 to-black",
+  "from-blue-600 to-indigo-600",
+  "from-orange-600 to-amber-600",
+  "from-sky-500 to-blue-400",
+  "from-emerald-500 to-green-600",
 ];
 
 export default function Projects() {
-  const [showAll, setShowAll] = useState(false);
+  const [showAll, setShowAll]   = useState(false);
+  const [projects, setProjects] = useState([]);
+  const [cv, setCV]             = useState(null);
+  const [loading, setLoading]   = useState(true);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [projectsRes, cvRes] = await Promise.allSettled([
+          api.get("/projects"),
+          api.get("/cv/active"),
+        ]);
+
+        if (projectsRes.status === "fulfilled") {
+          const list = Array.isArray(projectsRes.value.data)
+            ? projectsRes.value.data
+            : Object.values(projectsRes.value.data ?? {});
+          list.sort((a, b) => (b.created_at ?? 0) - (a.created_at ?? 0));
+          setProjects(list);
+        }
+
+        if (cvRes.status === "fulfilled") {
+          setCV(cvRes.value.data);
+        }
+      } catch (err) {
+        console.error("Failed to fetch data:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const visibleProjects = showAll ? projects : projects.slice(0, 6);
 
   return (
     <section className="min-h-screen bg-black text-white py-24 px-6" id="projects">
       <div className="max-w-7xl mx-auto">
-        
-        <motion.div 
+
+        <motion.div
           initial={{ opacity: 0, y: -20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
@@ -108,71 +68,106 @@ export default function Projects() {
           <p className="text-gray-400 max-w-2xl mx-auto">
             A showcase of my technical projects, research, and creative designs.
           </p>
+
+          {cv && (
+            <motion.a
+              href={cv.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              download
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="inline-flex items-center gap-2 mt-6 px-5 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/30 text-white text-sm font-medium rounded-xl transition-all"
+            >
+              <FiDownload />
+              Download CV
+            </motion.a>
+          )}
         </motion.div>
 
-        {/* Improved Grid with popLayout for smoother transitions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <AnimatePresence mode="popLayout">
-            {visibleProjects.map((project, index) => (
-              <ProjectCard 
-                key={project.title} 
-                project={project} 
-                index={index} 
-                isExpanded={showAll}
-              />
-            ))}
-          </AnimatePresence>
-        </div>
-
-        {projects.length > 6 && (
-          <div className="flex justify-center mt-16">
-            <button
-              onClick={() => setShowAll(!showAll)}
-              className="group flex flex-col items-center gap-2 text-gray-400 hover:text-white transition-colors"
-            >
-              <span className="text-sm font-medium tracking-widest uppercase">
-                {showAll ? "Show Less" : "View All Projects"}
-              </span>
-              <div className="p-3 rounded-full bg-white/5 border border-white/10 group-hover:bg-white/10 group-hover:border-white/30 transition-all">
-                {showAll ? (
-                  <FiChevronUp className="text-xl" />
-                ) : (
-                  <FiChevronDown className="text-xl animate-bounce" />
-                )}
-              </div>
-            </button>
+        {loading && (
+          <div className="flex justify-center py-20">
+            <div className="w-8 h-8 border-4 border-white/10 border-t-white rounded-full animate-spin" />
           </div>
+        )}
+
+        {!loading && (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <AnimatePresence mode="popLayout">
+                {visibleProjects.map((project, index) => (
+                  <ProjectCard
+                    key={project.id}
+                    project={project}
+                    index={index}
+                    isExpanded={showAll}
+                    color={COLORS[index % COLORS.length]}
+                  />
+                ))}
+              </AnimatePresence>
+            </div>
+
+            {projects.length === 0 && (
+              <div className="text-center text-gray-600 font-mono text-xs uppercase tracking-widest py-20">
+                No_Projects_Found
+              </div>
+            )}
+
+            {projects.length > 6 && (
+              <div className="flex justify-center mt-16">
+                <button
+                  onClick={() => setShowAll(!showAll)}
+                  className="group flex flex-col items-center gap-2 text-gray-400 hover:text-white transition-colors"
+                >
+                  <span className="text-sm font-medium tracking-widest uppercase">
+                    {showAll ? "Show Less" : "View All Projects"}
+                  </span>
+                  <div className="p-3 rounded-full bg-white/5 border border-white/10 group-hover:bg-white/10 group-hover:border-white/30 transition-all">
+                    {showAll ? (
+                      <FiChevronUp className="text-xl" />
+                    ) : (
+                      <FiChevronDown className="text-xl animate-bounce" />
+                    )}
+                  </div>
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
     </section>
   );
 }
 
-function ProjectCard({ project, index, isExpanded }) {
+function ProjectCard({ project, index, isExpanded, color }) {
   const isExtraItem = index > 5;
-  
+
   return (
     <motion.div
-      layout 
+      layout
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95 }}
-      transition={{ 
-        duration: 0.3, 
-       
-        delay: (isExpanded && isExtraItem) ? 0 : index * 0.05 
+      transition={{
+        duration: 0.3,
+        delay: isExpanded && isExtraItem ? 0 : index * 0.05,
       }}
       whileHover={{ y: -8 }}
       className="group relative bg-neutral-900/50 border border-white/10 rounded-3xl overflow-hidden backdrop-blur-sm flex flex-col"
     >
       <div className="relative h-48 overflow-hidden">
-        <div className={`absolute inset-0 bg-gradient-to-br ${project.color} opacity-20 group-hover:opacity-30 transition-opacity`} />
-        <img 
-          src={project.image} 
-          alt={project.title} 
-          loading="lazy" 
-          className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
-        />
+        <div className={`absolute inset-0 bg-gradient-to-br ${color} opacity-20 group-hover:opacity-30 transition-opacity`} />
+        {project.image_link ? (
+          <img
+            src={project.image_link}
+            alt={project.title}
+            loading="lazy"
+            className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
+          />
+        ) : (
+          <div className={`w-full h-full bg-gradient-to-br ${color} opacity-30`} />
+        )}
         <div className="absolute top-4 left-4 px-3 py-1 bg-black/60 backdrop-blur-md rounded-full border border-white/10 text-xs text-white">
           {project.category}
         </div>
@@ -187,9 +182,9 @@ function ProjectCard({ project, index, isExpanded }) {
         </p>
 
         <div className="flex flex-wrap gap-2 mb-6 mt-auto">
-          {project.tech.map((t, i) => (
-            <span 
-              key={i} 
+          {project.tech_stack?.map((t, i) => (
+            <span
+              key={i}
               className="px-2 py-1 text-xs rounded bg-white/5 border border-white/10 text-gray-300"
             >
               {t}
@@ -198,9 +193,10 @@ function ProjectCard({ project, index, isExpanded }) {
         </div>
 
         <div className="flex items-center gap-4 pt-4 border-t border-white/5">
-          {project.github && project.github !== "#" ? (
-            <a 
-              href={project.github} 
+        
+          {project.github_url && project.github_url !== "#" ? (
+            <a
+              href={project.github_url}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"
@@ -208,11 +204,11 @@ function ProjectCard({ project, index, isExpanded }) {
               <FiGithub className="text-lg" /> Code
             </a>
           ) : (
-             <span className="text-sm text-gray-600 italic">Code Private</span>
+            <span className="text-sm text-gray-600 italic">Code Private</span>
           )}
-          {project.live && (
-            <a 
-              href={project.live} 
+          {project.live_url && project.live_url !== "#" && (
+            <a
+              href={project.live_url}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"
