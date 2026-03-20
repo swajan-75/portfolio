@@ -69,21 +69,6 @@ export default function Projects() {
             A showcase of my technical projects, research, and creative designs.
           </p>
 
-          {cv && (
-            <motion.a
-              href={cv.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              download
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="inline-flex items-center gap-2 mt-6 px-5 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/30 text-white text-sm font-medium rounded-xl transition-all"
-            >
-              <FiDownload />
-              Download CV
-            </motion.a>
-          )}
         </motion.div>
 
         {loading && (
