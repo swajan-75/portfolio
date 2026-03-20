@@ -6,6 +6,7 @@ import {
   FiGithub, FiArrowLeft
 } from "react-icons/fi";
 import logo from "../images/logo.jpg";
+import api from "@/lib/axios";
 
 // --- 1. CONFIGURATION ---
 const dockItems = [
@@ -22,7 +23,6 @@ const dockItems = [
     icon: <FiFileText />, 
     label: "Resume", 
     id: "resume", 
-    href: "https://drive.google.com/file/d/1gY0DfrOQkm0py9kRNrQAxyr422W3jQyU/view?usp=sharing" 
   },
   { 
     icon: <FiGithub />, 
@@ -35,6 +35,13 @@ const dockItems = [
 
 export default function FloatingDock() {
   const [isTerminalOpen, setIsTerminalOpen] = useState(false);
+  const [cvUrl, setCvUrl] = useState(null);
+
+  useEffect(() => {
+    api.get("/cv/active")
+      .then((res) => setCvUrl(res.data?.url ?? null))
+      .catch(() => setCvUrl(null));
+  }, []);
 
   const handleItemClick = (item) => {
     switch (item.id) {
@@ -52,6 +59,10 @@ export default function FloatingDock() {
         }
         break;
       case "resume":
+        if (cvUrl) {
+          window.open(cvUrl, "_blank", "noopener,noreferrer");
+        }
+        break;
       case "github":
         if (item.href) {
           window.open(item.href, "_blank", "noopener,noreferrer");
@@ -69,12 +80,10 @@ export default function FloatingDock() {
 
   return (
     <>
-      {/* THE DOCK */}
       <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-40">
         <motion.div
-          initial={{ y: 50, opacity: 0 }} // Reduced y distance so it arrives faster
+          initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          // CHANGED: 0 delay, super high stiffness for instant snap
           transition={{ delay: 0, type: "spring", stiffness: 500, damping: 25 }}
           className="flex items-center gap-3 px-4 py-2 bg-neutral-900/40 backdrop-blur-2xl border border-white/10 rounded-full shadow-2xl"
         >
@@ -82,13 +91,13 @@ export default function FloatingDock() {
             <DockItem 
               key={index} 
               item={item} 
-              onClick={() => handleItemClick(item)} 
+              onClick={() => handleItemClick(item)}
+              disabled={item.id === "resume" && !cvUrl}
             />
           ))}
         </motion.div>
       </div>
 
-      {/* THE TERMINAL POPUP */}
       <AnimatePresence>
         {isTerminalOpen && (
           <TerminalWindow onClose={() => setIsTerminalOpen(false)} />
@@ -99,10 +108,8 @@ export default function FloatingDock() {
 }
 
 // --- 2. DOCK ITEM COMPONENT ---
-function DockItem({ item, onClick }) {
+function DockItem({ item, onClick, disabled }) {
   const baseClass = "relative flex items-center justify-center cursor-pointer group"; 
-  
-  // CHANGED: Fixed duration of 0.1s for lightning fast hover
   const ultraFast = { duration: 0.1 };
 
   if (item.type === "avatar") {
@@ -110,7 +117,7 @@ function DockItem({ item, onClick }) {
       <motion.div 
         whileHover={{ scale: 1.2 }}
         whileTap={{ scale: 0.9 }}
-        transition={ultraFast} // Applied fast transition
+        transition={ultraFast}
         onClick={onClick}
         className={`${baseClass} w-10 h-10 rounded-full bg-cyan-400 overflow-hidden border-2 border-neutral-800`}
       >
@@ -122,21 +129,22 @@ function DockItem({ item, onClick }) {
 
   return (
     <motion.div
-      whileHover={{ scale: 1.2, backgroundColor: "rgba(255, 255, 255, 0.1)" }}
-      whileTap={{ scale: 0.9 }}
-      transition={ultraFast} // Applied fast transition
-      onClick={onClick}
-      className={`${baseClass} w-8 h-8 rounded-full text-neutral-400 hover:text-white`}
+      whileHover={!disabled ? { scale: 1.2, backgroundColor: "rgba(255, 255, 255, 0.1)" } : {}}
+      whileTap={!disabled ? { scale: 0.9 } : {}}
+      transition={ultraFast}
+      onClick={!disabled ? onClick : undefined}
+      className={`${baseClass} w-8 h-8 rounded-full ${
+        disabled ? "text-neutral-700 cursor-not-allowed" : "text-neutral-400 hover:text-white"
+      }`}
     >
       <div className="text-lg">{item.icon}</div>
-      <Tooltip label={item.label} />
+      <Tooltip label={disabled ? "No CV uploaded" : item.label} />
     </motion.div>
   );
 }
 
 function Tooltip({ label }) {
   return (
-    // CHANGED: duration-75 for instant tooltip appearance
     <span className="absolute -top-10 left-1/2 -translate-x-1/2 px-2 py-1 bg-neutral-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-75 pointer-events-none whitespace-nowrap border border-white/10">
       {label}
     </span>
@@ -201,10 +209,9 @@ function TerminalWindow({ onClose }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
       <motion.div 
-        initial={{ opacity: 0, scale: 0.95, y: 10 }} // Reduced distance
+        initial={{ opacity: 0, scale: 0.95, y: 10 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 10 }}
-        // CHANGED: 0.1s duration (100ms) - almost instant
         transition={{ duration: 0.1, ease: "easeOut" }}
         className="w-full max-w-2xl bg-[#1e1e1e] rounded-lg shadow-2xl border border-gray-700 overflow-hidden font-mono text-sm"
       >
