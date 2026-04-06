@@ -7,7 +7,6 @@ export default function ThemeToggle() {
   const [isDark, setIsDark] = useState(true);
 
   useEffect(() => {
-    // Check local storage or system preference on mount
     const savedTheme = localStorage.getItem("theme");
     const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
 
@@ -39,19 +38,20 @@ export default function ThemeToggle() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.5 }}
       onClick={toggleTheme}
-      className="fixed top-6 right-6 z-50 p-3 rounded-full bg-neutral-900/40 backdrop-blur-xl border border-white/10 shadow-xl cursor-pointer text-white hover:bg-white/10 transition-colors ring-1 ring-white/5 group"
+      className="fixed top-6 right-6 z-50 p-3 rounded-full bg-white/80 dark:bg-neutral-900/40 backdrop-blur-xl border border-gray-200 dark:border-white/10 shadow-xl cursor-pointer text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition-colors ring-1 ring-gray-200 dark:ring-white/5 group"
+      aria-label="Toggle theme"
     >
       <div className="relative w-6 h-6 flex items-center justify-center overflow-hidden">
-        {/* Sun Icon (shows when Light) */}
+        {/* Sun Icon (shows in Light mode) */}
         <motion.div
           animate={{ y: isDark ? 30 : 0, opacity: isDark ? 0 : 1, rotate: isDark ? 90 : 0 }}
           transition={{ duration: 0.2 }}
           className="absolute"
         >
-          <FiSun className="text-xl text-yellow-400" />
+          <FiSun className="text-xl text-yellow-500" />
         </motion.div>
 
-        {/* Moon Icon (shows when Dark) */}
+        {/* Moon Icon (shows in Dark mode) */}
         <motion.div
           animate={{ y: isDark ? 0 : -30, opacity: isDark ? 1 : 0, rotate: isDark ? 0 : -90 }}
           transition={{ duration: 0.2 }}

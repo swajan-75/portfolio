@@ -22,32 +22,44 @@ export default function Projects() {
   const [loading, setLoading]   = useState(true);
 
   useEffect(() => {
+    const controller = new AbortController();
+
     const fetchData = async () => {
+      setLoading(true);
       try {
         const [projectsRes, cvRes] = await Promise.allSettled([
-          api.get("/projects"),
-          api.get("/cv/active"),
+          api.get("/projects", { signal: controller.signal }),
+          api.get("/cv/active", { signal: controller.signal }),
         ]);
 
         if (projectsRes.status === "fulfilled") {
           const list = Array.isArray(projectsRes.value.data)
             ? projectsRes.value.data
             : Object.values(projectsRes.value.data ?? {});
-          list.sort((a, b) => (b.created_at ?? 0) - (a.created_at ?? 0));
-          setProjects(list);
+          
+
+          setProjects(prev => {
+             const newList = [...list].sort((a, b) => (b.created_at ?? 0) - (a.created_at ?? 0));
+             return JSON.stringify(prev) === JSON.stringify(newList) ? prev : newList;
+          });
         }
 
         if (cvRes.status === "fulfilled") {
           setCV(cvRes.value.data);
         }
       } catch (err) {
-        console.error("Failed to fetch data:", err);
+        if (err.name !== 'CanceledError') {
+          console.error("Failed to fetch data:", err);
+        }
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
+
+
+    return () => controller.abort();
   }, []);
 
   const visibleProjects = showAll ? projects : projects.slice(0, 6);
