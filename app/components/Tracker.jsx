@@ -7,7 +7,7 @@ export default function AnalyticsTracker() {
     const trackVisit = async () => {
       try {
     
-        await api.post("/track/visit");
+        await api.post("/track/visit",{},{withCredentials: true});
       } catch (err) {
   
         console.error("Analytics sync failed");
