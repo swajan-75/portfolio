@@ -94,10 +94,11 @@ export default function Projects() {
           </p>
         </motion.header>
 
+        {loading && (
           <div className="flex justify-center py-20" aria-busy="true">
             <div className="w-8 h-8 border-4 border-blue-600/20 border-t-[#1976D2] rounded-full animate-spin" />
           </div>
-
+        )}
         {!loading && (
           <>
             <motion.div 
