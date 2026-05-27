@@ -40,10 +40,12 @@ export default function TerminalText() {
   }, [subIndex, index, deleting]);
 
   return (
-    <div className="font-mono text-purple-400 text-lg mt-6">
-      <span>$ </span>
-      {text}
-      <span className="animate-pulse">▋</span>
+    <div className="font-mono text-purple-400 text-[1rem] sm:text-lg mt-6 h-[72px] sm:h-[36px] flex items-start">
+      <div className="w-full">
+        <span>$ </span>
+        {text}
+        <span className="animate-pulse">▋</span>
+      </div>
     </div>
   );
 }

@@ -1,14 +1,16 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import { FiDownload, FiUser, FiCpu, FiBookOpen, FiAward, FiTrendingUp } from "react-icons/fi";
-import logo from "../images/logo.jpg";
 import aiubLogo from "../images/aiub.png";
 import swajanDP from "../images/swajan_1.jpg";
+import { useProfile } from "../hooks/useProfile";
 import api from "@/lib/axios";
 
 export default function About() {
   const [cvUrl, setCvUrl] = useState(null);
+  const { profile, loading: profileLoading } = useProfile();
+  const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
     api.get("/cv/active")
@@ -20,145 +22,167 @@ export default function About() {
     try {
       await api.post("/track/downloads");
     } catch (err) {
-      console.error("Download tracking failed:", err.response?.status, err.message);
+      console.error("Download tracking failed:", err?.response?.status, err?.message);
     }
   };
 
+  if (profileLoading) return null;
+
+  const containerVariants = {
+    hidden: {},
+    visible: {
+      transition: { staggerChildren: shouldReduceMotion ? 0 : 0.08 }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: shouldReduceMotion ? 0.3 : 0.6, ease: "easeOut" } }
+  };
+
   return (
-    <section className="py-24 px-6 bg-black text-white" id="about">
-      <div className="max-w-6xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+    <section className="py-24 px-5 sm:px-8" id="about">
+      <div 
+        style={{ background: 'rgba(255,255,255,0.2)' }}
+        className="max-w-6xl w-full mx-auto p-6 sm:p-10 md:p-12 rounded-[2.5rem]"
+      >        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
           className="grid grid-cols-1 md:grid-cols-12 gap-6"
         >
 
+          {/* 2. PROFILE IMAGE CARD */}
+          <motion.article 
+            style={{ backdropFilter: 'blur(40px) saturate(180%)', WebkitBackdropFilter: 'blur(40px) saturate(180%)', background: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.25)' }}
+            variants={itemVariants}
+            className="md:col-span-4 relative overflow-hidden group order-1 md:order-2 aspect-[4/5] md:aspect-auto md:h-full rounded-3xl"
+          >
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10" aria-hidden="true" />
+            <img
+              src={swajanDP.src}
+              alt="Swajan Barua profile picture"
+              className="w-full h-full object-cover transition-all duration-700 scale-100 group-hover:scale-105"
+            />
+          </motion.article>
+
           {/* 1. HERO BIO CARD */}
-          <div className="col-span-1 md:col-span-8 bg-neutral-900/50 backdrop-blur-sm border border-white/10 rounded-3xl p-8 flex flex-col justify-center">
-            <div className="flex items-center gap-3 mb-6">
-              <span className="p-2 bg-blue-500/20 text-blue-400 rounded-lg text-xl"><FiUser /></span>
-              <h2 className="text-3xl font-bold">Who I Am</h2>
+          <motion.article 
+            style={{ backdropFilter: 'blur(40px) saturate(180%)', WebkitBackdropFilter: 'blur(40px) saturate(180%)', background: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.25)' }}
+            variants={itemVariants}
+            className="md:col-span-8 p-6 sm:p-8 flex flex-col justify-center order-2 md:order-1 rounded-3xl"
+          >
+            <header className="flex items-center gap-3 mb-6">
+              <span className="text-slate-700 text-2xl" aria-hidden="true"><FiUser /></span>
+              <h2 className="text-[clamp(1.75rem,5vw,2.25rem)] font-bold text-slate-900">Who I Am</h2>
+            </header>
+
+            <div className="text-slate-700 font-medium text-base sm:text-lg leading-relaxed mb-6 whitespace-pre-wrap">
+              {profile?.bio || `I am a Computer Science student and Backend Developer passionate about creating high-performing, scalable systems. From low-level algorithms in C++ and Go to modern web frameworks like NestJS, Next.js, and .NET Core, my experience covers the full software lifecycle.`}
             </div>
 
-            <p className="text-gray-400 text-lg leading-relaxed mb-6">
-              I am a <span className="text-white font-semibold">Computer Science student</span> and <span className="text-white font-semibold">Backend Developer</span> passionate about creating high-performing, scalable systems.
-              From low-level algorithms in <span className="text-cyan-400">C++ and Go</span> to modern web frameworks like <span className="text-cyan-400">NestJS, Next.js, and .NET Core</span>, my experience covers the full software lifecycle.
-            </p>
-
-            <p className="text-gray-400 text-lg leading-relaxed mb-8">
-              I design database architectures across <span className="text-blue-400">Relational, Non-Relational, and Serverless</span> environments, supported by a strong foundation in <span className="text-emerald-400">Data Structures & Algorithms</span>.
-              Beyond backend, I have practical expertise in full-stack mobile and web programming, allowing me to build complete, end-to-end applications.
-            </p>
-
             {cvUrl ? (
-              <motion.a
+              <a
                 href={cvUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 download
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
                 onClick={handleDownload}
-                className="w-fit flex items-center gap-2 px-6 py-3 bg-white text-black font-semibold rounded-full hover:bg-gray-200 transition-colors cursor-pointer"
+                className="w-full sm:w-fit flex items-center justify-center gap-2 px-6 py-3 bg-[#1976D2] text-white font-bold rounded-full hover:bg-[#1565C0] shadow-md transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
               >
                 <FiDownload /> Download Resume
-              </motion.a>
+              </a>
             ) : (
-              <motion.button
+              <button
                 disabled
-                className="w-fit flex items-center gap-2 px-6 py-3 bg-white/10 text-gray-500 font-semibold rounded-full cursor-not-allowed"
+                style={{ backdropFilter: 'blur(40px) saturate(180%)', WebkitBackdropFilter: 'blur(40px) saturate(180%)', background: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.25)' }}
+                className="w-full sm:w-fit flex items-center justify-center gap-2 px-6 py-3 text-slate-500 font-bold rounded-full cursor-not-allowed bg-white/20"
               >
                 <FiDownload /> Resume Unavailable
-              </motion.button>
+              </button>
             )}
-          </div>
-
-          {/* 2. PROFILE IMAGE CARD */}
-          <div className="col-span-1 md:col-span-4 relative overflow-hidden rounded-3xl border border-white/10 group">
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent z-10" />
-            <img
-              src={swajanDP.src}
-              alt="Profile"
-              className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 scale-100 group-hover:scale-110"
-            />
-          </div>
+          </motion.article>
 
           {/* 3. EDUCATION CARD */}
-          <div className="col-span-1 md:col-span-6 bg-gradient-to-br from-blue-900/20 to-black border border-white/10 rounded-3xl p-8 relative overflow-hidden">
-            <div className="flex justify-between items-center relative z-10">
-              <div className="pr-4">
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="p-2 bg-blue-500/20 text-blue-400 rounded-lg text-xl"><FiBookOpen /></span>
-                  <h3 className="text-xl font-bold">Education</h3>
-                </div>
+          <motion.article 
+            variants={itemVariants}
+            style={{ backdropFilter: 'blur(40px) saturate(180%)', WebkitBackdropFilter: 'blur(40px) saturate(180%)', background: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.25)' }}
+            className="md:col-span-6 p-6 sm:p-8 relative overflow-hidden order-3 rounded-3xl"
+          >
+            <div className="flex flex-col-reverse sm:flex-row justify-between items-start sm:items-center gap-6 relative z-10">
+              <div>
+                <header className="flex items-center gap-3 mb-4">
+                  <span className="text-slate-700 text-2xl" aria-hidden="true"><FiBookOpen /></span>
+                  <h3 className="text-[clamp(1.25rem,3vw,1.5rem)] font-bold text-slate-900">Education</h3>
+                </header>
                 <div className="space-y-1">
-                  <h4 className="text-2xl font-bold text-white">B.Sc. in CSE</h4>
-                  <p className="text-gray-400 text-sm">American International<br />University-Bangladesh (AIUB)</p>
+                  <h4 className="text-[clamp(1.25rem,4vw,1.75rem)] font-bold text-slate-900 leading-tight">
+                    {profile?.education_info?.degree || "Loading..."}
+                  </h4>
+                  <p className="text-slate-700 font-medium text-sm whitespace-pre-wrap mt-2">
+                    {profile?.education_info?.institution || ""}
+                  </p>
                 </div>
               </div>
-              <div className="bg-white p-3 rounded-2xl h-50 w-50 flex items-center justify-center shrink-0 shadow-lg">
+              <div style={{ backdropFilter: 'blur(40px) saturate(180%)', WebkitBackdropFilter: 'blur(40px) saturate(180%)', background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.30)' }} className="p-3 h-16 w-16 sm:h-20 sm:w-20 flex items-center justify-center shrink-0 rounded-2xl" aria-hidden="true">
                 <img src={aiubLogo.src} alt="AIUB" className="w-full h-full object-contain" />
               </div>
             </div>
-          </div>
+          </motion.article>
 
           {/* 4. TECH FOCUS CARD */}
-          <div className="col-span-1 md:col-span-6 bg-neutral-900/50 border border-white/10 rounded-3xl p-8">
-            <div className="flex items-center gap-3 mb-4">
-              <span className="p-2 bg-purple-500/20 text-purple-400 rounded-lg text-xl"><FiCpu /></span>
-              <h3 className="text-xl font-bold">The Tech</h3>
-            </div>
+          <motion.article variants={itemVariants} style={{ backdropFilter: 'blur(40px) saturate(180%)', WebkitBackdropFilter: 'blur(40px) saturate(180%)', background: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.25)' }} className="md:col-span-6 p-6 sm:p-8 order-4 rounded-3xl">
+            <header className="flex items-center gap-3 mb-4">
+              <span className="text-slate-700 text-2xl" aria-hidden="true"><FiCpu /></span>
+              <h3 className="text-[clamp(1.25rem,3vw,1.5rem)] font-bold text-slate-900">The Tech</h3>
+            </header>
             <div className="flex flex-wrap gap-2">
-              {['Golang', 'NextJS', 'NestJS', '.NET Core', 'PostgreSQL', 'Firebase', 'Kotlin', 'Git'].map((tag) => (
-                <span key={tag} className="px-3 py-1 bg-white/5 border border-white/10 rounded-lg text-sm text-gray-300">
+              {(profile?.tech_tags || []).map((tag) => (
+                <span key={tag} className="px-3 py-1.5 bg-white/40 border border-white/40 rounded-full text-xs font-bold text-blue-700">
                   {tag}
                 </span>
               ))}
             </div>
-          </div>
+          </motion.article>
 
           {/* 5. STATS CARD */}
-          <div className="col-span-1 md:col-span-4 bg-neutral-900/50 backdrop-blur-sm border border-white/10 rounded-3xl p-8 flex flex-col justify-between">
-            <div className="flex items-center gap-3 mb-4">
-              <span className="p-2 bg-gray-500/20 text-gray-400 rounded-lg text-xl"><FiTrendingUp /></span>
-              <h3 className="text-xl font-bold">Stats</h3>
-            </div>
+          <motion.article variants={itemVariants} style={{ backdropFilter: 'blur(40px) saturate(180%)', WebkitBackdropFilter: 'blur(40px) saturate(180%)', background: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.25)' }} className="md:col-span-4 p-6 sm:p-8 flex flex-col justify-between order-5 rounded-3xl">
+            <header className="flex items-center gap-3 mb-6">
+              <span className="text-slate-700 text-2xl" aria-hidden="true"><FiTrendingUp /></span>
+              <h3 className="text-[clamp(1.25rem,3vw,1.5rem)] font-bold text-slate-900">Stats</h3>
+            </header>
             <div className="grid grid-cols-2 gap-4">
-              <div>
-                <h3 className="text-3xl font-bold text-white">15+</h3>
-                <p className="text-gray-500 text-xs uppercase">Projects</p>
-              </div>
-              <div>
-                <h3 className="text-3xl font-bold text-white">600+</h3>
-                <p className="text-gray-500 text-xs uppercase">DSA Solved</p>
-              </div>
+              {(profile?.stats || []).map((stat, i) => (
+                <div key={i}>
+                  <h3 className="text-[clamp(1.75rem,5vw,2.25rem)] font-bold text-blue-700 leading-none mb-1">{stat.value}</h3>
+                  <p className="text-slate-600 font-bold text-xs uppercase tracking-wider">{stat.label}</p>
+                </div>
+              ))}
             </div>
-          </div>
+          </motion.article>
 
           {/* 6. COMPETITIVE HIGHLIGHTS */}
-          <div className="col-span-1 md:col-span-8 bg-gradient-to-br from-yellow-900/20 to-black border border-white/10 rounded-3xl p-8">
-            <div className="flex items-center gap-3 mb-6">
-              <span className="p-2 bg-yellow-500/20 text-yellow-400 rounded-lg text-xl"><FiAward /></span>
-              <h3 className="text-xl font-bold">Competitive Career</h3>
+          <motion.article variants={itemVariants} style={{ backdropFilter: 'blur(40px) saturate(180%)', WebkitBackdropFilter: 'blur(40px) saturate(180%)', background: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.25)' }} className="md:col-span-8 p-6 sm:p-8 order-6 rounded-3xl">
+            <header className="flex items-center gap-3 mb-6">
+              <span className="text-slate-700 text-2xl" aria-hidden="true"><FiAward /></span>
+              <h3 className="text-[clamp(1.25rem,3vw,1.5rem)] font-bold text-slate-900">Competitive Career</h3>
+            </header>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              {(profile?.highlights || []).map((highlight, i) => (
+                <motion.div 
+                  key={i} 
+                  whileHover={{ scale: 1.02 }}
+                  style={{ backdropFilter: 'blur(40px) saturate(180%)', WebkitBackdropFilter: 'blur(40px) saturate(180%)', background: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.25)' }}
+                  className="p-5 hover:bg-white/40 transition-all cursor-default rounded-2xl"
+                >
+                  <div className="text-sm font-medium text-slate-700 mb-2">{highlight.title}</div>
+                  <div className="text-2xl font-bold text-blue-700 mb-1">{highlight.value}</div>
+                  {highlight.subtext && <div className="text-xs font-bold text-slate-500">{highlight.subtext}</div>}
+                </motion.div>
+              ))}
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="p-4 bg-white/5 rounded-2xl border border-white/5 hover:border-yellow-500/50 transition-colors">
-                <div className="text-sm text-gray-400 mb-1">Codeforces</div>
-                <div className="text-2xl font-bold text-white mb-1">Max 1162</div>
-              </div>
-              <div className="p-4 bg-white/5 rounded-2xl border border-white/5 hover:border-yellow-500/50 transition-colors">
-                <div className="text-sm text-gray-400 mb-1">LeetCode</div>
-                <div className="text-2xl font-bold text-white mb-1">50+</div>
-                <div className="text-xs text-green-400">Problems Solved</div>
-              </div>
-              <div className="p-4 bg-white/5 rounded-2xl border border-white/5 hover:border-yellow-500/50 transition-colors">
-                <div className="text-sm text-gray-400 mb-1">Programming Contest</div>
-                <div className="text-2xl font-bold text-white mb-1">17th</div>
-                <div className="text-xs text-blue-400">AIUB CS Fest 2024</div>
-              </div>
-            </div>
-          </div>
+          </motion.article>
 
         </motion.div>
       </div>

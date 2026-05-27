@@ -1,27 +1,32 @@
 "use client";
-import React, { useRef, useState } from "react";
-import { motion } from "motion/react";
-import emailjs from "@emailjs/browser"; // 1. Import EmailJS
-import { FiMail, FiMapPin, FiSend, FiGithub, FiLinkedin, FiFacebook, FiPhone } from "react-icons/fi";
-import codeforecesIcon from "../images/codeforces.png";
+import React, { useRef, useState, useEffect } from "react";
+import { motion, useReducedMotion } from "motion/react";
+import emailjs from "@emailjs/browser"; 
+import { FiMail, FiMapPin, FiSend, FiLink } from "react-icons/fi";
+import api from "@/lib/axios";
+import { resolveIcon } from "@/app/lib/resolveIcon";
 
 export default function Contact() {
-  // 2. Setup Ref and State
   const formRef = useRef();
   const [isSending, setIsSending] = useState(false);
-  const [status, setStatus] = useState(null); // 'success' or 'error'
+  const [status, setStatus] = useState(null); 
+  const [contacts, setContacts] = useState([]);
+  const shouldReduceMotion = useReducedMotion();
 
-  // 3. The Send Function
+  useEffect(() => {
+    api.get(`/profile?t=${Date.now()}`)
+      .then(({ data }) => setContacts(data?.socials || []))
+      .catch(err => console.error("Failed to load contacts:", err));
+  }, []);
+
   const sendEmail = (e) => {
     e.preventDefault();
     setIsSending(true);
     setStatus(null);
 
-    // --- REPLACE WITH YOUR EMAILJS KEYS ---
     const SERVICE_ID = "service_uqakf6u";
     const TEMPLATE_ID = "template_nl9vpnd";
     const PUBLIC_KEY = "YimywiF0JktUGRhI4";
-    // --------------------------------------
 
     emailjs
       .sendForm(SERVICE_ID, TEMPLATE_ID, formRef.current, {
@@ -31,8 +36,8 @@ export default function Contact() {
         () => {
           setIsSending(false);
           setStatus("success");
-          formRef.current.reset(); // Clear form
-          setTimeout(() => setStatus(null), 5000); // clear success msg after 5s
+          formRef.current.reset(); 
+          setTimeout(() => setStatus(null), 5000); 
         },
         (error) => {
           setIsSending(false);
@@ -42,157 +47,162 @@ export default function Contact() {
       );
   };
 
+  const formVariants = {
+    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 30 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+  };
+
   return (
-    <section className="py-24 px-6 bg-black text-white" id="contact">
-      <div className="max-w-6xl mx-auto">
-        
-        {/* HEADER */}
-        <motion.div 
-          initial={{ opacity: 0, y: -20 }}
+    <section className="py-24 px-5 sm:px-8" id="contact">
+      <div 
+        style={{ background: 'rgba(255,255,255,0.2)' }}
+        className="max-w-6xl w-full mx-auto p-6 sm:p-10 md:p-12 rounded-[2.5rem]"
+      >
+        <motion.header 
+          initial={{ opacity: 0, y: shouldReduceMotion ? 0 : -20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-500 mb-4">
+          <h2 className="text-[clamp(2rem,6vw,3rem)] font-bold text-slate-900 mb-4">
             Let's Connect
           </h2>
-          <p className="text-gray-400 max-w-xl mx-auto">
+          <p className="text-slate-700 max-w-xl mx-auto text-base sm:text-lg font-medium">
             Have a project in mind or want to discuss the latest in AI and Web Dev? 
             My inbox is always open.
           </p>
-        </motion.div>
+        </motion.header>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
           
-          {/* 1. CONTACT INFO & SOCIALS */}
           <motion.div 
-            initial={{ opacity: 0, x: -50 }}
+            initial={{ opacity: 0, x: shouldReduceMotion ? 0 : -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
             className="space-y-8"
           >
-            {/* Location/Email Card */}
-            <div className="bg-neutral-900/50 backdrop-blur-sm border border-white/10 p-8 rounded-3xl">
-              <h3 className="text-2xl font-bold mb-6">Contact Info</h3>
+            <article style={{ backdropFilter: 'blur(40px) saturate(180%)', WebkitBackdropFilter: 'blur(40px) saturate(180%)', background: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.25)' }} className="p-6 sm:p-8 rounded-3xl">
+              <h3 className="text-[clamp(1.25rem,3vw,1.5rem)] font-bold mb-6 text-slate-900">Contact Info</h3>
               
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
-                  <div className="p-3 bg-blue-500/10 rounded-xl text-blue-400 text-xl">
+                  <div className="p-3 bg-white/40 rounded-xl text-blue-600 text-xl border border-white/40" aria-hidden="true">
                     <FiMapPin />
                   </div>
                   <div>
-                    <h4 className="text-lg font-semibold text-white">Location</h4>
-                    <p className="text-gray-400">Dhaka, Bangladesh</p>
-                    <p className="text-xs text-gray-500 mt-1">Open to remote work</p>
+                    <h4 className="text-lg font-bold text-slate-900">Location</h4>
+                    <p className="text-slate-700 font-medium">Dhaka, Bangladesh</p>
+                    <p className="text-xs text-slate-500 mt-1 font-medium">Open to remote work</p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="p-3 bg-green-500/10 rounded-xl text-green-400 text-xl">
+                  <div className="p-3 bg-white/40 rounded-xl text-blue-600 text-xl border border-white/40" aria-hidden="true">
                     <FiMail />
                   </div>
                   <div>
-                    <h4 className="text-lg font-semibold text-white">Email</h4>
-                    <a href="mailto:swajanbarua09@gmail.com" className="text-gray-400 hover:text-white transition-colors">
+                    <h4 className="text-lg font-bold text-slate-900">Email</h4>
+                    <a href="mailto:swajanbarua09@gmail.com" className="text-slate-700 font-medium hover:text-blue-600 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded p-1 -ml-1">
                       swajanbarua09@gmail.com
                     </a>
                   </div>
                 </div>
               </div>
-            </div>
+            </article>
 
-            {/* Social Buttons */}
-            <div className="grid grid-cols-3 sm:grid-cols-4 gap-4">
-              <SocialBtn icon={<FiGithub />} label="GitHub" href="https://github.com/swajan-75" delay={0.1} />
-              <SocialBtn icon={<FiLinkedin />} label="LinkedIn" href="https://www.linkedin.com/in/swajan-barua09/" delay={0.2} />
-              <SocialBtn icon={<FiFacebook />} label="Facebook" href="https://www.facebook.com/swajan.09" delay={0.3} />
-              <SocialBtn icon={<FiPhone />} label="Phone" href="tel:+8801742227504" delay={0.4} />
-              <SocialBtn icon={codeforecesIcon} label="Codeforces" href="https://codeforces.com/profile/Swajan_" delay={0.5}/>
-            </div>
+            <nav aria-label="Social links" className="grid grid-cols-3 sm:grid-cols-4 gap-4">
+              {contacts.map((c, i) => (
+                <SocialBtn key={i} icon={c.icon} label={c.platform} href={c.url} delay={shouldReduceMotion ? 0 : 0.1 + (i * 0.1)} />
+              ))}
+            </nav>
           </motion.div>
 
 
-          {/* 2. MESSAGE FORM */}
           <motion.div 
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            className="bg-neutral-900/50 backdrop-blur-sm border border-white/10 p-8 rounded-3xl"
+            variants={formVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            style={{ backdropFilter: 'blur(40px) saturate(180%)', WebkitBackdropFilter: 'blur(40px) saturate(180%)', background: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.25)' }}
+            className="p-6 sm:p-8 rounded-3xl"
           >
-            {/* 4. Connect Form Ref and Submit Handler */}
             <form ref={formRef} onSubmit={sendEmail} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-sm text-gray-400 ml-1">Name</label>
+                  <label htmlFor="user_name" className="text-sm font-bold text-slate-800 ml-1">Name</label>
                   <input 
                     type="text" 
-                    name="user_name" // 5. Added 'name' attribute
+                    id="user_name"
+                    name="user_name" 
                     required
                     placeholder="John Doe" 
-                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 transition-all placeholder:text-gray-600"
+                    className="w-full glass-input px-4 py-3.5"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm text-gray-400 ml-1">Email</label>
+                  <label htmlFor="user_email" className="text-sm font-bold text-slate-800 ml-1">Email</label>
                   <input 
                     type="email" 
-                    name="user_email" // 5. Added 'name' attribute
+                    id="user_email"
+                    name="user_email" 
                     required
                     placeholder="john@example.com" 
-                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 transition-all placeholder:text-gray-600"
+                    className="w-full glass-input px-4 py-3.5"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm text-gray-400 ml-1">Subject</label>
+                <label htmlFor="subject" className="text-sm font-bold text-slate-800 ml-1">Subject</label>
                 <input 
                   type="text" 
-                  name="subject" // 5. Added 'name' attribute
+                  id="subject"
+                  name="subject" 
                   required
                   placeholder="Project Inquiry" 
-                  className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 transition-all placeholder:text-gray-600"
+                  className="w-full glass-input px-4 py-3.5"
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm text-gray-400 ml-1">Message</label>
+                <label htmlFor="message" className="text-sm font-bold text-slate-800 ml-1">Message</label>
                 <textarea 
-                  rows="4" 
-                  name="message" // 5. Added 'name' attribute
+                  id="message"
+                  rows={4} 
+                  name="message" 
                   required
                   placeholder="Tell me about your project..." 
-                  className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 transition-all placeholder:text-gray-600 resize-none"
+                  className="w-full glass-input px-4 py-3.5 resize-y min-h-[120px]"
                 />
               </div>
 
-              {/* 6. Updated Button with Loading State */}
               <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                whileHover={shouldReduceMotion ? {} : { scale: 1.02 }}
+                whileTap={shouldReduceMotion ? {} : { scale: 0.98 }}
                 disabled={isSending}
                 type="submit"
-                className={`w-full font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-colors ${
-                  isSending ? "bg-gray-600 cursor-not-allowed" : "bg-white text-black hover:bg-gray-200"
+                className={`w-full font-bold px-6 py-3 rounded-xl flex items-center justify-center gap-2 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 shadow-md ${
+                  isSending ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-[#1976D2] hover:bg-[#1565C0] text-white"
                 }`}
               >
                 {isSending ? (
                   "Sending..."
                 ) : (
                   <>
-                    <FiSend /> Send Message
+                    <FiSend aria-hidden="true" /> Send Message
                   </>
                 )}
               </motion.button>
 
-               {/* 7. Success/Error Messages */}
                {status === "success" && (
-                <p className="text-green-400 text-center text-sm mt-2">
+                <p className="text-green-700 text-center text-sm mt-3 font-bold" role="alert">
                   Message sent successfully!
                 </p>
               )}
               {status === "error" && (
-                <p className="text-red-400 text-center text-sm mt-2">
+                <p className="text-red-600 text-center text-sm mt-3 font-bold" role="alert">
                   Failed to send. Please try again.
                 </p>
               )}
@@ -205,9 +215,8 @@ export default function Contact() {
   );
 }
 
-// 8. Kept your SocialBtn Component exactly as requested
 function SocialBtn({ icon, label, href, delay }) {
-  const isReactIcon = React.isValidElement(icon);
+  const iconElement = resolveIcon(icon, { size: 24 }) || <FiLink />;
 
   return (
     <motion.a 
@@ -216,21 +225,16 @@ function SocialBtn({ icon, label, href, delay }) {
       rel="noopener noreferrer"
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
-      transition={{ delay: delay }}
-      className="flex flex-col items-center justify-center gap-2 p-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all group"
+      transition={{ delay: delay, duration: 0.4 }}
+      viewport={{ once: true }}
+      style={{ backdropFilter: 'blur(40px) saturate(180%)', WebkitBackdropFilter: 'blur(40px) saturate(180%)', background: 'rgba(255,255,255,0.20)', border: '1px solid rgba(255,255,255,0.40)' }}
+      className="flex flex-col items-center justify-center gap-2 p-4 hover:bg-white/40 transition-all group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-2xl"
+      aria-label={`Visit my ${label} profile`}
     >
-      <div className="text-2xl text-gray-400 group-hover:text-white transition-colors">
-        {isReactIcon ? (
-          icon
-        ) : (
-          <img 
-            src={icon.src || icon} 
-            alt={label} 
-            className="w-6 h-6 object-contain opacity-50 grayscale group-hover:grayscale-0 group-hover:opacity-100 transition-all" 
-          />
-        )}
+      <div className="text-2xl text-slate-700 group-hover:text-[#1976D2] transition-colors" aria-hidden="true">
+        {iconElement}
       </div>
-      <span className="text-xs text-gray-500 group-hover:text-gray-300">{label}</span>
+      <span className="text-xs text-slate-600 group-hover:text-[#1976D2] font-bold">{label}</span>
     </motion.a>
   );
 }

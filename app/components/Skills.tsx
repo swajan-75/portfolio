@@ -1,156 +1,137 @@
 "use client";
-import { motion } from "motion/react";
-import {
-  SiReact,
-  SiNextdotjs,
-  SiTailwindcss,
-  SiHtml5,
-  SiCss3,
-  SiNodedotjs,
-  SiExpress,
-  SiFirebase,
-  SiMongodb,
-  SiKotlin,
-  SiAndroid,
-  SiPython,
-  SiTensorflow,
-  SiJavascript,
-  SiTypescript,
-  SiGit,
-  SiGo,
-  SiNestjs,
-  SiDotnet,
-  SiPostgresql,
-  SiMysql,
-} from "react-icons/si";
-import { FaDatabase, FaMobileAlt, FaBrain, FaCode } from "react-icons/fa";
-import { FiDatabase } from "react-icons/fi";
+import { useEffect, useState } from "react";
+import { motion, useReducedMotion, Variants } from "motion/react";
+import api from "@/lib/axios";
+import { resolveIcon } from "@/app/lib/resolveIcon";
+import { FiCpu } from "react-icons/fi";
 
+interface SkillItem {
+  name: string;
+  icon: string;
+}
 
-const features = [
-  {
-    title: "Front-End Development",
-    description:
-      "Building engaging and user-friendly web interfaces using modern frameworks.",
-    className: "md:col-span-2", 
-    icon: <FaCode className="text-blue-400" />,
-    tech: [
-      { name: "React", icon: <SiReact /> },
-      { name: "Next.js", icon: <SiNextdotjs /> },
-      { name: "Tailwind", icon: <SiTailwindcss /> },
-      { name: "HTML", icon: <SiHtml5 /> },
-      { name: "CSS", icon: <SiCss3 /> },
-      { name: "JS", icon: <SiJavascript /> },
-      { name: "TS", icon: <SiTypescript /> },
-    ],
-  },
-  {
-    title: "Back-End & Database",
-    description:
-      "Developing robust server-side logic and managing efficient data storage.",
-    className: "md:col-span-1",
-    icon: <FaDatabase className="text-green-400" />,
-    tech: [
-      { name: "Go", icon: <SiGo /> }, 
-      { name: "NestJS", icon: <SiNestjs /> }, 
-      { name: ".NET Core", icon: <SiDotnet /> }, 
-      { name: "Node.js", icon: <SiNodedotjs /> }, 
-    ],
-  },
-  {
-    title: "Mobile App Development",
-    description:
-      "Creating cross-platform and native mobile apps with sleek designs.",
-    className: "md:col-span-1",
-    icon: <FaMobileAlt className="text-purple-400" />,
-    tech: [
-      { name: "Kotlin", icon: <SiKotlin /> },
-      { name: "Android", icon: <SiAndroid /> },
-      { name: "Room DB", icon: <FaDatabase /> },
-    ],
-  },
-  {
-    title: "Database Architecture",
-    description:
-      "Architecting reliable, scalable storage solutions across SQL and NoSQL environments.",
-    className: "md:col-span-2",
-    icon: <FiDatabase className="text-emerald-400" />,
-    tech: [
-      { name: "PostgreSQL", icon: <SiPostgresql /> },
-      { name: "MySQL", icon: <SiMysql /> },
-      { name: "Firebase", icon: <SiFirebase /> },
-    ],
-  },
-  {
-    title: "AI & Data Science",
-    description:
-      "Leveraging machine learning algorithms to derive insights from data.",
-    className: "md:col-span-2",
-    icon: <FaBrain className="text-pink-400" />,
-    tech: [
-      { name: "Python", icon: <SiPython /> },
-      { name: "ML", icon: <FaBrain /> },
-      { name: "TensorFlow", icon: <SiTensorflow /> },
-    ],
-  },
+interface SkillCategory {
+  title: string;
+  description: string;
+  icon: string;
+  col_span: number;
+  skills: SkillItem[];
+}
+
+// Glow colors per category index (cycles)
+const GLOWS = [
+  "bg-blue-500/10 group-hover:bg-blue-500/20",
+  "bg-green-500/10 group-hover:bg-green-500/20",
+  "bg-purple-500/10 group-hover:bg-purple-500/20",
+  "bg-emerald-500/10 group-hover:bg-emerald-500/20",
+  "bg-pink-500/10 group-hover:bg-pink-500/20",
 ];
 
 export default function Skills() {
+  const [categories, setCategories] = useState<SkillCategory[]>([]);
+  const [loading, setLoading] = useState(true);
+  const shouldReduceMotion = useReducedMotion();
+
+  useEffect(() => {
+    api.get(`/profile?t=${Date.now()}`)
+      .then(({ data }) => {
+        const cats: SkillCategory[] = data?.skill_categories;
+        setCategories(Array.isArray(cats) ? cats : []);
+      })
+      .catch(() => setCategories([]))
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) return null;
+
+  const containerVariants: Variants = {
+    hidden: {},
+    visible: {
+      transition: { staggerChildren: shouldReduceMotion ? 0 : 0.08 }
+    }
+  };
+
+  const itemVariants: Variants = {
+    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: shouldReduceMotion ? 0.3 : 0.5, ease: "easeOut" } }
+  };
+
   return (
-    <section className="min-h-screen bg-black text-white py-20 px-4 flex items-center justify-center">
-      <div className="max-w-6xl w-full">
-        <motion.h2
-          initial={{ opacity: 0, y: -20 }}
+    <section className="min-h-[100svh] py-24 px-5 sm:px-8 flex items-center justify-center" id="skills">
+      <div 
+        style={{ background: 'rgba(255,255,255,0.2)' }}
+        className="max-w-6xl w-full p-6 sm:p-10 md:p-12 rounded-[2.5rem]"
+      >
+        <motion.header
+          initial={{ opacity: 0, y: shouldReduceMotion ? 0 : -20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          className="text-4xl md:text-5xl font-bold text-center mb-16"
+          viewport={{ once: true }}
+          className="text-center mb-16 sm:mb-20 py-8 px-6 rounded-3xl"
         >
-          My Skills
-        </motion.h2>
+          <h2 className="text-[clamp(2rem,6vw,3rem)] font-bold text-center mb-4 text-slate-900">
+            My Skills
+          </h2>
+          <p className="text-slate-700 font-medium text-base sm:text-lg max-w-2xl mx-auto">
+            Tools and technologies I use to build scalable systems.
+          </p>
+        </motion.header>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {features.map((item, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
-              viewport={{ once: true }}
-              className={`
-                ${item.className || ""} 
-                relative overflow-hidden rounded-3xl border border-white/10 bg-neutral-900/50 p-8 
-                backdrop-blur-sm hover:border-white/20 transition-colors group
-              `}
-            >
-              {/* Subtle Gradient Glow effect */}
-              <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-purple-500/10 blur-3xl group-hover:bg-purple-500/20 transition-all duration-500" />
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+          className="grid grid-cols-1 md:grid-cols-3 gap-10 sm:gap-12"
+        >
+          {categories.map((cat, i) => {
+            const colSpan =
+              cat.col_span === 2
+                ? "md:col-span-2"
+                : cat.col_span === 3
+                ? "md:col-span-3"
+                : "md:col-span-1";
 
-              {/* Top Section: Icons */}
-              <div className="mb-6 flex flex-wrap gap-3">
-                {item.tech.map((tech, idx) => (
-                  <div
-                    key={idx}
-                    className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 hover:scale-105 transition-all duration-300"
-                  >
-                    <span className="text-xl text-gray-300">{tech.icon}</span>
-                    <span className="text-xs font-medium text-gray-400">
-                      {tech.name}
-                    </span>
-                  </div>
-                ))}
-              </div>
+            const categoryIcon =
+              resolveIcon(cat.icon, { size: 20 }) ?? <FiCpu size={20} />;
 
-              {/* Bottom Section: Text */}
-              <div className="relative z-10">
-                <h3 className="text-xl font-semibold text-white mb-2 flex items-center gap-2">
-                  {item.title}
-                </h3>
-                <p className="text-sm text-gray-400 leading-relaxed">
-                  {item.description}
-                </p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+            return (
+              <motion.article
+                key={i}
+                variants={itemVariants}
+                style={{ backdropFilter: 'blur(40px) saturate(180%)', WebkitBackdropFilter: 'blur(40px) saturate(180%)', background: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.25)' }}
+                className={`${colSpan} flex flex-col justify-between p-6 rounded-3xl`}
+              >
+                {/* Tech badges */}
+                <div className="mb-6 flex flex-wrap gap-2">
+                  {(cat.skills ?? []).map((skill, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/40 border border-white/40 shadow-sm transition-colors duration-300 hover:bg-white/60"
+                    >
+                      <span className="text-xl text-blue-600 shrink-0" aria-hidden="true">
+                        {resolveIcon(skill.icon) ?? <FiCpu />}
+                      </span>
+                      <span className="text-sm font-bold whitespace-nowrap text-blue-700">
+                        {skill.name}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Title + description */}
+                <div className="mt-auto">
+                  <h3 className="text-[clamp(1.25rem,3vw,1.5rem)] font-bold text-slate-900 mb-2 flex items-center gap-3">
+                    <span className="text-blue-600" aria-hidden="true">{categoryIcon}</span>
+                    {cat.title}
+                  </h3>
+                  <p className="text-sm sm:text-base text-slate-700 font-medium leading-relaxed">
+                    {cat.description}
+                  </p>
+                </div>
+              </motion.article>
+            );
+          })}
+        </motion.div>
       </div>
     </section>
   );

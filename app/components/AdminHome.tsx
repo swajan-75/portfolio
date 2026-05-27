@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState, useCallback } from "react";
-import api from "@/lib/axios";
+import api from "../../lib/axios";
 import { FiGlobe, FiBox, FiFileText, FiLayers, FiTrendingUp, FiRefreshCw } from "react-icons/fi";
 import { motion } from "framer-motion";
 

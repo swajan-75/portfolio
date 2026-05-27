@@ -14,7 +14,7 @@ const inputClass =
 export default function AddProjectForm({ onRefresh, onCancel }: AddProjectFormProps) {
   const [form, setForm] = useState({
     title: "", category: "", description: "",
-    tech_stack: "", github_url: "", live_url: "", image_link: "",
+    tech_stack: "", github_url: "", live_url: "", image_link: "", rank: "",
   });
   const [submitting, setSubmitting] = useState(false);
 
@@ -27,6 +27,7 @@ export default function AddProjectForm({ onRefresh, onCancel }: AddProjectFormPr
       setSubmitting(true);
       await api.post("/admin/projects", {
         ...form,
+        rank: Number(form.rank) || 0,
         tech_stack: form.tech_stack.split(",").map((t) => t.trim()).filter(Boolean),
       });
       onRefresh();
@@ -44,13 +45,15 @@ export default function AddProjectForm({ onRefresh, onCancel }: AddProjectFormPr
     placeholder: string;
     span?: boolean;
     textarea?: boolean;
+    type?: string;
   }[] = [
     { key: "title",       label: "Title",       placeholder: "My Awesome Project" },
     { key: "category",    label: "Category",    placeholder: "Web / Mobile / AI ..." },
-    { key: "description", label: "Description", placeholder: "What does it do?",               span: true, textarea: true },
-    { key: "tech_stack",  label: "Tech Stack",  placeholder: "React, Node, Postgres (comma-separated)", span: true },
+    { key: "rank",        label: "Visibility Rank", placeholder: "1 for top, 0 for default", type: "number" },
     { key: "github_url",  label: "GitHub URL",  placeholder: "https://github.com/..." },
     { key: "live_url",    label: "Live URL",    placeholder: "https://yourproject.com" },
+    { key: "description", label: "Description", placeholder: "What does it do?",               span: true, textarea: true },
+    { key: "tech_stack",  label: "Tech Stack",  placeholder: "React, Node, Postgres (comma-separated)", span: true },
   ];
 
   return (
@@ -58,7 +61,7 @@ export default function AddProjectForm({ onRefresh, onCancel }: AddProjectFormPr
       <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-widest">New Project</h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {fields.map(({ key, label, placeholder, span, textarea }) => (
+        {fields.map(({ key, label, placeholder, span, textarea, type }) => (
           <div key={key} className={span ? "sm:col-span-2" : ""}>
             <label className="block text-xs text-gray-500 mb-1.5">{label}</label>
             {textarea ? (
@@ -69,7 +72,7 @@ export default function AddProjectForm({ onRefresh, onCancel }: AddProjectFormPr
               />
             ) : (
               <input
-                type="text" placeholder={placeholder} value={form[key]}
+                type={type || "text"} placeholder={placeholder} value={form[key]}
                 onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
                 className={inputClass}
               />

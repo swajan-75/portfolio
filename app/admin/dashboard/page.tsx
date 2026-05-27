@@ -5,9 +5,12 @@ import api from "@/lib/axios";
 import AdminHome from "../../components/AdminHome";
 import AdminProjects from "../../components/AdminProjects";
 import AdminCV from "../../components/AdminCV";
+import AdminSkills from "../../components/AdminSkills";
+import AdminContacts from "../../components/AdminContacts";
+import AdminAbout from "../../components/AdminAbout";
 import {
   FiLogOut, FiShield, FiLayers,
-  FiHome, FiBox, FiCpu, FiFileText, FiPhone,
+  FiHome, FiBox, FiCpu, FiFileText, FiPhone, FiUser,
 } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -21,7 +24,7 @@ interface Project {
   live_url?: string;
 }
 
-type Section = "home" | "projects" | "skills" | "cv" | "contacts";
+type Section = "home" | "projects" | "skills" | "cv" | "contacts" | "about";
 
 interface NavItem {
   id: Section;
@@ -31,6 +34,7 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { id: "home",     label: "Home",      icon: <FiHome /> },
+  { id: "about",    label: "About",     icon: <FiUser /> },
   { id: "projects", label: "Projects",  icon: <FiBox /> },
   { id: "skills",   label: "Skills",    icon: <FiCpu /> },
   { id: "cv",       label: "Update CV", icon: <FiFileText /> },
@@ -147,7 +151,19 @@ export default function AdminDashboard() {
               <AdminCV />
             )}
 
-            {activeSection !== "home" && activeSection !== "projects" && activeSection !== "cv" && (
+            {activeSection === "skills" && (
+              <AdminSkills />
+            )}
+
+            {activeSection === "contacts" && (
+              <AdminContacts />
+            )}
+
+            {activeSection === "about" && (
+              <AdminAbout />
+            )}
+            
+            {activeSection !== "home" && activeSection !== "projects" && activeSection !== "cv" && activeSection !== "skills" && activeSection !== "contacts" && activeSection !== "about" && (
               <div className="h-[60vh] flex flex-col items-center justify-center text-gray-600 select-none">
                 <FiLayers size={40} className="mb-4 opacity-20" />
                 <p className="font-mono text-xs uppercase tracking-widest">

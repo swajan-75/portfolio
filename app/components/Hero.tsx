@@ -1,57 +1,74 @@
 "use client";
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
+import { useProfile } from "../hooks/useProfile";
 import TerminalText from "./TerminalText";
+import SplitText from "./SplitText";
 
 export default function Hero() {
+  const { profile, loading } = useProfile();
+  const shouldReduceMotion = useReducedMotion();
+
+  if (loading) return null; // Or a skeleton
+
+  const yOffset = shouldReduceMotion ? 0 : 40;
+  const smallYOffset = shouldReduceMotion ? 0 : 20;
+
   return (
-    <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-black via-gray-900 to-black overflow-hidden">
-      
-      {/* Background glow */}
-      <div className="absolute w-[500px] h-[500px] bg-purple-500/20 rounded-full blur-3xl top-1/4 left-1/3"></div>
-
-      <div className="z-10 text-center max-w-3xl px-6">
-
-        <motion.h1
-          initial={{ opacity: 0, y: 40 }}
+    <header className="relative min-h-[100svh] flex items-center justify-start overflow-hidden pt-20 pb-12">
+      <div className="z-10 w-full max-w-7xl px-5 sm:px-8 mx-auto flex flex-col items-start min-h-[inherit] justify-center -mt-16 md:-mt-24">
+        <div className="w-full p-8 sm:p-12 md:p-16 rounded-3xl bg-white/10 backdrop-blur-sm border border-white/20 shadow-xl relative overflow-hidden">
+          
+        <motion.div
+          initial={{ opacity: 0, y: yOffset }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1 }}
-          className="text-5xl md:text-7xl font-bold text-white"
+          transition={{ duration: shouldReduceMotion ? 0.3 : 1, ease: "easeOut" }}
+          className="py-2 relative z-10"
         >
-          Hi, I'm <span className="text-purple-400">Swajan</span> 
-        </motion.h1>
+          <SplitText
+            tag="h1"
+            text={`Hi, I'm ${profile?.name || "Swajan"}`}
+            className="text-[clamp(2.5rem,10vw,5.5rem)] font-bold text-white leading-[1.1] tracking-tight text-left"
+            delay={40}
+            duration={1}
+            ease="power3.out"
+            splitType="words,chars"
+            from={{ opacity: 0, y: 40 }}
+            to={{ opacity: 1, y: 0 }}
+            textAlign="left"
+          />
 
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 1 }}
-          className="mt-6 text-xl text-gray-400"
-        >
-          Software Developer • Android • Web 
-        </motion.p>
-        <TerminalText />
+          <p className="mt-6 text-[clamp(1.125rem,4vw,1.5rem)] text-blue-400 font-medium max-w-2xl">
+            {profile?.subtitle || "Software Developer • Android • Web"}
+          </p>
+
+          <div className="mt-4 text-white/65">
+            <TerminalText />
+          </div>
+        </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.8, duration: 0.6 }}
-          className="mt-10 flex justify-center gap-6"
+          initial={{ opacity: 0, y: smallYOffset }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: shouldReduceMotion ? 0 : 0.8, duration: shouldReduceMotion ? 0.3 : 0.8, ease: "easeOut" }}
+          className="mt-12 flex flex-col sm:flex-row items-center gap-4 sm:gap-6"
         >
           <a
             href="#projects"
-            className="px-6 py-3 rounded-xl bg-purple-600 hover:bg-purple-700 transition text-white font-semibold"
+            className="w-full sm:w-auto px-6 py-2.5 rounded-full bg-white hover:bg-white/90 transition-colors text-gray-900 font-medium text-base text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 shadow-lg shadow-black/10"
           >
             View Projects
           </a>
 
           <a
             href="#contact"
-            className="px-6 py-3 rounded-xl border border-gray-600 hover:border-purple-500 transition text-white"
+            className="w-full sm:w-auto px-6 py-2.5 rounded-full border border-white/50 hover:bg-white/10 transition-colors text-white font-medium text-base text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
           >
             Contact Me
           </a>
         </motion.div>
-
+        
+        </div>
       </div>
-    </section>
+    </header>
   );
 }

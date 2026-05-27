@@ -9,9 +9,9 @@ export default function AnalyticsTracker() {
     
         await api.post("/track/visit",{},{withCredentials: true});
       } catch (err) {
-  
-        console.error("Analytics sync failed");
+        console.error("Analytics sync failed:", err.response?.data || err.message);
       }
+
     };
     trackVisit();
   }, []);

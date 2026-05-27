@@ -4,6 +4,8 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiMail, FiLock, FiShield, FiArrowRight } from "react-icons/fi";
 
+import api from "@/lib/axios";
+
 export default function AdminLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -16,31 +18,26 @@ export default function AdminLogin() {
 
   const handleLogin = async () => {
     setLoading(true);
-    const res = await fetch("https://portfolio-backend-v2-4t2j.onrender.com/api/v1/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
-    const data = await res.json();
-    setLoading(false);
-    if (res.ok) setStep(2);
-    else{
-        alert("Login Failed");
+    try {
+      const res = await api.post("/login", { email, password });
+      setStep(2);
+    } catch (err) {
+      alert("Login Failed");
+    } finally {
+      setLoading(false);
     }
-    
   };
 
   const handleVerify = async () => {
     setLoading(true);
-    const res = await fetch("https://portfolio-backend-v2-4t2j.onrender.com/api/v1/otp/verify", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, otp }),
-      credentials: "include", // 👈 IMPORTANT: Allows Go to set the HttpOnly cookie
-    });
-    setLoading(false);
-    if (res.ok) router.push("/admin/dashboard");
-    else alert("Invalid OTP");
+    try {
+      const res = await api.post("/otp/verify", { email, otp });
+      router.push("/admin/dashboard");
+    } catch (err) {
+      alert("Invalid OTP");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

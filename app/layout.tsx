@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import "./components/ThemeToggle"
-import ThemeToggle from "./components/ThemeToggle";
+import ClickSpark from "./components/ClickSpark";
+import { Keyboard } from "@/components/ui/keyboard";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,9 +17,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Swajan Barua",
   description: "Full Stack Developer",
-  icons :{
+  icons: {
     icon: "/logo.png",
-  }
+  },
 };
 
 export default function RootLayout({
@@ -29,13 +29,27 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased text-white`}>
+  
+  {/* Layer 1 — sharp background, isolated layer */}
+  <div className="bg-root" />
 
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        
-        {children}
-      </body>
+  {/* Layer 2 — content, must be isolated with isolation-isolate */}
+  <div style={{ isolation: 'isolate', position: 'relative' }}>
+    <ClickSpark sparkColor="#ffffff" sparkSize={10} sparkRadius={15} sparkCount={8} duration={400}>
+      {children}
+      
+      {/* Global typing sounds and animated preview without the physical keypad */}
+      <Keyboard 
+        enableSound={true} 
+        showPreview={true} 
+        showKeypad={false} 
+        className="fixed top-24 inset-x-0 z-[99999] pointer-events-none flex justify-center" 
+      />
+    </ClickSpark>
+  </div>
+
+</body>
     </html>
   );
 }
