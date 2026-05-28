@@ -103,12 +103,12 @@ export default function Skills() {
                   {(cat.skills ?? []).map((skill, idx) => (
                     <div
                       key={idx}
-                      className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border-white/10 border border-white/40 shadow-sm transition-colors duration-300 hover:bg-white/60"
+                      className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/30 backdrop-blur-md border border-white/20 transition-colors duration-300 hover:bg-black/40"
                     >
-                      <span className="text-xl text-sky-300 shrink-0" aria-hidden="true">
+                      <span className="text-xl text-white shrink-0" aria-hidden="true">
                         {resolveIcon(skill.icon) ?? <FiCpu />}
                       </span>
-                      <span className="text-sm font-bold whitespace-nowrap text-sky-200">
+                      <span className="text-sm font-bold whitespace-nowrap text-white">
                         {skill.name}
                       </span>
                     </div>

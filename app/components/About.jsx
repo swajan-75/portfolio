@@ -86,7 +86,7 @@ export default function About() {
                 rel="noopener noreferrer"
                 download
                 onClick={handleDownload}
-                className="w-full sm:w-fit flex items-center justify-center gap-2 px-6 py-3 bg-[#1976D2] text-white font-bold rounded-full hover:bg-[#1565C0] shadow-md transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                className="w-full sm:w-fit flex items-center justify-center gap-2 px-6 py-3 bg-white text-black font-bold rounded-full hover:bg-gray-200 shadow-md transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
               >
                 <FiDownload /> Download Resume
               </a>
@@ -136,7 +136,7 @@ export default function About() {
             </header>
             <div className="flex flex-wrap gap-2">
               {(profile?.tech_tags || []).map((tag) => (
-                <span key={tag} className="px-3 py-1.5 bg-white/10 border-white/10 border border-white/40 rounded-full text-xs font-bold text-sky-200">
+                <span key={tag} className="px-3 py-1 bg-black/30 backdrop-blur-md border border-white/20 rounded-full text-xs font-medium text-white hover:bg-black/40 transition-colors">
                   {tag}
                 </span>
               ))}

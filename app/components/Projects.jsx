@@ -219,7 +219,7 @@ function ProjectCard({ project, index, isExpanded, color, variants }) {
           {project.tech_stack?.map((t, i) => (
             <span
               key={i}
-              className="bg-white/10 border-white/10 border border-white/40 text-sky-200 font-bold rounded-full px-3 py-[2px] text-[12px]"
+              className="bg-black/30 backdrop-blur-md border border-white/20 text-white font-medium rounded-full px-3 py-1 text-[12px] hover:bg-black/40 transition-colors"
             >
               {t}
             </span>

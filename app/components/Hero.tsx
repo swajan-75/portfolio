@@ -54,14 +54,14 @@ export default function Hero() {
         >
           <a
             href="#projects"
-            className="w-full sm:w-auto px-6 py-2.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/50 transition-colors text-white font-medium text-base text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 shadow-lg shadow-black/10"
+            className="w-full sm:w-auto px-6 py-2.5 rounded-full bg-white hover:bg-gray-200 transition-colors text-black font-medium text-base text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 shadow-lg shadow-black/10"
           >
             View Projects
           </a>
 
           <a
             href="#contact"
-            className="w-full sm:w-auto px-6 py-2.5 rounded-full border border-white/50 hover:bg-white/10 transition-colors text-white font-medium text-base text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
+            className="w-full sm:w-auto px-6 py-2.5 rounded-full bg-black/30 backdrop-blur-md border border-white/20 hover:bg-black/40 transition-colors text-white font-medium text-base text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
           >
             Contact Me
           </a>
