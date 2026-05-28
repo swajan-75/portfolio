@@ -35,7 +35,7 @@ export default function AIChat() {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 md:bottom-24 md:right-12 z-50 flex flex-col items-end">
+    <div className="absolute bottom-6 right-6 md:bottom-24 md:right-12 z-50 flex flex-col items-end">
       <AnimatePresence mode="wait">
         {isOpen ? (
           

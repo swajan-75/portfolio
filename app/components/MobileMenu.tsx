@@ -72,7 +72,7 @@ export default function MobileMenu() {
         onClick={() => setIsOpen(true)}
         aria-label="Open mobile menu"
         aria-expanded={isOpen}
-        className="fixed top-6 right-6 z-50 p-3 glass-nav rounded-full text-white shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
+        className="absolute top-6 right-6 z-50 p-3 glass-nav rounded-full text-white shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
       >
         <FiMenu size={24} />
       </button>
@@ -87,7 +87,7 @@ export default function MobileMenu() {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
               onClick={() => setIsOpen(false)}
-              className="fixed inset-0 z-50 bg-black/60"
+              className="absolute inset-0 z-50 bg-black/60"
               aria-hidden="true"
             />
 
@@ -98,7 +98,7 @@ export default function MobileMenu() {
               animate="open"
               exit="closed"
               style={{ backdropFilter: 'blur(150px) saturate(200%)', WebkitBackdropFilter: 'blur(150px) saturate(200%)', background: 'rgba(255,255,255,0.22)', border: '1px solid rgba(255,255,255,0.25)' }}
-              className="fixed top-0 right-0 bottom-0 z-50 w-[80%] max-w-sm flex flex-col p-6 rounded-l-3xl border-r-0"
+              className="absolute inset-y-0 right-0 w-64 max-w-[80vw] z-[60] flex flex-col p-6 rounded-l-3xl border-r-0"
               role="dialog"
               aria-modal="true"
               aria-label="Mobile navigation"

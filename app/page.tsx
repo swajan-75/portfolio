@@ -11,15 +11,18 @@ import GradualBlur from "./components/GradualBlur";
 
 export default function Home() {
   return (
-    <main className="h-[100svh] w-full overflow-hidden px-2 pt-3 pb-[85px] md:px-4 md:pt-4 md:pb-[95px] lg:px-6 lg:pt-6 lg:pb-[100px] flex items-center justify-center">
+    <main className="h-[100svh] w-full overflow-hidden p-0 md:px-4 md:pt-4 md:pb-[95px] lg:px-6 lg:pt-6 lg:pb-[100px] flex items-center justify-center">
       <AnalyticsTracker />
 
       {/* Global Glass Container */}
-      <div className="w-full max-w-[1600px] h-full relative overflow-hidden rounded-[2.5rem] bg-white/10 backdrop-blur-3xl border border-white/10 shadow-2xl">
+      <div className="w-full max-w-[1600px] h-full relative overflow-hidden rounded-none md:rounded-[2.5rem] bg-white/10 backdrop-blur-3xl border-none md:border border-white/10 shadow-none md:shadow-2xl">
+
+        {/* Absolute floating elements bound to container */}
+        <MobileMenu />
+        <AIChat />
 
         {/* Scrollable Content Area */}
         <div className="h-full w-full overflow-y-auto overflow-x-hidden custom-scrollbar pb-16 scroll-smooth">
-          <MobileMenu />
           <Hero />
           <About />
           <Skills />
@@ -45,7 +48,6 @@ export default function Home() {
       <div className="hidden md:block">
         <FloatingDock />
       </div>
-      <AIChat />
     </main>
   );
 }
