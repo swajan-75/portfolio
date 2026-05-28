@@ -178,8 +178,8 @@ function ProjectCard({ project, index, isExpanded, color, variants }) {
       style={{ 
         backdropFilter: 'blur(150px) saturate(200%)', 
         WebkitBackdropFilter: 'blur(150px) saturate(200%)',
-        background: 'rgba(255,255,255,0.22)',
-        border: '1px solid rgba(255,255,255,0.25)'
+        background: 'rgba(255,255,255,0.06)',
+        border: '1px solid rgba(255,255,255,0.12)'
       }}
       exit={{ opacity: 0, scale: shouldReduceMotion ? 1 : 0.95 }}
       whileHover={shouldReduceMotion ? {} : { y: -4 }}

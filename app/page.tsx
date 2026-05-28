@@ -32,11 +32,11 @@ export default function Home() {
           target="parent"
           position="bottom"
           height="6rem"
-          strength={0.8}
+          strength={0.9}
           divCount={4}
           curve="bezier"
           exponential={true}
-          opacity={1}
+          opacity={0.7}
          
         />
       </div>
