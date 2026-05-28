@@ -11,8 +11,8 @@ const texts = [
 
 export default function TerminalText() {
   return (
-    <div className="font-sans text-white text-3xl sm:text-4xl md:text-5xl font-bold mt-6 h-[72px] sm:h-[56px] flex items-start">
-      <div className="w-full flex items-center whitespace-pre-wrap">
+    <div className="font-sans text-white text-3xl sm:text-4xl md:text-5xl font-bold mt-6 h-[72px] sm:h-[56px] flex items-center justify-center w-full">
+      <div className="flex items-center justify-center whitespace-pre-wrap">
         <span className="mr-3">Creative</span>
         
         <RotatingText
@@ -24,8 +24,9 @@ export default function TerminalText() {
           exit={{ y: "-120%" }}
           staggerDuration={0.025}
           splitLevelClassName="overflow-hidden"
-          transition={{ type: "spring", damping: 30, stiffness: 400 }}
+          transition={{ type: "spring", damping: 25, stiffness: 300 }}
           rotationInterval={3000}
+          animatePresenceMode="popLayout"
         />
       </div>
     </div>

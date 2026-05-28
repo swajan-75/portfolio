@@ -14,9 +14,9 @@ export default function Hero() {
   const smallYOffset = shouldReduceMotion ? 0 : 20;
 
   return (
-    <header className="relative min-h-[85vh] flex items-center justify-start overflow-hidden pt-12 pb-12">
-      <div className="z-10 w-full max-w-7xl px-5 sm:px-8 mx-auto flex flex-col items-start min-h-[inherit] justify-center -mt-16 md:-mt-24">
-        <div className="w-full p-8 sm:p-12 md:p-16 relative overflow-hidden">
+    <header className="relative min-h-[85vh] flex items-center justify-center overflow-hidden pt-12 pb-12">
+      <div className="z-10 w-full max-w-7xl px-5 sm:px-8 mx-auto flex flex-col items-center min-h-[inherit] justify-center -mt-16 md:-mt-24 text-center">
+        <div className="w-full p-8 sm:p-12 md:p-16 relative overflow-hidden flex flex-col items-center">
           
         <motion.div
           initial={{ opacity: 0, y: yOffset }}
@@ -27,21 +27,21 @@ export default function Hero() {
           <SplitText
             tag="h1"
             text={`Hi, I'm ${profile?.name || "Swajan"}`}
-            className="text-[clamp(2.5rem,10vw,5.5rem)] font-bold text-white leading-[1.1] tracking-tight text-left"
+            className="text-[clamp(2.5rem,10vw,5.5rem)] font-bold text-white leading-[1.1] tracking-tight text-center"
             delay={40}
             duration={1}
             ease="power3.out"
             splitType="words,chars"
             from={{ opacity: 0, y: 40 }}
             to={{ opacity: 1, y: 0 }}
-            textAlign="left"
+            textAlign="center"
           />
 
-          <p className="mt-6 text-[clamp(1.125rem,4vw,1.5rem)] text-sky-200 font-medium max-w-2xl">
+          <p className="mt-6 text-[clamp(1.125rem,4vw,1.5rem)] text-sky-200 font-medium max-w-2xl mx-auto text-center">
             {profile?.subtitle || "Software Developer • Android • Web"}
           </p>
 
-          <div className="mt-4 text-white/65">
+          <div className="mt-4 text-white/65 flex justify-center w-full">
             <TerminalText />
           </div>
         </motion.div>
@@ -50,7 +50,7 @@ export default function Hero() {
           initial={{ opacity: 0, y: smallYOffset }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: shouldReduceMotion ? 0 : 0.8, duration: shouldReduceMotion ? 0.3 : 0.8, ease: "easeOut" }}
-          className="mt-12 flex flex-col sm:flex-row items-center gap-4 sm:gap-6"
+          className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 w-full"
         >
           <a
             href="#projects"

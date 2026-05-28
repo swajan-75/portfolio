@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import ClickSpark from "./components/ClickSpark";
 import { Keyboard } from "@/components/ui/keyboard";
-import HyperspeedWrapper from "./components/HyperspeedWrapper";
+import IridescenceWrapper from "./components/IridescenceWrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,7 +34,7 @@ export default function RootLayout({
   
   {/* Layer 1 — WebGL background, isolated layer */}
   <div className="fixed inset-0 -z-10 bg-black">
-    <HyperspeedWrapper />
+    <IridescenceWrapper />
   </div>
 
   {/* Layer 2 — content, must be isolated with isolation-isolate */}
