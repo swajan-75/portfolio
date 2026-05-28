@@ -53,11 +53,8 @@ export default function Contact() {
   };
 
   return (
-    <section className="py-24 px-5 sm:px-8" id="contact">
-      <div 
-        style={{ background: 'rgba(255,255,255,0.2)' }}
-        className="max-w-6xl w-full mx-auto p-6 sm:p-10 md:p-12 rounded-[2.5rem]"
-      >
+    <section className="min-h-[85vh] py-16 px-4 sm:px-6 lg:px-8 flex items-center" id="contact">
+      <div className="max-w-7xl w-full mx-auto p-6 sm:p-10 md:p-12">
         <motion.header 
           initial={{ opacity: 0, y: shouldReduceMotion ? 0 : -20 }}
           whileInView={{ opacity: 1, y: 0 }}

@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import { FiGithub, FiExternalLink, FiChevronDown, FiChevronUp } from "react-icons/fi";
 import api from "@/lib/axios";
+import CountUp from "./CountUp";
 
 const COLORS = [
   "from-orange-500 to-red-500",
@@ -74,11 +75,8 @@ export default function Projects() {
   };
 
   return (
-    <section className="min-h-screen py-24 px-5 sm:px-8" id="projects">
-      <div 
-        style={{ background: 'rgba(255,255,255,0.2)' }}
-        className="max-w-7xl w-full mx-auto p-6 sm:p-10 md:p-12 rounded-[2.5rem]"
-      >
+    <section className="min-h-[85vh] py-16 px-4 sm:px-6 lg:px-8" id="projects">
+      <div className="max-w-7xl w-full mx-auto p-6 sm:p-10 md:p-12">
         <motion.header
           initial={{ opacity: 0, y: shouldReduceMotion ? 0 : -20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -94,11 +92,26 @@ export default function Projects() {
           </p>
         </motion.header>
 
-        {loading && (
-          <div className="flex justify-center py-20" aria-busy="true">
-            <div className="w-8 h-8 border-4 border-blue-600/20 border-t-[#1976D2] rounded-full animate-spin" />
-          </div>
-        )}
+        <AnimatePresence>
+          {loading && (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[99999] flex flex-col items-center justify-center gap-4 bg-black/30 backdrop-blur-xl" 
+              aria-busy="true"
+            >
+              <div className="flex items-center text-4xl md:text-5xl font-black font-mono text-white drop-shadow-2xl">
+                <CountUp 
+                  from={0} 
+                  to={100} 
+                  duration={1.5} 
+                  className="text-white" 
+                />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
         {!loading && (
           <>
             <motion.div 

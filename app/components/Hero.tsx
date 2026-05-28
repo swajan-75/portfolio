@@ -14,9 +14,9 @@ export default function Hero() {
   const smallYOffset = shouldReduceMotion ? 0 : 20;
 
   return (
-    <header className="relative min-h-[100svh] flex items-center justify-start overflow-hidden pt-20 pb-12">
+    <header className="relative min-h-[85vh] flex items-center justify-start overflow-hidden pt-12 pb-12">
       <div className="z-10 w-full max-w-7xl px-5 sm:px-8 mx-auto flex flex-col items-start min-h-[inherit] justify-center -mt-16 md:-mt-24">
-        <div className="w-full p-8 sm:p-12 md:p-16 rounded-3xl bg-white/10 backdrop-blur-sm border border-white/20 shadow-xl relative overflow-hidden">
+        <div className="w-full p-8 sm:p-12 md:p-16 relative overflow-hidden">
           
         <motion.div
           initial={{ opacity: 0, y: yOffset }}

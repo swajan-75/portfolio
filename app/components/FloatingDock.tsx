@@ -68,7 +68,7 @@ export default function FloatingDock() {
 
   return (
     <>
-      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-40">
+      <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40">
         <motion.div
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
