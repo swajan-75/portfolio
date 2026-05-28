@@ -97,7 +97,7 @@ export default function MobileMenu() {
               initial="closed"
               animate="open"
               exit="closed"
-              style={{ backdropFilter: 'blur(40px) saturate(180%)', WebkitBackdropFilter: 'blur(40px) saturate(180%)', background: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.25)' }}
+              style={{ backdropFilter: 'blur(150px) saturate(200%)', WebkitBackdropFilter: 'blur(150px) saturate(200%)', background: 'rgba(255,255,255,0.22)', border: '1px solid rgba(255,255,255,0.25)' }}
               className="fixed top-0 right-0 bottom-0 z-50 w-[80%] max-w-sm flex flex-col p-6 rounded-l-3xl border-r-0"
               role="dialog"
               aria-modal="true"

@@ -151,7 +151,7 @@ export default function Projects() {
                   <span className="text-sm font-bold tracking-widest uppercase">
                     {showAll ? "Show Less" : "View All Projects"}
                   </span>
-                  <div className="p-4 rounded-full bg-[#1976D2] group-hover:bg-[#1565C0] transition-all shadow-lg text-white">
+                  <div className="p-4 rounded-full bg-white group-hover:bg-gray-200 transition-all shadow-lg text-black">
                     <FiChevronDown 
                       className={`text-xl transition-transform duration-300 ${showAll ? "rotate-180" : ""}`} 
                     />
@@ -176,9 +176,9 @@ function ProjectCard({ project, index, isExpanded, color, variants }) {
       initial="hidden"
       animate="visible"
       style={{ 
-        backdropFilter: 'blur(40px) saturate(180%)', 
-        WebkitBackdropFilter: 'blur(40px) saturate(180%)',
-        background: 'rgba(255,255,255,0.10)',
+        backdropFilter: 'blur(150px) saturate(200%)', 
+        WebkitBackdropFilter: 'blur(150px) saturate(200%)',
+        background: 'rgba(255,255,255,0.22)',
         border: '1px solid rgba(255,255,255,0.25)'
       }}
       exit={{ opacity: 0, scale: shouldReduceMotion ? 1 : 0.95 }}
@@ -201,7 +201,7 @@ function ProjectCard({ project, index, isExpanded, color, variants }) {
         ) : (
           <div className={`w-full h-full bg-gradient-to-br ${color} opacity-30`} aria-hidden="true" />
         )}
-        <div style={{ backdropFilter: 'blur(40px) saturate(180%)', WebkitBackdropFilter: 'blur(40px) saturate(180%)', background: 'rgba(255,255,255,0.40)', border: '1px solid rgba(255,255,255,0.40)' }} className="absolute top-4 left-4 px-3 py-1.5 text-xs font-bold text-white shadow-lg rounded-xl">
+        <div style={{ backdropFilter: 'blur(150px) saturate(200%)', WebkitBackdropFilter: 'blur(150px) saturate(200%)', background: 'rgba(255,255,255,0.40)', border: '1px solid rgba(255,255,255,0.40)' }} className="absolute top-4 left-4 px-3 py-1.5 text-xs font-bold text-white shadow-lg rounded-xl">
           {project.category}
         </div>
       </div>
@@ -219,7 +219,7 @@ function ProjectCard({ project, index, isExpanded, color, variants }) {
           {project.tech_stack?.map((t, i) => (
             <span
               key={i}
-              className="bg-black/30 backdrop-blur-md border border-white/20 text-white font-medium rounded-full px-3 py-1 text-[12px] hover:bg-black/40 transition-colors"
+              className="bg-white/10 backdrop-blur-2xl border border-white/20 text-white font-medium rounded-full px-3 py-1 text-[12px] hover:bg-white/20 transition-colors"
             >
               {t}
             </span>

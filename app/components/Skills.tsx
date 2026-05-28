@@ -18,7 +18,6 @@ interface SkillCategory {
   skills: SkillItem[];
 }
 
-// Glow colors per category index (cycles)
 const GLOWS = [
   "bg-blue-500/10 group-hover:bg-blue-500/20",
   "bg-green-500/10 group-hover:bg-green-500/20",
@@ -26,6 +25,13 @@ const GLOWS = [
   "bg-emerald-500/10 group-hover:bg-emerald-500/20",
   "bg-pink-500/10 group-hover:bg-pink-500/20",
 ];
+
+const glass = {
+  backdropFilter: 'blur(24px) saturate(180%)',
+  WebkitBackdropFilter: 'blur(24px) saturate(180%)',
+  background: 'rgba(255,255,255,0.06)',
+  border: '1px solid rgba(255,255,255,0.12)',
+};
 
 export default function Skills() {
   const [categories, setCategories] = useState<SkillCategory[]>([]);
@@ -73,7 +79,7 @@ export default function Skills() {
           </p>
         </motion.header>
 
-        <motion.div 
+        <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
@@ -95,7 +101,7 @@ export default function Skills() {
               <motion.article
                 key={i}
                 variants={itemVariants}
-                style={{ backdropFilter: 'blur(40px) saturate(180%)', WebkitBackdropFilter: 'blur(40px) saturate(180%)', background: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.25)' }}
+                style={glass}
                 className={`${colSpan} flex flex-col justify-between p-6 rounded-3xl`}
               >
                 {/* Tech badges */}
@@ -103,7 +109,7 @@ export default function Skills() {
                   {(cat.skills ?? []).map((skill, idx) => (
                     <div
                       key={idx}
-                      className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/30 backdrop-blur-md border border-white/20 transition-colors duration-300 hover:bg-black/40"
+                      className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 transition-colors duration-300 hover:bg-white/10"
                     >
                       <span className="text-xl text-white shrink-0" aria-hidden="true">
                         {resolveIcon(skill.icon) ?? <FiCpu />}

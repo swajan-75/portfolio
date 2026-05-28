@@ -73,7 +73,7 @@ export default function FloatingDock() {
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0, type: "spring", stiffness: 500, damping: 25 }}
-          style={{ backdropFilter: 'blur(40px) saturate(180%)', WebkitBackdropFilter: 'blur(40px) saturate(180%)', background: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.25)' }}
+          style={{ backdropFilter: 'blur(150px) saturate(200%)', WebkitBackdropFilter: 'blur(150px) saturate(200%)', background: 'rgba(255,255,255,0.22)', border: '1px solid rgba(255,255,255,0.25)' }}
           className="flex items-center gap-3 px-4 py-2 rounded-full shadow-2xl"
         >
           {dockItems.map((item) => (
@@ -129,7 +129,7 @@ function DockItem({ item, onClick, disabled }: { item: any; onClick: () => void;
 
 function Tooltip({ label }: { label: string }) {
   return (
-    <span style={{ backdropFilter: 'blur(40px) saturate(180%)', WebkitBackdropFilter: 'blur(40px) saturate(180%)', background: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.25)' }} className="absolute -top-10 left-1/2 -translate-x-1/2 px-2 py-1 text-white text-xs rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-75 pointer-events-none whitespace-nowrap shadow-lg">
+    <span style={{ backdropFilter: 'blur(150px) saturate(200%)', WebkitBackdropFilter: 'blur(150px) saturate(200%)', background: 'rgba(255,255,255,0.22)', border: '1px solid rgba(255,255,255,0.25)' }} className="absolute -top-10 left-1/2 -translate-x-1/2 px-2 py-1 text-white text-xs rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-75 pointer-events-none whitespace-nowrap shadow-lg">
       {label}
     </span>
   );

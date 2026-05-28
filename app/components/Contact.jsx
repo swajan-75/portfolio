@@ -6,6 +6,20 @@ import { FiMail, FiMapPin, FiSend, FiLink } from "react-icons/fi";
 import api from "@/lib/axios";
 import { resolveIcon } from "@/app/lib/resolveIcon";
 
+const glass = {
+  backdropFilter: 'blur(24px) saturate(180%)',
+  WebkitBackdropFilter: 'blur(24px) saturate(180%)',
+  background: 'rgba(255,255,255,0.06)',
+  border: '1px solid rgba(255,255,255,0.12)',
+};
+
+const glassInner = {
+  backdropFilter: 'blur(16px) saturate(160%)',
+  WebkitBackdropFilter: 'blur(16px) saturate(160%)',
+  background: 'rgba(255,255,255,0.08)',
+  border: '1px solid rgba(255,255,255,0.15)',
+};
+
 export default function Contact() {
   const formRef = useRef();
   const [isSending, setIsSending] = useState(false);
@@ -80,12 +94,12 @@ export default function Contact() {
             viewport={{ once: true }}
             className="space-y-8"
           >
-            <article style={{ backdropFilter: 'blur(40px) saturate(180%)', WebkitBackdropFilter: 'blur(40px) saturate(180%)', background: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.25)' }} className="p-6 sm:p-8 rounded-3xl">
+            <article style={glass} className="p-6 sm:p-8 rounded-3xl">
               <h3 className="text-[clamp(1.25rem,3vw,1.5rem)] font-bold mb-6 text-white">Contact Info</h3>
               
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
-                  <div className="p-3 bg-white/10 border-white/10 rounded-xl text-sky-300 text-xl border border-white/40" aria-hidden="true">
+                  <div style={glassInner} className="p-3 rounded-xl text-sky-300 text-xl" aria-hidden="true">
                     <FiMapPin />
                   </div>
                   <div>
@@ -96,7 +110,7 @@ export default function Contact() {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="p-3 bg-white/10 border-white/10 rounded-xl text-sky-300 text-xl border border-white/40" aria-hidden="true">
+                  <div style={glassInner} className="p-3 rounded-xl text-sky-300 text-xl" aria-hidden="true">
                     <FiMail />
                   </div>
                   <div>
@@ -116,13 +130,12 @@ export default function Contact() {
             </nav>
           </motion.div>
 
-
           <motion.div 
             variants={formVariants}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            style={{ backdropFilter: 'blur(40px) saturate(180%)', WebkitBackdropFilter: 'blur(40px) saturate(180%)', background: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.25)' }}
+            style={glass}
             className="p-6 sm:p-8 rounded-3xl"
           >
             <form ref={formRef} onSubmit={sendEmail} className="space-y-6">
@@ -180,26 +193,20 @@ export default function Contact() {
                 whileTap={shouldReduceMotion ? {} : { scale: 0.98 }}
                 disabled={isSending}
                 type="submit"
-                className={`w-full font-bold px-6 py-3 rounded-xl flex items-center justify-center gap-2 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 shadow-md ${
-                  isSending ? "bg-gray-300 text-white/60 cursor-not-allowed" : "bg-[#1976D2] hover:bg-[#1565C0] text-white"
+                className={`w-full font-bold px-6 py-3 rounded-xl flex items-center justify-center gap-2 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 shadow-md ${
+                  isSending ? "bg-white/50 text-black/60 cursor-not-allowed" : "bg-white hover:bg-gray-200 text-black"
                 }`}
               >
-                {isSending ? (
-                  "Sending..."
-                ) : (
-                  <>
-                    <FiSend aria-hidden="true" /> Send Message
-                  </>
-                )}
+                {isSending ? "Sending..." : <><FiSend aria-hidden="true" /> Send Message</>}
               </motion.button>
 
-               {status === "success" && (
-                <p className="text-green-700 text-center text-sm mt-3 font-bold" role="alert">
+              {status === "success" && (
+                <p className="text-green-400 text-center text-sm mt-3 font-bold" role="alert">
                   Message sent successfully!
                 </p>
               )}
               {status === "error" && (
-                <p className="text-red-600 text-center text-sm mt-3 font-bold" role="alert">
+                <p className="text-red-400 text-center text-sm mt-3 font-bold" role="alert">
                   Failed to send. Please try again.
                 </p>
               )}
@@ -224,8 +231,8 @@ function SocialBtn({ icon, label, href, delay }) {
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ delay: delay, duration: 0.4 }}
       viewport={{ once: true }}
-      style={{ backdropFilter: 'blur(40px) saturate(180%)', WebkitBackdropFilter: 'blur(40px) saturate(180%)', background: 'rgba(255,255,255,0.20)', border: '1px solid rgba(255,255,255,0.40)' }}
-      className="flex flex-col items-center justify-center gap-2 p-4 hover:bg-white/10 border-white/10 transition-all group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-2xl"
+      style={glassInner}
+      className="flex flex-col items-center justify-center gap-2 p-4 hover:bg-white/10 transition-all group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-2xl"
       aria-label={`Visit my ${label} profile`}
     >
       <div className="text-2xl text-white/80 group-hover:text-sky-300 transition-colors" aria-hidden="true">
