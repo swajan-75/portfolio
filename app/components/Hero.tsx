@@ -37,7 +37,7 @@ export default function Hero() {
             textAlign="left"
           />
 
-          <p className="mt-6 text-[clamp(1.125rem,4vw,1.5rem)] text-blue-400 font-medium max-w-2xl">
+          <p className="mt-6 text-[clamp(1.125rem,4vw,1.5rem)] text-sky-200 font-medium max-w-2xl">
             {profile?.subtitle || "Software Developer • Android • Web"}
           </p>
 
@@ -54,7 +54,7 @@ export default function Hero() {
         >
           <a
             href="#projects"
-            className="w-full sm:w-auto px-6 py-2.5 rounded-full bg-white hover:bg-white/90 transition-colors text-gray-900 font-medium text-base text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 shadow-lg shadow-black/10"
+            className="w-full sm:w-auto px-6 py-2.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/50 transition-colors text-white font-medium text-base text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 shadow-lg shadow-black/10"
           >
             View Projects
           </a>

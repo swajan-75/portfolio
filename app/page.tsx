@@ -15,7 +15,7 @@ export default function Home() {
       <AnalyticsTracker />
 
       {/* Global Glass Container */}
-      <div className="w-full max-w-[1600px] h-full relative overflow-hidden rounded-[2.5rem] bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl">
+      <div className="w-full max-w-[1600px] h-full relative overflow-hidden rounded-[2.5rem] bg-white/10 backdrop-blur-xl border border-white/10 shadow-2xl">
 
         {/* Scrollable Content Area */}
         <div className="h-full w-full overflow-y-auto overflow-x-hidden custom-scrollbar pb-16 scroll-smooth">

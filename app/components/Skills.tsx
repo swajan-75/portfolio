@@ -65,10 +65,10 @@ export default function Skills() {
           viewport={{ once: true }}
           className="text-center mb-16 sm:mb-20 py-8 px-6 rounded-3xl"
         >
-          <h2 className="text-[clamp(2rem,6vw,3rem)] font-bold text-center mb-4 text-slate-900">
+          <h2 className="text-[clamp(2rem,6vw,3rem)] font-bold text-center mb-4 text-white">
             My Skills
           </h2>
-          <p className="text-slate-700 font-medium text-base sm:text-lg max-w-2xl mx-auto">
+          <p className="text-white/80 font-medium text-base sm:text-lg max-w-2xl mx-auto">
             Tools and technologies I use to build scalable systems.
           </p>
         </motion.header>
@@ -103,12 +103,12 @@ export default function Skills() {
                   {(cat.skills ?? []).map((skill, idx) => (
                     <div
                       key={idx}
-                      className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/40 border border-white/40 shadow-sm transition-colors duration-300 hover:bg-white/60"
+                      className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border-white/10 border border-white/40 shadow-sm transition-colors duration-300 hover:bg-white/60"
                     >
-                      <span className="text-xl text-blue-600 shrink-0" aria-hidden="true">
+                      <span className="text-xl text-sky-300 shrink-0" aria-hidden="true">
                         {resolveIcon(skill.icon) ?? <FiCpu />}
                       </span>
-                      <span className="text-sm font-bold whitespace-nowrap text-blue-700">
+                      <span className="text-sm font-bold whitespace-nowrap text-sky-200">
                         {skill.name}
                       </span>
                     </div>
@@ -117,11 +117,11 @@ export default function Skills() {
 
                 {/* Title + description */}
                 <div className="mt-auto">
-                  <h3 className="text-[clamp(1.25rem,3vw,1.5rem)] font-bold text-slate-900 mb-2 flex items-center gap-3">
-                    <span className="text-blue-600" aria-hidden="true">{categoryIcon}</span>
+                  <h3 className="text-[clamp(1.25rem,3vw,1.5rem)] font-bold text-white mb-2 flex items-center gap-3">
+                    <span className="text-sky-300" aria-hidden="true">{categoryIcon}</span>
                     {cat.title}
                   </h3>
-                  <p className="text-sm sm:text-base text-slate-700 font-medium leading-relaxed">
+                  <p className="text-sm sm:text-base text-white/80 font-medium leading-relaxed">
                     {cat.description}
                   </p>
                 </div>

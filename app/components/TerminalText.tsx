@@ -1,50 +1,32 @@
 "use client";
-import { useEffect, useState } from "react";
+import RotatingText from './RotatingText';
 
 const texts = [
-  "Building Android apps...",             
-  "Designing scalable REST APIs...",      
-  "Developing full-stack websites...",    
-  "Architecting secure systems...",       
-  "Solving algorithmic challenges..."     
+  "components!",             
+  "apps!",      
+  "websites!",    
+  "APIs!",       
+  "solutions!"     
 ];
 
 export default function TerminalText() {
-  const [text, setText] = useState("");
-  const [index, setIndex] = useState(0);
-  const [subIndex, setSubIndex] = useState(0);
-  const [deleting, setDeleting] = useState(false);
-
-  useEffect(() => {
-    const current = texts[index];
-
-    if (!deleting && subIndex < current.length) {
-      setTimeout(() => {
-        setText(current.substring(0, subIndex + 1));
-        setSubIndex(subIndex + 1);
-      }, 80);
-    } 
-    else if (deleting && subIndex > 0) {
-      setTimeout(() => {
-        setText(current.substring(0, subIndex - 1));
-        setSubIndex(subIndex - 1);
-      }, 50);
-    }
-    else if (!deleting && subIndex === current.length) {
-      setTimeout(() => setDeleting(true), 1200);
-    }
-    else if (deleting && subIndex === 0) {
-      setDeleting(false);
-      setIndex((index + 1) % texts.length);
-    }
-  }, [subIndex, index, deleting]);
-
   return (
-    <div className="font-mono text-purple-400 text-[1rem] sm:text-lg mt-6 h-[72px] sm:h-[36px] flex items-start">
-      <div className="w-full">
-        <span>$ </span>
-        {text}
-        <span className="animate-pulse">▋</span>
+    <div className="font-sans text-white text-3xl sm:text-4xl md:text-5xl font-bold mt-6 h-[72px] sm:h-[56px] flex items-start">
+      <div className="w-full flex items-center whitespace-pre-wrap">
+        <span className="mr-3">Creative</span>
+        
+        <RotatingText
+          texts={texts}
+          mainClassName="px-2 sm:px-3 bg-purple-500 text-white overflow-hidden py-0.5 sm:py-1 rounded-lg"
+          staggerFrom={"last"}
+          initial={{ y: "100%" }}
+          animate={{ y: 0 }}
+          exit={{ y: "-120%" }}
+          staggerDuration={0.025}
+          splitLevelClassName="overflow-hidden"
+          transition={{ type: "spring", damping: 30, stiffness: 400 }}
+          rotationInterval={3000}
+        />
       </div>
     </div>
   );

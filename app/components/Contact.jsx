@@ -62,10 +62,10 @@ export default function Contact() {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-[clamp(2rem,6vw,3rem)] font-bold text-slate-900 mb-4">
+          <h2 className="text-[clamp(2rem,6vw,3rem)] font-bold text-white mb-4">
             Let's Connect
           </h2>
-          <p className="text-slate-700 max-w-xl mx-auto text-base sm:text-lg font-medium">
+          <p className="text-white/80 max-w-xl mx-auto text-base sm:text-lg font-medium">
             Have a project in mind or want to discuss the latest in AI and Web Dev? 
             My inbox is always open.
           </p>
@@ -81,27 +81,27 @@ export default function Contact() {
             className="space-y-8"
           >
             <article style={{ backdropFilter: 'blur(40px) saturate(180%)', WebkitBackdropFilter: 'blur(40px) saturate(180%)', background: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.25)' }} className="p-6 sm:p-8 rounded-3xl">
-              <h3 className="text-[clamp(1.25rem,3vw,1.5rem)] font-bold mb-6 text-slate-900">Contact Info</h3>
+              <h3 className="text-[clamp(1.25rem,3vw,1.5rem)] font-bold mb-6 text-white">Contact Info</h3>
               
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
-                  <div className="p-3 bg-white/40 rounded-xl text-blue-600 text-xl border border-white/40" aria-hidden="true">
+                  <div className="p-3 bg-white/10 border-white/10 rounded-xl text-sky-300 text-xl border border-white/40" aria-hidden="true">
                     <FiMapPin />
                   </div>
                   <div>
-                    <h4 className="text-lg font-bold text-slate-900">Location</h4>
-                    <p className="text-slate-700 font-medium">Dhaka, Bangladesh</p>
-                    <p className="text-xs text-slate-500 mt-1 font-medium">Open to remote work</p>
+                    <h4 className="text-lg font-bold text-white">Location</h4>
+                    <p className="text-white/80 font-medium">Dhaka, Bangladesh</p>
+                    <p className="text-xs text-white/60 mt-1 font-medium">Open to remote work</p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="p-3 bg-white/40 rounded-xl text-blue-600 text-xl border border-white/40" aria-hidden="true">
+                  <div className="p-3 bg-white/10 border-white/10 rounded-xl text-sky-300 text-xl border border-white/40" aria-hidden="true">
                     <FiMail />
                   </div>
                   <div>
-                    <h4 className="text-lg font-bold text-slate-900">Email</h4>
-                    <a href="mailto:swajanbarua09@gmail.com" className="text-slate-700 font-medium hover:text-blue-600 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded p-1 -ml-1">
+                    <h4 className="text-lg font-bold text-white">Email</h4>
+                    <a href="mailto:swajanbarua09@gmail.com" className="text-white/80 font-medium hover:text-sky-300 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded p-1 -ml-1">
                       swajanbarua09@gmail.com
                     </a>
                   </div>
@@ -128,7 +128,7 @@ export default function Contact() {
             <form ref={formRef} onSubmit={sendEmail} className="space-y-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label htmlFor="user_name" className="text-sm font-bold text-slate-800 ml-1">Name</label>
+                  <label htmlFor="user_name" className="text-sm font-bold text-white/90 ml-1">Name</label>
                   <input 
                     type="text" 
                     id="user_name"
@@ -139,7 +139,7 @@ export default function Contact() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label htmlFor="user_email" className="text-sm font-bold text-slate-800 ml-1">Email</label>
+                  <label htmlFor="user_email" className="text-sm font-bold text-white/90 ml-1">Email</label>
                   <input 
                     type="email" 
                     id="user_email"
@@ -152,7 +152,7 @@ export default function Contact() {
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="subject" className="text-sm font-bold text-slate-800 ml-1">Subject</label>
+                <label htmlFor="subject" className="text-sm font-bold text-white/90 ml-1">Subject</label>
                 <input 
                   type="text" 
                   id="subject"
@@ -164,7 +164,7 @@ export default function Contact() {
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="message" className="text-sm font-bold text-slate-800 ml-1">Message</label>
+                <label htmlFor="message" className="text-sm font-bold text-white/90 ml-1">Message</label>
                 <textarea 
                   id="message"
                   rows={4} 
@@ -181,7 +181,7 @@ export default function Contact() {
                 disabled={isSending}
                 type="submit"
                 className={`w-full font-bold px-6 py-3 rounded-xl flex items-center justify-center gap-2 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 shadow-md ${
-                  isSending ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-[#1976D2] hover:bg-[#1565C0] text-white"
+                  isSending ? "bg-gray-300 text-white/60 cursor-not-allowed" : "bg-[#1976D2] hover:bg-[#1565C0] text-white"
                 }`}
               >
                 {isSending ? (
@@ -225,13 +225,13 @@ function SocialBtn({ icon, label, href, delay }) {
       transition={{ delay: delay, duration: 0.4 }}
       viewport={{ once: true }}
       style={{ backdropFilter: 'blur(40px) saturate(180%)', WebkitBackdropFilter: 'blur(40px) saturate(180%)', background: 'rgba(255,255,255,0.20)', border: '1px solid rgba(255,255,255,0.40)' }}
-      className="flex flex-col items-center justify-center gap-2 p-4 hover:bg-white/40 transition-all group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-2xl"
+      className="flex flex-col items-center justify-center gap-2 p-4 hover:bg-white/10 border-white/10 transition-all group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-2xl"
       aria-label={`Visit my ${label} profile`}
     >
-      <div className="text-2xl text-slate-700 group-hover:text-[#1976D2] transition-colors" aria-hidden="true">
+      <div className="text-2xl text-white/80 group-hover:text-sky-300 transition-colors" aria-hidden="true">
         {iconElement}
       </div>
-      <span className="text-xs text-slate-600 group-hover:text-[#1976D2] font-bold">{label}</span>
+      <span className="text-xs text-white/70 group-hover:text-sky-300 font-bold">{label}</span>
     </motion.a>
   );
 }

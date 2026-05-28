@@ -17,11 +17,7 @@ body {
   position: fixed;
   inset: 0;
   z-index: -1;
-  background-color: #4a7c59;
-  background-image: url('images/bgm.jpg'); /* /public/images/bgm.jpg */
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  background-color: #000000;
   /* NO filter blur here — background must be sharp */
 }
 
@@ -49,12 +45,7 @@ body {
 .glass-card .glass-blur-layer::before {
   content: '';
   position: absolute;
-  inset: -40px;
-  background-image: url('/images/bgm.jpg');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-  filter: blur(40px) saturate(160%) brightness(1.05);
+  /* Removed static background image for Hyperspeed support */
 }
 
 .glass-card .glass-blur-layer::after {

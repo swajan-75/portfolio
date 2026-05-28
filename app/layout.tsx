@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import ClickSpark from "./components/ClickSpark";
 import { Keyboard } from "@/components/ui/keyboard";
+import HyperspeedWrapper from "./components/HyperspeedWrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,8 +32,10 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased text-white`}>
   
-  {/* Layer 1 — sharp background, isolated layer */}
-  <div className="bg-root" />
+  {/* Layer 1 — WebGL background, isolated layer */}
+  <div className="fixed inset-0 -z-10 bg-black">
+    <HyperspeedWrapper />
+  </div>
 
   {/* Layer 2 — content, must be isolated with isolation-isolate */}
   <div style={{ isolation: 'isolate', position: 'relative' }}>

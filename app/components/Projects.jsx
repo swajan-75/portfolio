@@ -84,10 +84,10 @@ export default function Projects() {
           viewport={{ once: true }}
           className="text-center mb-16 sm:mb-20"
         >
-          <h2 className="text-[clamp(2rem,6vw,3rem)] font-bold text-slate-900 mb-4">
+          <h2 className="text-[clamp(2rem,6vw,3rem)] font-bold text-white mb-4">
             Featured Projects
           </h2>
-          <p className="text-slate-700 font-medium text-base sm:text-lg max-w-2xl mx-auto">
+          <p className="text-white/80 font-medium text-base sm:text-lg max-w-2xl mx-auto">
             A showcase of my technical projects, research, and creative designs.
           </p>
         </motion.header>
@@ -136,7 +136,7 @@ export default function Projects() {
             </motion.div>
 
             {projects.length === 0 && (
-              <div className="text-center text-slate-500 font-mono text-xs uppercase tracking-widest py-20 font-bold">
+              <div className="text-center text-white/60 font-mono text-xs uppercase tracking-widest py-20 font-bold">
                 No_Projects_Found
               </div>
             )}
@@ -146,7 +146,7 @@ export default function Projects() {
                 <button
                   onClick={() => setShowAll(!showAll)}
                   aria-expanded={showAll}
-                  className="group flex flex-col items-center gap-2 text-slate-700 hover:text-[#1976D2] font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-lg p-2"
+                  className="group flex flex-col items-center gap-2 text-white/80 hover:text-sky-300 font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-lg p-2"
                 >
                   <span className="text-sm font-bold tracking-widest uppercase">
                     {showAll ? "Show Less" : "View All Projects"}
@@ -201,17 +201,17 @@ function ProjectCard({ project, index, isExpanded, color, variants }) {
         ) : (
           <div className={`w-full h-full bg-gradient-to-br ${color} opacity-30`} aria-hidden="true" />
         )}
-        <div style={{ backdropFilter: 'blur(40px) saturate(180%)', WebkitBackdropFilter: 'blur(40px) saturate(180%)', background: 'rgba(255,255,255,0.40)', border: '1px solid rgba(255,255,255,0.40)' }} className="absolute top-4 left-4 px-3 py-1.5 text-xs font-bold text-slate-900 shadow-lg rounded-xl">
+        <div style={{ backdropFilter: 'blur(40px) saturate(180%)', WebkitBackdropFilter: 'blur(40px) saturate(180%)', background: 'rgba(255,255,255,0.40)', border: '1px solid rgba(255,255,255,0.40)' }} className="absolute top-4 left-4 px-3 py-1.5 text-xs font-bold text-white shadow-lg rounded-xl">
           {project.category}
         </div>
       </div>
 
       {/* Content */}
       <div className="p-6 flex-1 flex flex-col">
-        <h3 className="text-[clamp(1.25rem,3vw,1.5rem)] font-bold mb-2 text-slate-900 transition-colors">
+        <h3 className="text-[clamp(1.25rem,3vw,1.5rem)] font-bold mb-2 text-white transition-colors">
           {project.title}
         </h3>
-        <p className="text-slate-700 font-medium text-sm mb-6 line-clamp-3 leading-relaxed">
+        <p className="text-white/80 font-medium text-sm mb-6 line-clamp-3 leading-relaxed">
           {project.description}
         </p>
 
@@ -219,7 +219,7 @@ function ProjectCard({ project, index, isExpanded, color, variants }) {
           {project.tech_stack?.map((t, i) => (
             <span
               key={i}
-              className="bg-white/40 border border-white/40 text-blue-700 font-bold rounded-full px-3 py-[2px] text-[12px]"
+              className="bg-white/10 border-white/10 border border-white/40 text-sky-200 font-bold rounded-full px-3 py-[2px] text-[12px]"
             >
               {t}
             </span>
@@ -232,20 +232,20 @@ function ProjectCard({ project, index, isExpanded, color, variants }) {
               href={project.github_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 text-sm font-bold text-slate-600 hover:text-[#1976D2] transition-colors focus-visible:outline-none focus-visible:text-[#1976D2] p-2 -ml-2 rounded-lg"
+              className="flex items-center gap-2 text-sm font-bold text-white/70 hover:text-sky-300 transition-colors focus-visible:outline-none focus-visible:text-sky-300 p-2 -ml-2 rounded-lg"
               aria-label={`${project.title} source code on GitHub`}
             >
               <FiGithub className="text-lg" /> Code
             </a>
           ) : (
-            <span className="text-sm font-bold text-slate-500 italic p-2 -ml-2">Code Private</span>
+            <span className="text-sm font-bold text-white/60 italic p-2 -ml-2">Code Private</span>
           )}
           {project.live_url && project.live_url !== "#" && (
             <a
               href={project.live_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 text-sm font-bold text-slate-600 hover:text-[#1976D2] transition-colors focus-visible:outline-none focus-visible:text-[#1976D2] p-2 rounded-lg"
+              className="flex items-center gap-2 text-sm font-bold text-white/70 hover:text-sky-300 transition-colors focus-visible:outline-none focus-visible:text-sky-300 p-2 rounded-lg"
               aria-label={`View live demo of ${project.title}`}
             >
               <FiExternalLink className="text-lg" /> Live
