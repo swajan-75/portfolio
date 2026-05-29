@@ -8,13 +8,13 @@ export default function Hero() {
   const { profile, loading } = useProfile();
   const shouldReduceMotion = useReducedMotion();
 
-  if (loading) return <header className="min-h-[85vh] w-full"></header>;
+  if (loading) return <header id="hero" className="min-h-[85vh] w-full"></header>;
 
   const yOffset = shouldReduceMotion ? 0 : 40;
   const smallYOffset = shouldReduceMotion ? 0 : 20;
 
   return (
-    <header className="relative min-h-[85vh] flex items-center justify-center overflow-hidden pt-12 pb-12">
+    <header id="hero" className="relative min-h-[85vh] flex items-center justify-center overflow-hidden pt-12 pb-12">
       <div className="z-10 w-full max-w-7xl px-5 sm:px-8 mx-auto flex flex-col items-center min-h-[inherit] justify-center -mt-16 md:-mt-24 text-center">
         <div className="w-full p-8 sm:p-12 md:p-16 relative overflow-hidden flex flex-col items-center">
           

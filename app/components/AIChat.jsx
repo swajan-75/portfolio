@@ -116,7 +116,7 @@ function DesktopChatWindow({ messages, loading, scrollRef, input, setInput, hand
       </div>
 
       {/* Messages */}
-      <div className="h-80">
+      <div className="h-80 flex flex-col">
         <ChatBody messages={messages} loading={loading} scrollRef={scrollRef} />
       </div>
 
@@ -172,7 +172,7 @@ export default function AIChat() {
       {isOpen && isMobile && <MobileChatModal {...chatProps} />}
 
       {/* Floating button + desktop window */}
-      <div className="absolute bottom-24 right-4 sm:bottom-6 sm:right-6 md:bottom-24 md:right-12 z-50 flex flex-col items-end">
+      <div className="absolute bottom-24 right-4 sm:bottom-6 sm:right-6 md:bottom-6 md:right-8 lg:bottom-8 z-50 flex flex-col items-end">
         {/* Desktop chat window only */}
         {isOpen && !isMobile && (
           <DesktopChatWindow {...chatProps} />

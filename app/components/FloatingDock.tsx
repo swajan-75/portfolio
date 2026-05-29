@@ -3,18 +3,22 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import {
   FiHome, FiTerminal, FiBox, FiFileText,
-  FiGithub, FiArrowLeft
+  FiGithub, FiArrowLeft, FiCpu, FiMail
 } from "react-icons/fi";
+import { FaWhatsapp } from "react-icons/fa";
 import logo from "../images/logo.jpg";
 import api from "../../lib/axios";
 const dockItems = [
   { icon: <FiHome />, label: "Home", id: "home" },
-  { icon: <FiTerminal />, label: "Console", id: "console" },
+  { icon: <FiCpu />, label: "Skills", id: "skills" },
   { icon: <FiBox />, label: "Projects", id: "projects" },
-  { type: "avatar", img: logo.src, label: "Profile", id: "profile" },
+
+  { icon: <FaWhatsapp />, label: "WhatsApp", id: "whatsapp", href: "https://wa.me/8801742227504" },
+    { type: "avatar", img: logo.src, label: "Profile", id: "profile" },
+  { icon: <FiMail />, label: "Contact", id: "contact" },
+  { icon: <FiTerminal />, label: "Console", id: "console" },
   { icon: <FiFileText />, label: "Resume", id: "resume" },
   { icon: <FiGithub />, label: "GitHub", id: "github", href: "https://github.com/swajan-75" },
-  { icon: <FiArrowLeft />, label: "Back", id: "back" },
 ];
 
 // FIX: All dynamic command prefixes listed here so autocomplete can suggest them
@@ -50,14 +54,23 @@ export default function FloatingDock() {
     switch (item.id) {
       case "console": setIsTerminalOpen(true); break;
       case "home":
+        document.getElementById("hero")?.scrollIntoView({ behavior: "smooth" });
+        break;
       case "profile": window.scrollTo({ top: 0, behavior: "smooth" }); break;
+      case "skills":
+        document.getElementById("skills")?.scrollIntoView({ behavior: "smooth" });
+        break;
       case "projects":
         document.getElementById("projects")?.scrollIntoView({ behavior: "smooth" });
+        break;
+      case "contact":
+        document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
         break;
       case "resume":
         if (cvUrl) window.open(cvUrl, "_blank", "noopener,noreferrer");
         break;
       case "github":
+      case "whatsapp":
         if ("href" in item && item.href) window.open(item.href, "_blank", "noopener,noreferrer");
         break;
       case "back":
