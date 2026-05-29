@@ -2,6 +2,7 @@
 import { useState, useRef, useEffect } from "react";
 import { FiMessageSquare, FiX, FiSend, FiCpu, FiArrowLeft } from "react-icons/fi";
 import api from "@/lib/axios";
+import axios from "axios";
 
 const INITIAL_MESSAGES = [
   { role: "bot", text: "I'm Mr. Meeseeks! I'm here to help you explore Swajan Barua! How can I help you?" }
@@ -155,9 +156,9 @@ export default function AIChat() {
     setInput("");
     setLoading(true);
     try {
-      const res = await api.post("/chat/", { message: input });
-      setMessages(prev => [...prev, { role: "bot", text: res.data.text }]);
-    } catch {
+      const res = await axios.post("https://portfolio-backend-omega-gray.vercel.app/api/v1/chat/", { message: input });
+      setMessages(prev => [...prev, { role: "bot", text: res.data.text || res.data.reply || res.data.message || res.data }]);
+    } catch (err) {
       setMessages(prev => [...prev, { role: "bot", text: "Mr. Meeseeks is offline. Try again later?" }]);
     } finally {
       setLoading(false);
