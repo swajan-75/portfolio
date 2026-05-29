@@ -48,7 +48,7 @@ export default function Skills() {
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return null;
+  if (loading) return <section className="min-h-[85vh] w-full"></section>;
 
   const containerVariants: Variants = {
     hidden: {},

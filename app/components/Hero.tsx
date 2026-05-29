@@ -8,7 +8,7 @@ export default function Hero() {
   const { profile, loading } = useProfile();
   const shouldReduceMotion = useReducedMotion();
 
-  if (loading) return null; // Or a skeleton
+  if (loading) return <header className="min-h-[85vh] w-full"></header>;
 
   const yOffset = shouldReduceMotion ? 0 : 40;
   const smallYOffset = shouldReduceMotion ? 0 : 20;
@@ -37,21 +37,21 @@ export default function Hero() {
             textAlign="center"
           />
 
-          <p className="mt-6 text-[clamp(1.125rem,4vw,1.5rem)] text-sky-200 font-medium max-w-2xl mx-auto text-center">
+          <p className="mt-3 text-[clamp(0.95rem,4vw,1.5rem)] text-sky-200 font-medium max-w-2xl mx-auto text-center whitespace-nowrap">
             {profile?.subtitle || "Software Developer • Android • Web"}
           </p>
 
-          <div className="mt-4 text-white/65 flex justify-center w-full">
+          <div className="flex justify-center w-full text-white/65">
             <TerminalText />
           </div>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: smallYOffset }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: shouldReduceMotion ? 0 : 0.8, duration: shouldReduceMotion ? 0.3 : 0.8, ease: "easeOut" }}
-          className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 w-full"
-        >
+          <motion.div
+            initial={{ opacity: 0, y: smallYOffset }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: shouldReduceMotion ? 0 : 0.8, duration: shouldReduceMotion ? 0.3 : 0.8, ease: "easeOut" }}
+            className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 w-full"
+          >
           <a
             href="#projects"
             className="w-full sm:w-auto px-6 py-2.5 rounded-full bg-white hover:bg-gray-200 transition-colors text-black font-medium text-base text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 shadow-lg shadow-black/10"

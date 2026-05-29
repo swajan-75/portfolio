@@ -40,7 +40,7 @@ export default function About() {
     }
   };
 
-  if (profileLoading) return null;
+  if (profileLoading) return <section className="min-h-[85vh] w-full"></section>;
 
   const containerVariants = {
     hidden: {},
