@@ -41,7 +41,7 @@ function ChatInput({ input, setInput, handleSend }) {
         onChange={(e) => setInput(e.target.value)}
         onKeyDown={(e) => e.key === "Enter" && handleSend()}
         placeholder="Type a message..."
-        className="flex-1 bg-white/80 border border-black/10 rounded-xl px-4 py-2.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:bg-white transition-colors"
+        className="flex-1 bg-white/80 border border-black/10 rounded-xl px-4 py-2.5 text-base md:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:bg-white transition-colors"
       />
       <button
         onClick={handleSend}

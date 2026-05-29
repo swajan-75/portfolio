@@ -601,7 +601,7 @@ function TerminalWindow({ onClose }: { onClose: () => void }) {
             <span className="text-white">~</span>
             <div className="relative flex-1 h-5">
               {!sudoMode && (
-                <div className="absolute inset-0 pointer-events-none font-mono text-sm flex items-center">
+                <div className="absolute inset-0 pointer-events-none font-mono text-base md:text-sm flex items-center">
                   <span className="text-white whitespace-pre">{input}</span>
                   <span className="text-gray-500 whitespace-pre">{suggestion}</span>
                 </div>
@@ -614,7 +614,7 @@ function TerminalWindow({ onClose }: { onClose: () => void }) {
                 onKeyDown={handleCommand}
                 autoFocus
                 disabled={busy}
-                className={`absolute inset-0 w-full bg-transparent border-none outline-none font-mono caret-white text-sm disabled:cursor-wait ${sudoMode ? "text-white" : "text-transparent"}`}
+                className={`absolute inset-0 w-full bg-transparent border-none outline-none font-mono caret-white text-base md:text-sm disabled:cursor-wait ${sudoMode ? "text-white" : "text-transparent"}`}
                 autoComplete="off"
                 spellCheck={false}
               />

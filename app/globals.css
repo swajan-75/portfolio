@@ -93,6 +93,7 @@ body {
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   color: #1e293b;
+  font-size: 16px;
 }
 
 .glass-input::placeholder {
