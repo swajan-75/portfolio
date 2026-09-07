@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Header,
   Param,
   Post,
   Put,
@@ -19,6 +20,7 @@ export class SkillsController {
   constructor(private readonly skillsService: SkillsService) {}
 
   @Get('skills')
+  @Header('Cache-Control', 'public, max-age=60, s-maxage=3600, stale-while-revalidate=86400')
   @ApiOperation({
     summary: 'List all skills (public; powers the /skills page)',
   })

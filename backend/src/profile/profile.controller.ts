@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Header,
   Param,
   ParseIntPipe,
   Post,
@@ -23,6 +24,7 @@ export class ProfileController {
   constructor(private readonly profileService: ProfileService) {}
 
   @Get('profile')
+  @Header('Cache-Control', 'public, max-age=60, s-maxage=3600, stale-while-revalidate=86400')
   @ApiOperation({ summary: 'Get the public profile document' })
   getProfile() {
     return this.profileService.getPublicProfile();

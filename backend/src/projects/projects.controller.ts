@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Header,
   Param,
   Patch,
   Post,
@@ -21,6 +22,7 @@ export class ProjectsController {
   constructor(private readonly projectsService: ProjectsService) {}
 
   @Get('projects')
+  @Header('Cache-Control', 'public, max-age=60, s-maxage=3600, stale-while-revalidate=86400')
   @ApiOperation({
     summary: 'List all projects (public; also used by the admin dashboard)',
   })

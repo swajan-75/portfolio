@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Header,
   Param,
   Post,
   Put,
@@ -58,6 +59,7 @@ export class CvController {
   }
 
   @Get('cv/active')
+  @Header('Cache-Control', 'public, max-age=60, s-maxage=3600, stale-while-revalidate=86400')
   @ApiOperation({ summary: 'Get the currently active CV URL (public)' })
   getActive() {
     return this.cvService.getActiveUrl();
