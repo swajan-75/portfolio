@@ -21,7 +21,7 @@ async function bootstrap() {
   // reject when the frontend sets withCredentials: true — the Set-Cookie
   // from /otp/verify would silently never stick. Must be an explicit origin.
   app.enableCors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    origin: true,
     credentials: true,
   });
 
