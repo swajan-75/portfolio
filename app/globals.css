@@ -1,108 +1,438 @@
 @import "tailwindcss";
 @source "../components";
 
+/* Lets components opt into an explicit light-mode override (`light:...`)
+   on top of the CSS-variable retheming below, for the rare case a utility
+   doesn't derive from a --color-* token. */
+@custom-variant light (&:where([data-theme="light"], [data-theme="light"] *));
+
 @theme {
-  --color-text-primary: #FFFFFF;
+  --color-bg: #0a0a0f;
+  --color-surface: #15151c;
+  --color-surface-2: #1c1c26;
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-border-strong: rgba(255, 255, 255, 0.16);
+  --color-accent: #6c5ce7;
+  --color-accent-light: #8b7cf6;
+  --color-mint: #8ef7d4;
+
+  --color-text-primary: #ffffff;
   --color-text-secondary: rgba(255, 255, 255, 0.85);
-  --color-text-muted: rgba(255, 255, 255, 0.60);
+  --color-text-muted: #a1a1ad;
+
+  /* Backing tokens for the handful of shared classes below that used to
+     hardcode rgba(255,255,255,…)/#fff literals — giving them names means
+     the light theme can override just these instead of touching every
+     class. */
+  --color-surface-tint: rgba(255, 255, 255, 0.04);
+  --color-surface-tint-hover: rgba(255, 255, 255, 0.08);
+  --color-surface-tint-strong: rgba(255, 255, 255, 0.05);
+  --color-placeholder: #6b6b76;
+  --color-scrollbar-thumb: rgba(255, 255, 255, 0.12);
+  --color-scrollbar-thumb-hover: rgba(255, 255, 255, 0.22);
 }
+
+:root {
+  color-scheme: dark;
+  /* Skills bento tile's decorative background — a plain CSS var (not a
+     Tailwind token) so its literal SVG stroke color can still flip with
+     the theme via the [data-theme="light"] override below. */
+  --topo-pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'%3E%3Cg fill='none' stroke='white' stroke-width='1'%3E%3Ccircle cx='120' cy='120' r='24'/%3E%3Ccircle cx='120' cy='120' r='52'/%3E%3Ccircle cx='120' cy='120' r='80'/%3E%3Ccircle cx='120' cy='120' r='108'/%3E%3Ccircle cx='120' cy='120' r='136'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/*
+ * Light theme. Overrides the same custom properties above, PLUS Tailwind's
+ * own `white`/`black` tokens — every `text-white`, `bg-black/NN`, etc.
+ * utility anywhere in the app already compiles to a var(--color-white /
+ * --color-black) reference, so redefining those two here re-themes the
+ * whole component tree (cards, dock, menus) without editing each file's
+ * utility classes. Scoped to [data-theme="light"], set on <html> by the
+ * theme toggle; absence of the attribute keeps the dark defaults above.
+ */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   LIGHT THEME — Professional & Premium
+   Design language: crisp whites + slate blue-grays, warm ink typography,
+   real elevation through box-shadows, accent-tinted highlights.
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+[data-theme="light"] {
+  color-scheme: light;
+
+  /* ── Tailwind white/black flip — reverses text-white / bg-black utilities ── */
+  --color-white: #1a1a2e;
+  --color-black: #ffffff;
+
+  /* ── Page & surface hierarchy ── */
+  --color-bg: #f0f2f8;
+  --color-surface: #ffffff;
+  --color-surface-2: #eef0f7;
+
+  /* ── Borders ── */
+  --color-border: rgba(100, 116, 185, 0.14);
+  --color-border-strong: rgba(100, 116, 185, 0.28);
+
+  /* ── Accent — same hue, lighter vibrancy for light bg ── */
+  --color-accent: #5a4fcf;
+  --color-accent-light: #7b6df5;
+  --color-mint: #059669;
+
+  /* ── Typography ── */
+  --color-text-primary: #0f0f1a;
+  --color-text-secondary: rgba(15, 15, 26, 0.72);
+  --color-text-muted: #6b7280;
+
+  /* ── Surface tints ── */
+  --color-surface-tint: rgba(90, 79, 207, 0.05);
+  --color-surface-tint-hover: rgba(90, 79, 207, 0.1);
+  --color-surface-tint-strong: rgba(90, 79, 207, 0.07);
+
+  /* ── Misc ── */
+  --color-placeholder: #9ca3af;
+  --color-scrollbar-thumb: rgba(90, 79, 207, 0.18);
+  --color-scrollbar-thumb-hover: rgba(90, 79, 207, 0.32);
+
+  /* ── SVG topography — crisp slate lines for a white/gray theme ── */
+  --topo-pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'%3E%3Cg fill='none' stroke='%2394a3b8' stroke-width='1.5'%3E%3Ccircle cx='120' cy='120' r='24'/%3E%3Ccircle cx='120' cy='120' r='52'/%3E%3Ccircle cx='120' cy='120' r='80'/%3E%3Ccircle cx='120' cy='120' r='108'/%3E%3Ccircle cx='120' cy='120' r='136'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* ── Card elevation — real depth instead of a flat surface ── */
+[data-theme="light"] .card-dark {
+  background: #ffffff;
+  border-color: rgba(180, 190, 220, 0.6);
+  box-shadow:
+    0 1px 2px 0 rgba(15, 15, 40, 0.04),
+    0 4px 16px -2px rgba(15, 15, 40, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+[data-theme="light"] .card-dark-hover:hover {
+  border-color: rgba(90, 79, 207, 0.4);
+  box-shadow:
+    0 2px 4px 0 rgba(90, 79, 207, 0.06),
+    0 8px 28px -4px rgba(90, 79, 207, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  transform: translateY(-1px);
+}
+
+[data-theme="light"] .card-inset {
+  background: #f5f6fc;
+  border-color: rgba(180, 190, 220, 0.5);
+}
+
+/* ── Ambient orbs — softer presence on light bg ── */
+[data-theme="light"] .bg-orb {
+  opacity: 0.2;
+  filter: blur(140px);
+}
+
+/* ── Badge/pill ── */
+[data-theme="light"] .badge-pill {
+  background: rgba(5, 150, 105, 0.08);
+  border-color: rgba(5, 150, 105, 0.28);
+  color: #047857;
+}
+
+[data-theme="light"] .tag-pill {
+  background: #eef0f7;
+  border-color: rgba(100, 116, 185, 0.3);
+  color: #1a1a2e;
+}
+
+[data-theme="light"] .tag-pill:hover {
+  background: #e4e7f5;
+  border-color: rgba(90, 79, 207, 0.45);
+}
+
+/* ── Buttons ── */
+[data-theme="light"] .btn-primary {
+  background: linear-gradient(145deg, #5a4fcf 0%, #7b6df5 100%);
+  box-shadow: 0 4px 14px rgba(90, 79, 207, 0.38), 0 1px 3px rgba(90, 79, 207, 0.2);
+}
+
+[data-theme="light"] .btn-primary:hover {
+  box-shadow: 0 6px 22px rgba(90, 79, 207, 0.5), 0 2px 6px rgba(90, 79, 207, 0.25);
+}
+
+[data-theme="light"] .btn-secondary {
+  background: #f5f6fc;
+  border-color: rgba(100, 116, 185, 0.35);
+  color: #1a1a2e;
+  box-shadow: 0 1px 2px rgba(15, 15, 40, 0.05);
+}
+
+[data-theme="light"] .btn-secondary:hover {
+  background: #e8ebf8;
+  border-color: rgba(90, 79, 207, 0.45);
+  color: #0f0f1a;
+}
+
+/* ── Gradient text ── */
+[data-theme="light"] .gradient-text {
+  background: linear-gradient(130deg, #4338ca 0%, #7b6df5 50%, #059669 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ── Eyebrow label ── */
+[data-theme="light"] .eyebrow {
+  color: #5a4fcf;
+  background: rgba(90, 79, 207, 0.08);
+  padding: 2px 8px;
+  border-radius: 9999px;
+  border: 1px solid rgba(90, 79, 207, 0.18);
+}
+
+/* ── Form inputs ── */
+[data-theme="light"] .input-dark {
+  background: #ffffff;
+  border-color: rgba(100, 116, 185, 0.4);
+  color: #0f0f1a;
+  box-shadow: 0 1px 3px rgba(15, 15, 40, 0.04);
+}
+
+[data-theme="light"] .input-dark::placeholder {
+  color: #9ca3af;
+}
+
+[data-theme="light"] .input-dark:focus {
+  background: #fafbff;
+  border-color: #5a4fcf;
+  box-shadow: 0 0 0 3px rgba(90, 79, 207, 0.15), 0 1px 3px rgba(15, 15, 40, 0.04);
+}
+
+/* ── Skeleton loader ── */
+[data-theme="light"] .card-dark [class*="bg-white/[0.06]"],
+[data-theme="light"] [class*="animate-pulse"] {
+  background-color: #e8ebf5;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   Interactive bento cards — Skills / Projects / Get in Touch
+   .bento-interactive  = the full-bleed button that IS the card face
+   .bento-tile         = floating icon squares
+   .bento-arrow        = bottom-left arrow circle
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+/* Card face — clean white/gray gradient for a sleek, minimal look */
+[data-theme="light"] .bento-interactive {
+  background: linear-gradient(145deg, #ffffff 0%, #f8fafc 45%, #e2e8f0 100%);
+}
+
+/* Floating icon tiles — crisp white with sharp neutral shadows */
+[data-theme="light"] .bento-tile {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12), 0 2px 6px rgba(15, 23, 42, 0.08) !important;
+}
+
+/* Arrow button — dark slate for stark contrast */
+[data-theme="light"] .bento-arrow {
+  background: linear-gradient(135deg, #334155 0%, #0f172a 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.15) !important;
+}
+
+/* Topo background pattern — visible gray lines */
+[data-theme="light"] .bento-topo {
+  opacity: 0.5 !important;
+}
+
+/* Hover overlay — dark slate so it provides stark contrast on hover */
+[data-theme="light"] .bento-interactive:hover .bento-overlay {
+  background: rgba(15, 23, 42, 0.6) !important;
+}
+
+/* ── Dragging state ring in light mode ── */
+[data-theme="light"] .ring-accent\/50 {
+  --tw-ring-color: rgba(90, 79, 207, 0.5);
+}
+
+/* ── Modal backdrop & panel ── */
+[data-theme="light"] [class*="bg-black\/60"][class*="backdrop-blur"] {
+  background: rgba(10, 12, 40, 0.55) !important;
+}
+
+[data-theme="light"] [class*="bg-bg"][class*="border-white\/10"] {
+  background: #ffffff !important;
+  border-color: rgba(100, 116, 185, 0.25) !important;
+  box-shadow: 0 20px 60px -8px rgba(15, 15, 40, 0.22), 0 0 0 1px rgba(90, 79, 207, 0.08);
+}
+
 
 body {
-  background: transparent !important;
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-bg);
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* ── Background — NOT blurred, sharp full image ── */
-.bg-root {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background-color: #000000;
-  /* NO filter blur here — background must be sharp */
+@keyframes tile-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
-/* ── Glass cards — backdrop-filter blurs what's BEHIND them ── */
-.glass-card {
+/* ── Scrollbars ── */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--color-scrollbar-thumb);
+  border-radius: 9999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--color-scrollbar-thumb-hover);
+}
+
+/* ── Dark card system (theme-aware despite the name — the surface tokens
+   it reads flip under [data-theme="light"] above) ── */
+.card-dark {
   position: relative;
   border-radius: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.40);
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.50);
-  /* NO overflow: hidden here */
+  border: 1px solid var(--color-border);
+  background: linear-gradient(155deg, var(--color-surface) 8%, var(--color-surface-2) 92%);
+  transition: border-color 0.3s ease, background 0.2s ease, box-shadow 0.3s ease, transform 0.2s ease;
 }
 
-/* Blur layer — separate element, not pseudo */
-.glass-card .glass-blur-layer {
-  position: absolute;
-  inset: 0;
-  border-radius: 24px;
-  overflow: hidden; /* clip is here, not on the card */
-  z-index: 0;
-  pointer-events: none;
+.card-dark-hover:hover {
+  border-color: rgba(108, 92, 231, 0.35);
 }
 
-.glass-card .glass-blur-layer::before {
-  content: '';
-  position: absolute;
-  /* Removed static background image for Hyperspeed support */
+.card-inset {
+  background: var(--color-surface-tint);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
 }
 
-.glass-card .glass-blur-layer::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: rgba(255, 255, 255, 0.18);
+/* ── Badges / pills ── */
+.badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 16px;
+  border-radius: 9999px;
+  background: rgba(142, 247, 212, 0.08);
+  border: 1px solid rgba(142, 247, 212, 0.2);
+  color: var(--color-mint);
+  font-size: 12px;
+  font-weight: 600;
 }
 
-.glass-card > *:not(.glass-blur-layer) {
-  position: relative;
-  z-index: 2;
+.tag-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  background: var(--color-surface-tint);
+  border: 1px solid var(--color-border-strong);
+  color: var(--color-text-primary);
+  font-size: 13px;
+  font-weight: 600;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
-.glass-inner-card {
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(20px) saturate(160%);
-  -webkit-backdrop-filter: blur(20px) saturate(160%);
-  border: 1px solid rgba(255, 255, 255, 0.30);
+.tag-pill:hover {
+  background: var(--color-surface-tint-hover);
+  border-color: rgba(108, 92, 231, 0.4);
+}
+
+/* ── Buttons ── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 22px;
+  border-radius: 9999px;
+  background: linear-gradient(160deg, var(--color-accent) 0%, var(--color-accent-light) 100%);
+  color: #fff;
+  font-weight: 600;
+  font-size: 13px;
+  box-shadow: 0 0 20px rgba(108, 92, 231, 0.35);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 28px rgba(108, 92, 231, 0.5);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 22px;
+  border-radius: 9999px;
+  background: var(--color-surface-tint);
+  border: 1px solid var(--color-border-strong);
+  color: var(--color-text-primary);
+  font-weight: 600;
+  font-size: 13px;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease, color 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background: var(--color-surface-tint-hover);
+  border-color: var(--color-border-strong);
+  transform: translateY(-1px);
+}
+
+/* ── Text treatments ── */
+.gradient-text {
+  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-light) 50%, var(--color-mint) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.eyebrow {
+  display: inline-flex;
+  width: fit-content;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-accent-light);
+}
+
+/* ── Form inputs ── */
+.input-dark {
+  background: var(--color-surface-tint);
+  border: 1px solid var(--color-border-strong);
   border-radius: 12px;
+  color: var(--color-text-primary);
+  font-size: 15px;
+  transition: background 0.2s ease, border-color 0.2s ease;
 }
 
-.glass-card-heavy {
-  background: rgba(255, 255, 255, 0.22);
-  backdrop-filter: blur(60px) saturate(200%);
-  -webkit-backdrop-filter: blur(60px) saturate(200%);
-  border: 1px solid rgba(255, 255, 255, 0.50);
-  border-radius: 24px;
-  box-shadow:
-    0 12px 40px rgba(0, 0, 0, 0.20),
-    inset 0 1px 0 rgba(255, 255, 255, 0.60);
+.input-dark::placeholder {
+  color: var(--color-placeholder);
 }
 
-.glass-nav {
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(30px) saturate(180%);
-  -webkit-backdrop-filter: blur(30px) saturate(180%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.25);
-}
-
-.glass-input {
-  background: rgba(255, 255, 255, 0.40);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  color: #1e293b;
-  font-size: 16px;
-}
-
-.glass-input::placeholder {
-  color: #64748b;
-}
-
-.glass-input:focus {
+.input-dark:focus {
   outline: none;
-  border-color: #1976D2;
-  background: rgba(255, 255, 255, 0.60);
-  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.20);
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.18);
+  background: var(--color-surface-tint-strong);
+}
+
+/* ── Background ambient glow orbs ── */
+.bg-orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(90px);
+  pointer-events: none;
 }

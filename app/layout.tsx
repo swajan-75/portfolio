@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import ClickSpark from "./components/ClickSpark";
-import { Keyboard } from "@/components/ui/keyboard";
-import IridescenceWrapper from "./components/IridescenceWrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,27 +26,29 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased text-white`}>
-  
-  {/* Layer 1 — WebGL background, isolated layer */}
-  <div className="fixed inset-0 -z-10 bg-black">
-    <IridescenceWrapper />
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        {/* Applies a saved theme choice before hydration so light-mode
+            visitors never see a flash of the dark default. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{if(localStorage.getItem('theme')==='light'){document.documentElement.setAttribute('data-theme','light')}}catch(e){}",
+          }}
+        />
+      </head>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased text-white bg-bg`}>
+
+  {/* Layer 1 — flat dark background with ambient gradient orbs */}
+  <div className="fixed inset-0 -z-10 bg-bg overflow-hidden">
+    <div className="bg-orb w-[600px] h-[600px] -top-40 -left-20 opacity-30" style={{ background: "radial-gradient(circle, rgba(108,92,231,0.55) 0%, rgba(108,92,231,0) 70%)" }} />
+    <div className="bg-orb w-[500px] h-[500px] top-1/3 -right-32 opacity-25" style={{ background: "radial-gradient(circle, rgba(142,247,212,0.45) 0%, rgba(142,247,212,0) 70%)" }} />
+    <div className="bg-orb w-[500px] h-[500px] bottom-0 left-1/4 opacity-20" style={{ background: "radial-gradient(circle, rgba(108,92,231,0.45) 0%, rgba(108,92,231,0) 70%)" }} />
   </div>
 
   {/* Layer 2 — content, must be isolated with isolation-isolate */}
   <div style={{ isolation: 'isolate', position: 'relative' }}>
-    <ClickSpark sparkColor="#ffffff" sparkSize={10} sparkRadius={15} sparkCount={8} duration={400}>
-      {children}
-      
-      {/* Global typing sounds and animated preview without the physical keypad */}
-      <Keyboard 
-        enableSound={true} 
-        showPreview={true} 
-        showKeypad={false} 
-        className="fixed top-24 inset-x-0 z-[99999] pointer-events-none flex justify-center" 
-      />
-    </ClickSpark>
+    {children}
   </div>
 
 </body>

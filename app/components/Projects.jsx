@@ -1,19 +1,15 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import { motion, AnimatePresence, useReducedMotion } from "motion/react";
-import { FiGithub, FiExternalLink, FiChevronDown, FiChevronUp } from "react-icons/fi";
+import { FiGithub, FiExternalLink, FiChevronDown, FiChevronUp, FiArrowRight } from "react-icons/fi";
 import api from "@/lib/axios";
 import CountUp from "./CountUp";
 
 const COLORS = [
-  "from-orange-500 to-red-500",
-  "from-pink-600 to-rose-500",
-  "from-teal-500 to-cyan-500",
-  "from-gray-700 to-black",
-  "from-blue-600 to-indigo-600",
-  "from-orange-600 to-amber-600",
-  "from-sky-500 to-blue-400",
-  "from-emerald-500 to-green-600",
+  "from-accent to-accent-light",
+  "from-accent-light to-mint",
+  "from-accent to-mint",
 ];
 
 export default function Projects() {
@@ -84,7 +80,7 @@ export default function Projects() {
           viewport={{ once: true }}
           className="text-center mb-16 sm:mb-20"
         >
-          <h2 className="text-[clamp(2rem,6vw,3rem)] font-bold text-white mb-4">
+          <h2 className="text-[clamp(1.75rem,4vw,2.5rem)] font-bold text-white mb-4">
             Featured Projects
           </h2>
           <p className="text-white/80 font-medium text-base sm:text-lg max-w-2xl mx-auto">
@@ -146,12 +142,12 @@ export default function Projects() {
                 <button
                   onClick={() => setShowAll(!showAll)}
                   aria-expanded={showAll}
-                  className="group flex flex-col items-center gap-2 text-white/80 hover:text-sky-300 font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-lg p-2"
+                  className="group flex flex-col items-center gap-2 text-white/80 hover:text-accent-light font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-lg p-2"
                 >
                   <span className="text-sm font-bold tracking-widest uppercase">
                     {showAll ? "Show Less" : "View All Projects"}
                   </span>
-                  <div className="p-4 rounded-full bg-white group-hover:bg-gray-200 transition-all shadow-lg text-black">
+                  <div className="p-4 rounded-full bg-surface-2 border border-border-strong group-hover:border-accent/40 group-hover:bg-surface transition-all shadow-lg text-white">
                     <FiChevronDown 
                       className={`text-xl transition-transform duration-300 ${showAll ? "rotate-180" : ""}`} 
                     />
@@ -162,6 +158,18 @@ export default function Projects() {
           </>
         )}
       </div>
+
+      {/* Browse all link */}
+      {!loading && projects.length > 0 && (
+        <div className="flex justify-center mt-10">
+          <Link
+            href="/projects"
+            className="inline-flex items-center gap-2 text-sm font-bold text-white/50 hover:text-accent-light transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-lg px-2 py-1"
+          >
+            Browse all projects <FiArrowRight className="text-base" />
+          </Link>
+        </div>
+      )}
     </section>
   );
 }
@@ -175,19 +183,10 @@ function ProjectCard({ project, index, isExpanded, color, variants }) {
       variants={variants}
       initial="hidden"
       animate="visible"
-      style={{ 
-        backdropFilter: 'blur(150px) saturate(200%)', 
-        WebkitBackdropFilter: 'blur(150px) saturate(200%)',
-        background: 'rgba(255,255,255,0.06)',
-        border: '1px solid rgba(255,255,255,0.12)'
-      }}
       exit={{ opacity: 0, scale: shouldReduceMotion ? 1 : 0.95 }}
       whileHover={shouldReduceMotion ? {} : { y: -4 }}
-      className="group relative rounded-3xl hover:border-white/40 flex flex-col focus-within:ring-2 focus-within:ring-white/50 focus-within:border-transparent transition-all duration-300 shadow-sm"
+      className="card-dark card-dark-hover group relative rounded-3xl flex flex-col focus-within:ring-2 focus-within:ring-white/50 focus-within:border-transparent transition-all duration-300 shadow-sm"
     >
-      {/* Blur layer — must be first child, handles its own clipping */}
-      <div className="glass-blur-layer" aria-hidden="true" />
-
       {/* Image section — needs its own clip */}
       <div className="relative aspect-[4/3] sm:aspect-[16/9] lg:aspect-[4/3] overflow-hidden rounded-t-[24px]">
         <div className={`absolute inset-0 bg-gradient-to-br ${color} opacity-20 group-hover:opacity-30 transition-opacity`} aria-hidden="true" />
@@ -201,14 +200,14 @@ function ProjectCard({ project, index, isExpanded, color, variants }) {
         ) : (
           <div className={`w-full h-full bg-gradient-to-br ${color} opacity-30`} aria-hidden="true" />
         )}
-        <div style={{ backdropFilter: 'blur(150px) saturate(200%)', WebkitBackdropFilter: 'blur(150px) saturate(200%)', background: 'rgba(255,255,255,0.40)', border: '1px solid rgba(255,255,255,0.40)' }} className="absolute top-4 left-4 px-3 py-1.5 text-xs font-bold text-white shadow-lg rounded-xl">
+        <div className="absolute top-4 left-4 px-3 py-1.5 text-xs font-bold text-white shadow-lg rounded-xl bg-surface-2/90 border border-border-strong">
           {project.category}
         </div>
       </div>
 
       {/* Content */}
       <div className="p-6 flex-1 flex flex-col">
-        <h3 className="text-[clamp(1.25rem,3vw,1.5rem)] font-bold mb-2 text-white transition-colors">
+        <h3 className="text-[clamp(1.125rem,2.5vw,1.25rem)] font-bold mb-2 text-white transition-colors">
           {project.title}
         </h3>
         <p className="text-white/80 font-medium text-sm mb-6 line-clamp-3 leading-relaxed">
@@ -219,7 +218,7 @@ function ProjectCard({ project, index, isExpanded, color, variants }) {
           {project.tech_stack?.map((t, i) => (
             <span
               key={i}
-              className="bg-white/10 backdrop-blur-2xl border border-white/20 text-white font-medium rounded-full px-3 py-1 text-[12px] hover:bg-white/20 transition-colors"
+              className="tag-pill text-[12px] px-3 py-1"
             >
               {t}
             </span>
@@ -232,7 +231,7 @@ function ProjectCard({ project, index, isExpanded, color, variants }) {
               href={project.github_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 text-sm font-bold text-white/70 hover:text-sky-300 transition-colors focus-visible:outline-none focus-visible:text-sky-300 p-2 -ml-2 rounded-lg"
+              className="flex items-center gap-2 text-sm font-bold text-white/70 hover:text-accent-light transition-colors focus-visible:outline-none focus-visible:text-accent-light p-2 -ml-2 rounded-lg"
               aria-label={`${project.title} source code on GitHub`}
             >
               <FiGithub className="text-lg" /> Code
@@ -245,7 +244,7 @@ function ProjectCard({ project, index, isExpanded, color, variants }) {
               href={project.live_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 text-sm font-bold text-white/70 hover:text-sky-300 transition-colors focus-visible:outline-none focus-visible:text-sky-300 p-2 rounded-lg"
+              className="flex items-center gap-2 text-sm font-bold text-white/70 hover:text-accent-light transition-colors focus-visible:outline-none focus-visible:text-accent-light p-2 rounded-lg"
               aria-label={`View live demo of ${project.title}`}
             >
               <FiExternalLink className="text-lg" /> Live

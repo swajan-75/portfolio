@@ -1,0 +1,369 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider     = "prisma-client"
+  output       = "../generated/prisma"
+  // This backend compiles to CommonJS (tsconfig "module": "nodenext",
+  // no "type": "module" in package.json). Without this, the generator
+  // defaults to ESM output (raw `import.meta.url`), which crashes at
+  // runtime with "exports is not defined" the moment Node require()s the
+  // generated client, and also breaks Jest's CJS transform for any spec
+  // that imports PrismaService transitively.
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─────────────────────────────────────────────
+// Enums
+// ─────────────────────────────────────────────
+
+enum SkillCategory {
+  LANGUAGE
+  FRONTEND
+  BACKEND
+  DATABASE
+  DEVOPS
+  AI_ML
+  TOOLING
+  OTHER
+}
+
+enum ProjectCategory {
+  WEB_APP
+  API
+  AI_ML
+  CLI_TOOL
+  LIBRARY
+  MOBILE
+  OTHER
+  FULLSTACK
+  BACKEND
+  FRONTEND
+
+}
+
+enum ProjectStatus {
+  DRAFT
+  LIVE
+  ARCHIVED
+  IN_PROGRESS
+}
+
+enum EmploymentType {
+  FULL_TIME
+  PART_TIME
+  INTERNSHIP
+  CONTRACT
+  FREELANCE
+}
+
+enum MessageStatus {
+  UNREAD
+  READ
+  REPLIED
+  ARCHIVED
+}
+
+enum ChatRole {
+  USER
+  ASSISTANT
+  SYSTEM
+}
+
+// ─────────────────────────────────────────────
+// Core profile
+// ─────────────────────────────────────────────
+
+model Profile {
+  id            String   @id @default(cuid())
+  fullName      String
+  headline      String
+  subtitle      String?
+  bio           String   @db.Text
+  avatarUrl     String?
+  resumeUrl     String?
+  location      String?
+  email         String
+  availableFor  String?  // e.g. "Full-time roles, freelance"
+  yearsExp      Int?
+  educationInfo Json?    // { degree, institution }
+  techTags      String[] @default([])
+  stats         Json[]   @default([]) // { value, label }[]
+  highlights    Json[]   @default([]) // { title, value, subtext? }[]
+  updatedAt     DateTime @updatedAt
+  createdAt     DateTime @default(now())
+
+  socialLinks     SocialLink[]
+  skillCategories ProfileSkillCategory[]
+
+  @@map("profiles")
+}
+
+model SocialLink {
+  id        String   @id @default(cuid())
+  platform  String   // "github", "linkedin", "twitter", "email"
+  url       String
+  icon      String?
+  order     Int      @default(0)
+
+  profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profileId String
+
+  @@index([profileId])
+  @@map("social_links")
+}
+
+// About-page skills showcase (title/description/icon/colSpan content block).
+// Distinct from the `Skill` model below, which tags Projects with free-form
+// tech stack strings, not a curated content section.
+model ProfileSkillCategory {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  icon        String?
+  colSpan     Int      @default(1)
+  order       Int      @default(0)
+
+  profile     Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profileId   String
+
+  skills      ProfileSkillCategorySkill[]
+
+  @@index([profileId, order])
+  @@map("profile_skill_categories")
+}
+
+model ProfileSkillCategorySkill {
+  id         String   @id @default(cuid())
+  name       String
+  icon       String?
+  order      Int      @default(0)
+
+  category   ProfileSkillCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId String
+
+  @@index([categoryId, order])
+  @@map("profile_skill_category_skills")
+}
+
+// ─────────────────────────────────────────────
+// Skills
+// ─────────────────────────────────────────────
+
+model Skill {
+  id          String        @id @default(cuid())
+  name        String        @unique
+  category    SkillCategory
+  description String?       @db.Text
+  iconUrl     String?
+  url         String?
+  proficiency Int           @default(3) // 1-5
+  order       Int           @default(0)
+  featured    Boolean       @default(false)
+
+  projects    ProjectSkill[]
+
+  @@index([category])
+  @@map("skills")
+}
+
+// ─────────────────────────────────────────────
+// Projects
+// ─────────────────────────────────────────────
+
+model Project {
+  id            String          @id @default(cuid())
+  title         String
+  slug          String          @unique
+  summary       String?
+  description   String          @db.Text
+  category      ProjectCategory
+  status        ProjectStatus   @default(LIVE)
+  thumbnailUrl  String?
+  images        String[]        @default([])
+  techStack     String[]        @default([])
+  liveUrl       String?
+  githubUrl     String?
+  featured      Boolean         @default(false)
+  order         Int             @default(0)
+  startDate     DateTime?
+  endDate       DateTime?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  skills        ProjectSkill[]
+
+  @@index([slug])
+  @@index([featured, order])
+  @@index([status])
+  @@map("projects")
+}
+
+// Explicit join table (lets you store metadata like "primary tech" later)
+model ProjectSkill {
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String
+  skill     Skill   @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  skillId   String
+
+  @@id([projectId, skillId])
+  @@index([skillId])
+  @@map("project_skills")
+}
+
+// ─────────────────────────────────────────────
+// Experience & Education
+// ─────────────────────────────────────────────
+
+model Experience {
+  id          String         @id @default(cuid())
+  company     String
+  role        String
+  type        EmploymentType @default(FULL_TIME)
+  location    String?
+  companyLogo String?
+  description String         @db.Text
+  startDate   DateTime
+  endDate     DateTime?
+  isCurrent   Boolean        @default(false)
+  order       Int            @default(0)
+
+  @@index([startDate])
+  @@map("experiences")
+}
+
+model Education {
+  id          String    @id @default(cuid())
+  institution String
+  degree      String
+  field       String
+  grade       String?
+  startDate   DateTime
+  endDate     DateTime?
+  description String?   @db.Text
+  order       Int       @default(0)
+
+  @@map("education")
+}
+
+// ─────────────────────────────────────────────
+// Social proof & inbound contact
+// ─────────────────────────────────────────────
+
+model Testimonial {
+  id        String   @id @default(cuid())
+  name      String
+  role      String?
+  company   String?
+  avatarUrl String?
+  content   String   @db.Text
+  rating    Int?     // 1-5
+  featured  Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@map("testimonials")
+}
+
+model ContactMessage {
+  id        String        @id @default(cuid())
+  name      String
+  email     String
+  subject   String?
+  message   String        @db.Text
+  status    MessageStatus @default(UNREAD)
+  ipAddress String?
+  createdAt DateTime      @default(now())
+
+  @@index([status])
+  @@index([createdAt])
+  @@map("contact_messages")
+}
+
+// ─────────────────────────────────────────────
+// AI chat assistant logs (Mr. Meeseeks)
+// ─────────────────────────────────────────────
+
+// model ChatSession {
+//   id         String        @id @default(cuid())
+//   visitorId  String        // anonymous client-generated id (cookie/localStorage)
+//   startedAt  DateTime      @default(now())
+//   lastActive DateTime      @updatedAt
+
+//   messages   ChatMessage[]
+
+//   @@index([visitorId])
+//   @@map("chat_sessions")
+// }
+
+// model ChatMessage {
+//   id        String      @id @default(cuid())
+//   role      ChatRole
+//   content   String      @db.Text
+//   createdAt DateTime    @default(now())
+
+//   session   ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+//   sessionId String
+
+//   @@index([sessionId, createdAt])
+//   @@map("chat_messages")
+// }
+
+// ─────────────────────────────────────────────
+// CV / resume files
+// ─────────────────────────────────────────────
+
+model Cv {
+  id                 String   @id @default(cuid())
+  name               String
+  url                String
+  cloudinaryPublicId String?
+  active             Boolean  @default(false)
+  createdAt          DateTime @default(now())
+
+  @@map("cvs")
+}
+
+// ─────────────────────────────────────────────
+// Analytics
+// ─────────────────────────────────────────────
+
+model VisitLog {
+  id        String   @id @default(cuid())
+  visitorId String   // sha256(ip + salt) — never a raw IP
+  country   String?
+  createdAt DateTime @default(now())
+
+  @@index([visitorId])
+  @@index([country])
+  @@map("visit_logs")
+}
+
+model DownloadLog {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  @@map("download_logs")
+}
+
+// ─────────────────────────────────────────────
+// Admin Authentication
+// ─────────────────────────────────────────────
+
+model Admin {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String?  // Hashed password
+  googleId  String?  // For Google OAuth
+  otp       String?  // Hashed OTP or plain OTP based on security needs (we'll store plain/hashed)
+  otpExpiry DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("admins")
+}

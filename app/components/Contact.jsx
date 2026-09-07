@@ -1,37 +1,18 @@
 "use client";
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
-import emailjs from "@emailjs/browser"; 
+import emailjs from "@emailjs/browser";
 import { FiMail, FiMapPin, FiSend, FiLink } from "react-icons/fi";
-import api from "@/lib/axios";
 import { resolveIcon } from "@/app/lib/resolveIcon";
-
-const glass = {
-  backdropFilter: 'blur(24px) saturate(180%)',
-  WebkitBackdropFilter: 'blur(24px) saturate(180%)',
-  background: 'rgba(255,255,255,0.06)',
-  border: '1px solid rgba(255,255,255,0.12)',
-};
-
-const glassInner = {
-  backdropFilter: 'blur(16px) saturate(160%)',
-  WebkitBackdropFilter: 'blur(16px) saturate(160%)',
-  background: 'rgba(255,255,255,0.08)',
-  border: '1px solid rgba(255,255,255,0.15)',
-};
+import { useProfile } from "../hooks/useProfile";
 
 export default function Contact() {
   const formRef = useRef();
   const [isSending, setIsSending] = useState(false);
-  const [status, setStatus] = useState(null); 
-  const [contacts, setContacts] = useState([]);
+  const [status, setStatus] = useState(null);
+  const { profile } = useProfile();
+  const contacts = profile?.socials ?? [];
   const shouldReduceMotion = useReducedMotion();
-
-  useEffect(() => {
-    api.get(`/profile?t=${Date.now()}`)
-      .then(({ data }) => setContacts(data?.socials || []))
-      .catch(err => console.error("Failed to load contacts:", err));
-  }, []);
 
   const sendEmail = (e) => {
     e.preventDefault();
@@ -76,8 +57,8 @@ export default function Contact() {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-[clamp(2rem,6vw,3rem)] font-bold text-white mb-4">
-            Let's Connect
+          <h2 className="text-[clamp(1.75rem,4vw,2.5rem)] font-bold text-white mb-4">
+            Let's <span className="gradient-text">Connect</span>
           </h2>
           <p className="text-white/80 max-w-xl mx-auto text-base sm:text-lg font-medium">
             Have a project in mind or want to discuss the latest in AI and Web Dev? 
@@ -94,12 +75,12 @@ export default function Contact() {
             viewport={{ once: true }}
             className="space-y-8"
           >
-            <article style={glass} className="p-6 sm:p-8 rounded-3xl">
-              <h3 className="text-[clamp(1.25rem,3vw,1.5rem)] font-bold mb-6 text-white">Contact Info</h3>
-              
+            <article className="card-dark p-6 sm:p-8 rounded-3xl">
+              <h3 className="text-[clamp(1.125rem,2.5vw,1.25rem)] font-bold mb-6 text-white">Contact Info</h3>
+
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
-                  <div style={glassInner} className="p-3 rounded-xl text-sky-300 text-xl" aria-hidden="true">
+                  <div className="card-inset p-3 rounded-xl text-accent-light text-xl" aria-hidden="true">
                     <FiMapPin />
                   </div>
                   <div>
@@ -110,12 +91,12 @@ export default function Contact() {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div style={glassInner} className="p-3 rounded-xl text-sky-300 text-xl" aria-hidden="true">
+                  <div className="card-inset p-3 rounded-xl text-accent-light text-xl" aria-hidden="true">
                     <FiMail />
                   </div>
                   <div>
                     <h4 className="text-lg font-bold text-white">Email</h4>
-                    <a href="mailto:swajanbarua09@gmail.com" className="text-white/80 font-medium hover:text-sky-300 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded p-1 -ml-1">
+                    <a href="mailto:swajanbarua09@gmail.com" className="text-white/80 font-medium hover:text-accent-light transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded p-1 -ml-1">
                       swajanbarua09@gmail.com
                     </a>
                   </div>
@@ -135,8 +116,7 @@ export default function Contact() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            style={glass}
-            className="p-6 sm:p-8 rounded-3xl"
+            className="card-dark p-6 sm:p-8 rounded-3xl"
           >
             <form ref={formRef} onSubmit={sendEmail} className="space-y-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -148,7 +128,7 @@ export default function Contact() {
                     name="user_name" 
                     required
                     placeholder="John Doe" 
-                    className="w-full glass-input px-4 py-3.5"
+                    className="w-full input-dark px-4 py-3.5"
                   />
                 </div>
                 <div className="space-y-2">
@@ -159,7 +139,7 @@ export default function Contact() {
                     name="user_email" 
                     required
                     placeholder="john@example.com" 
-                    className="w-full glass-input px-4 py-3.5"
+                    className="w-full input-dark px-4 py-3.5"
                   />
                 </div>
               </div>
@@ -172,7 +152,7 @@ export default function Contact() {
                   name="subject" 
                   required
                   placeholder="Project Inquiry" 
-                  className="w-full glass-input px-4 py-3.5"
+                  className="w-full input-dark px-4 py-3.5"
                 />
               </div>
 
@@ -183,8 +163,8 @@ export default function Contact() {
                   rows={4} 
                   name="message" 
                   required
-                  placeholder="Tell me about your project..." 
-                  className="w-full glass-input px-4 py-3.5 resize-y min-h-[120px]"
+                  placeholder="Tell me about your project..."
+                  className="w-full input-dark px-4 py-3.5 resize-y min-h-[120px]"
                 />
               </div>
 
@@ -193,8 +173,8 @@ export default function Contact() {
                 whileTap={shouldReduceMotion ? {} : { scale: 0.98 }}
                 disabled={isSending}
                 type="submit"
-                className={`w-full font-bold px-6 py-3 rounded-xl flex items-center justify-center gap-2 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 shadow-md ${
-                  isSending ? "bg-white/50 text-black/60 cursor-not-allowed" : "bg-white hover:bg-gray-200 text-black"
+                className={`btn-primary w-full font-bold px-6 py-3 rounded-xl flex items-center justify-center gap-2 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 ${
+                  isSending ? "opacity-60 cursor-not-allowed" : ""
                 }`}
               >
                 {isSending ? "Sending..." : <><FiSend aria-hidden="true" /> Send Message</>}
@@ -231,14 +211,13 @@ function SocialBtn({ icon, label, href, delay }) {
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ delay: delay, duration: 0.4 }}
       viewport={{ once: true }}
-      style={glassInner}
-      className="flex flex-col items-center justify-center gap-2 p-4 hover:bg-white/10 transition-all group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-2xl"
+      className="card-inset flex flex-col items-center justify-center gap-2 p-4 hover:bg-white/10 transition-all group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-2xl"
       aria-label={`Visit my ${label} profile`}
     >
-      <div className="text-2xl text-white/80 group-hover:text-sky-300 transition-colors" aria-hidden="true">
+      <div className="text-2xl text-white/80 group-hover:text-accent-light transition-colors" aria-hidden="true">
         {iconElement}
       </div>
-      <span className="text-xs text-white/70 group-hover:text-sky-300 font-bold">{label}</span>
+      <span className="text-xs text-white/70 group-hover:text-accent-light font-bold">{label}</span>
     </motion.a>
   );
 }

@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -sS -o /dev/null -w \"HTTP %{http_code}\\\\n\" http://localhost:8000/api/v1/profile --max-time 5)",
+      "Bash(curl -sS http://localhost:8000/api/v1/profile --max-time 5)"
+    ]
+  }
+}

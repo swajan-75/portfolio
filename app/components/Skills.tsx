@@ -1,52 +1,13 @@
 "use client";
-import { useEffect, useState } from "react";
-import { motion, useReducedMotion, Variants } from "motion/react";
-import api from "@/lib/axios";
+import { useReducedMotion, motion, Variants } from "motion/react";
 import { resolveIcon } from "@/app/lib/resolveIcon";
+import { useProfile } from "../hooks/useProfile";
 import { FiCpu } from "react-icons/fi";
 
-interface SkillItem {
-  name: string;
-  icon: string;
-}
-
-interface SkillCategory {
-  title: string;
-  description: string;
-  icon: string;
-  col_span: number;
-  skills: SkillItem[];
-}
-
-const GLOWS = [
-  "bg-blue-500/10 group-hover:bg-blue-500/20",
-  "bg-green-500/10 group-hover:bg-green-500/20",
-  "bg-purple-500/10 group-hover:bg-purple-500/20",
-  "bg-emerald-500/10 group-hover:bg-emerald-500/20",
-  "bg-pink-500/10 group-hover:bg-pink-500/20",
-];
-
-const glass = {
-  backdropFilter: 'blur(24px) saturate(180%)',
-  WebkitBackdropFilter: 'blur(24px) saturate(180%)',
-  background: 'rgba(255,255,255,0.06)',
-  border: '1px solid rgba(255,255,255,0.12)',
-};
-
 export default function Skills() {
-  const [categories, setCategories] = useState<SkillCategory[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { profile, loading } = useProfile();
+  const categories = profile?.skill_categories ?? [];
   const shouldReduceMotion = useReducedMotion();
-
-  useEffect(() => {
-    api.get(`/profile?t=${Date.now()}`)
-      .then(({ data }) => {
-        const cats: SkillCategory[] = data?.skill_categories;
-        setCategories(Array.isArray(cats) ? cats : []);
-      })
-      .catch(() => setCategories([]))
-      .finally(() => setLoading(false));
-  }, []);
 
   if (loading) return <section className="min-h-[85vh] w-full"></section>;
 
@@ -71,7 +32,7 @@ export default function Skills() {
           viewport={{ once: true }}
           className="text-center mb-16 sm:mb-20 py-8 px-6 rounded-3xl"
         >
-          <h2 className="text-[clamp(2rem,6vw,3rem)] font-bold text-center mb-4 text-white">
+          <h2 className="text-[clamp(1.75rem,4vw,2.5rem)] font-black tracking-tight text-center mb-4 text-white">
             My Skills
           </h2>
           <p className="text-white/80 font-medium text-base sm:text-lg max-w-2xl mx-auto">
@@ -101,15 +62,14 @@ export default function Skills() {
               <motion.article
                 key={i}
                 variants={itemVariants}
-                style={glass}
-                className={`${colSpan} flex flex-col justify-between p-6 rounded-3xl`}
+                className={`card-dark ${colSpan} flex flex-col justify-between p-6 rounded-3xl`}
               >
                 {/* Tech badges */}
                 <div className="mb-6 flex flex-wrap gap-2">
                   {(cat.skills ?? []).map((skill, idx) => (
                     <div
                       key={idx}
-                      className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 transition-colors duration-300 hover:bg-white/10"
+                      className="tag-pill flex items-center gap-2"
                     >
                       <span className="text-xl text-white shrink-0" aria-hidden="true">
                         {resolveIcon(skill.icon) ?? <FiCpu />}
@@ -123,8 +83,8 @@ export default function Skills() {
 
                 {/* Title + description */}
                 <div className="mt-auto">
-                  <h3 className="text-[clamp(1.25rem,3vw,1.5rem)] font-bold text-white mb-2 flex items-center gap-3">
-                    <span className="text-sky-300" aria-hidden="true">{categoryIcon}</span>
+                  <h3 className="text-[clamp(1.125rem,2.5vw,1.25rem)] font-bold tracking-tight text-white mb-2 flex items-center gap-3">
+                    <span className="text-accent-light" aria-hidden="true">{categoryIcon}</span>
                     {cat.title}
                   </h3>
                   <p className="text-sm sm:text-base text-white/80 font-medium leading-relaxed">

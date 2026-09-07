@@ -98,6 +98,69 @@ export function resolveIcon(
 }
 
 /**
+ * Index of ICON_MAP keys by their bare, normalized name:
+ * "SiJavascript" -> "javascript", "FaDatabase" -> "database".
+ */
+const NORMALIZED_KEYS: Record<string, string> = (() => {
+  const index: Record<string, string> = {};
+  for (const key of Object.keys(ICON_MAP)) {
+    const bare = key.replace(/^(Si|Fa|Fi|Tb|Di|Io|Md|Bs)/, "").toLowerCase();
+    if (!(bare in index)) index[bare] = key;
+  }
+  return index;
+})();
+
+/** Human-facing labels whose normalized form differs from the icon's own name. */
+const NAME_ALIASES: Record<string, string> = {
+  nextjs: "nextdotjs",
+  node: "nodedotjs",
+  nodejs: "nodedotjs",
+  vue: "vuedotjs",
+  vuejs: "vuedotjs",
+  reactjs: "react",
+  reactnative: "react",
+  cpp: "cplusplus",
+  cc: "cplusplus",
+  csharp: "sharp",
+  golang: "go",
+  postgres: "postgresql",
+  aws: "amazonwebservices",
+  androidstudio: "android",
+  linuxunixcli: "linux",
+  dockercompose: "docker",
+  firebasefirestorefcmauth: "firebase",
+  website: "world",
+  email: "mail",
+};
+
+function normalizeName(value: string): string {
+  return value.toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+/**
+ * Resolves an icon from either an explicit react-icons key ("SiReact") or a
+ * human label ("Next.js", "PostgreSQL", "github"). Falls back to the label when
+ * stored icon data is missing, which is the common case for seeded content.
+ */
+export function resolveIconSmart(
+  iconKey: string | undefined,
+  label: string | undefined,
+  props?: { className?: string; size?: number }
+): React.ReactElement | null {
+  const direct = iconKey ? resolveIcon(iconKey, props) : null;
+  if (direct) return direct;
+
+  if (!label) return null;
+  const normalized = normalizeName(label);
+  const target = NAME_ALIASES[normalized] ?? normalized;
+  const mapKey = NORMALIZED_KEYS[target];
+  if (!mapKey) return null;
+
+  const Icon = ICON_MAP[mapKey];
+  return <Icon {...(props ?? {})} />;
+}
+
+/**
  * Searches icon names matching a query string (case-insensitive).
  * Returns up to `limit` results.
  */

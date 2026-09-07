@@ -1,36 +1,18 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React from "react";
+import Image from "next/image";
 import { motion, useReducedMotion } from "motion/react";
 import { FiDownload, FiUser, FiCpu, FiBookOpen, FiAward, FiTrendingUp } from "react-icons/fi";
 import aiubLogo from "../images/aiub.png";
 import swajanDP from "../images/swajan_1.jpg";
 import { useProfile } from "../hooks/useProfile";
+import { useActiveCv } from "../hooks/useActiveCv";
 import api from "@/lib/axios";
 
-const glass = {
-  backdropFilter: 'blur(24px) saturate(180%)',
-  WebkitBackdropFilter: 'blur(24px) saturate(180%)',
-  background: 'rgba(255,255,255,0.06)',
-  border: '1px solid rgba(255,255,255,0.12)',
-};
-
-const glassInner = {
-  backdropFilter: 'blur(16px) saturate(160%)',
-  WebkitBackdropFilter: 'blur(16px) saturate(160%)',
-  background: 'rgba(255,255,255,0.08)',
-  border: '1px solid rgba(255,255,255,0.15)',
-};
-
 export default function About() {
-  const [cvUrl, setCvUrl] = useState(null);
+  const cvUrl = useActiveCv();
   const { profile, loading: profileLoading } = useProfile();
   const shouldReduceMotion = useReducedMotion();
-
-  useEffect(() => {
-    api.get("/cv/active")
-      .then((res) => setCvUrl(res.data?.url ?? null))
-      .catch(() => setCvUrl(null));
-  }, []);
 
   const handleDownload = async () => {
     try {
@@ -67,27 +49,27 @@ export default function About() {
 
           {/* 2. PROFILE IMAGE CARD */}
           <motion.article
-            style={glass}
             variants={itemVariants}
-            className="md:col-span-4 relative overflow-hidden group order-1 md:order-2 aspect-[4/5] md:aspect-auto md:h-full rounded-3xl"
+            className="card-dark md:col-span-4 relative overflow-hidden group order-1 md:order-2 aspect-[4/5] md:aspect-auto md:h-full rounded-3xl"
           >
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10" aria-hidden="true" />
-            <img
-              src={swajanDP.src}
+            <Image
+              src={swajanDP}
               alt="Swajan Barua profile picture"
-              className="w-full h-full object-cover transition-all duration-700 scale-100 group-hover:scale-105"
+              fill
+              sizes="(min-width: 768px) 33vw, 100vw"
+              className="object-cover transition-all duration-700 scale-100 group-hover:scale-105"
             />
           </motion.article>
 
           {/* 1. HERO BIO CARD */}
           <motion.article
-            style={glass}
             variants={itemVariants}
-            className="md:col-span-8 p-6 sm:p-8 flex flex-col justify-center order-2 md:order-1 rounded-3xl"
+            className="card-dark md:col-span-8 p-6 sm:p-8 flex flex-col justify-center order-2 md:order-1 rounded-3xl"
           >
             <header className="flex items-center gap-3 mb-6">
               <span className="text-white/80 text-2xl" aria-hidden="true"><FiUser /></span>
-              <h2 className="text-[clamp(1.75rem,5vw,2.25rem)] font-bold text-white">Who I Am</h2>
+              <h2 className="text-[clamp(1.5rem,4vw,2rem)] font-bold text-white">Who I Am</h2>
             </header>
 
             <div className="text-white/80 font-medium text-base sm:text-lg leading-relaxed mb-6 whitespace-pre-wrap">
@@ -101,15 +83,14 @@ export default function About() {
                 rel="noopener noreferrer"
                 download
                 onClick={handleDownload}
-                className="w-full sm:w-fit flex items-center justify-center gap-2 px-6 py-3 bg-white text-black font-bold rounded-full hover:bg-gray-200 shadow-md transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
+                className="btn-primary w-full sm:w-fit focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
               >
                 <FiDownload /> Download Resume
               </a>
             ) : (
               <button
                 disabled
-                style={glassInner}
-                className="w-full sm:w-fit flex items-center justify-center gap-2 px-6 py-3 text-white/60 font-bold rounded-full cursor-not-allowed"
+                className="btn-secondary w-full sm:w-fit opacity-50 cursor-not-allowed"
               >
                 <FiDownload /> Resume Unavailable
               </button>
@@ -119,17 +100,16 @@ export default function About() {
           {/* 3. EDUCATION CARD */}
           <motion.article
             variants={itemVariants}
-            style={glass}
-            className="md:col-span-6 p-6 sm:p-8 relative overflow-hidden order-3 rounded-3xl"
+            className="card-dark md:col-span-6 p-6 sm:p-8 relative overflow-hidden order-3 rounded-3xl"
           >
             <div className="flex flex-col-reverse sm:flex-row justify-between items-start sm:items-center gap-6 relative z-10">
               <div>
                 <header className="flex items-center gap-3 mb-4">
                   <span className="text-white/80 text-2xl" aria-hidden="true"><FiBookOpen /></span>
-                  <h3 className="text-[clamp(1.25rem,3vw,1.5rem)] font-bold text-white">Education</h3>
+                  <h3 className="text-[clamp(1.125rem,2.5vw,1.25rem)] font-bold text-white">Education</h3>
                 </header>
                 <div className="space-y-1">
-                  <h4 className="text-[clamp(1.25rem,4vw,1.75rem)] font-bold text-white leading-tight">
+                  <h4 className="text-[clamp(1.125rem,3vw,1.375rem)] font-bold text-white leading-tight">
                     {profile?.education_info?.degree || "Loading..."}
                   </h4>
                   <p className="text-white/80 font-medium text-sm whitespace-pre-wrap mt-2">
@@ -138,11 +118,10 @@ export default function About() {
                 </div>
               </div>
               <div
-                style={glassInner}
-                className="p-3 h-16 w-16 sm:h-20 sm:w-20 flex items-center justify-center shrink-0 rounded-2xl"
+                className="card-inset p-3 h-16 w-16 sm:h-20 sm:w-20 flex items-center justify-center shrink-0 rounded-2xl"
                 aria-hidden="true"
               >
-                <img src={aiubLogo.src} alt="AIUB" className="w-full h-full object-contain" />
+                <Image src={aiubLogo} alt="AIUB" width={80} height={80} className="w-full h-full object-contain" />
               </div>
             </div>
           </motion.article>
@@ -150,16 +129,15 @@ export default function About() {
           {/* 4. TECH FOCUS CARD */}
           <motion.article
             variants={itemVariants}
-            style={glass}
-            className="md:col-span-6 p-6 sm:p-8 order-4 rounded-3xl"
+            className="card-dark md:col-span-6 p-6 sm:p-8 order-4 rounded-3xl"
           >
             <header className="flex items-center gap-3 mb-4">
               <span className="text-white/80 text-2xl" aria-hidden="true"><FiCpu /></span>
-              <h3 className="text-[clamp(1.25rem,3vw,1.5rem)] font-bold text-white">The Tech</h3>
+              <h3 className="text-[clamp(1.125rem,2.5vw,1.25rem)] font-bold text-white">The Tech</h3>
             </header>
             <div className="flex flex-wrap gap-2">
               {(profile?.tech_tags || []).map((tag) => (
-                <span key={tag} className="px-3 py-1 bg-white/5 backdrop-blur-sm border border-white/20 rounded-full text-xs font-medium text-white hover:bg-white/20 transition-colors">
+                <span key={tag} className="tag-pill">
                   {tag}
                 </span>
               ))}
@@ -169,17 +147,16 @@ export default function About() {
           {/* 5. STATS CARD */}
           <motion.article
             variants={itemVariants}
-            style={glass}
-            className="md:col-span-4 p-6 sm:p-8 flex flex-col justify-between order-5 rounded-3xl"
+            className="card-dark md:col-span-4 p-6 sm:p-8 flex flex-col justify-between order-5 rounded-3xl"
           >
             <header className="flex items-center gap-3 mb-6">
               <span className="text-white/80 text-2xl" aria-hidden="true"><FiTrendingUp /></span>
-              <h3 className="text-[clamp(1.25rem,3vw,1.5rem)] font-bold text-white">Stats</h3>
+              <h3 className="text-[clamp(1.125rem,2.5vw,1.25rem)] font-bold text-white">Stats</h3>
             </header>
             <div className="grid grid-cols-2 gap-4">
               {(profile?.stats || []).map((stat, i) => (
                 <div key={i}>
-                  <h3 className="text-[clamp(1.75rem,5vw,2.25rem)] font-bold text-sky-200 leading-none mb-1">{stat.value}</h3>
+                  <h3 className="text-[clamp(1.75rem,5vw,2.25rem)] font-bold text-accent-light leading-none mb-1">{stat.value}</h3>
                   <p className="text-white/70 font-bold text-xs uppercase tracking-wider">{stat.label}</p>
                 </div>
               ))}
@@ -189,23 +166,21 @@ export default function About() {
           {/* 6. COMPETITIVE HIGHLIGHTS */}
           <motion.article
             variants={itemVariants}
-            style={glass}
-            className="md:col-span-8 p-6 sm:p-8 order-6 rounded-3xl"
+            className="card-dark md:col-span-8 p-6 sm:p-8 order-6 rounded-3xl"
           >
             <header className="flex items-center gap-3 mb-6">
               <span className="text-white/80 text-2xl" aria-hidden="true"><FiAward /></span>
-              <h3 className="text-[clamp(1.25rem,3vw,1.5rem)] font-bold text-white">Competitive Career</h3>
+              <h3 className="text-[clamp(1.125rem,2.5vw,1.25rem)] font-bold text-white">Competitive Career</h3>
             </header>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {(profile?.highlights || []).map((highlight, i) => (
                 <motion.div
                   key={i}
                   whileHover={{ scale: 1.02 }}
-                  style={glassInner}
-                  className="p-5 transition-all cursor-default rounded-2xl"
+                  className="card-inset p-5 transition-all cursor-default rounded-2xl"
                 >
                   <div className="text-sm font-medium text-white/80 mb-2">{highlight.title}</div>
-                  <div className="text-2xl font-bold text-sky-200 mb-1">{highlight.value}</div>
+                  <div className="text-2xl font-bold text-accent-light mb-1">{highlight.value}</div>
                   {highlight.subtext && <div className="text-xs font-bold text-white/60">{highlight.subtext}</div>}
                 </motion.div>
               ))}

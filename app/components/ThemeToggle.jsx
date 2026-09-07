@@ -1,38 +1,12 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { motion } from "motion/react";
 import { FiSun, FiMoon } from "react-icons/fi";
+import { useTheme } from "../hooks/useTheme";
 
 export default function ThemeToggle({ className = "" }) {
-  const [isDark, setIsDark] = useState(true);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    const savedTheme = localStorage.getItem("theme");
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-
-    if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
-      setIsDark(true);
-      document.documentElement.classList.add("dark");
-    } else {
-      setIsDark(false);
-      document.documentElement.classList.remove("dark");
-    }
-  }, []);
-
-  const toggleTheme = () => {
-    const newTheme = !isDark;
-    setIsDark(newTheme);
-
-    if (newTheme) {
-      document.documentElement.classList.add("dark");
-      localStorage.setItem("theme", "dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-      localStorage.setItem("theme", "light");
-    }
-  };
+  const { theme, toggleTheme, mounted } = useTheme();
+  const isDark = theme === "dark";
 
   // Prevent hydration mismatch on initial render
   if (!mounted) return <div className={`w-10 h-10 ${className}`} />;
@@ -40,15 +14,15 @@ export default function ThemeToggle({ className = "" }) {
   return (
     <button
       onClick={toggleTheme}
-      className={`relative w-10 h-10 flex items-center justify-center rounded-full bg-gray-200 dark:bg-white/10 hover:bg-gray-300 dark:hover:bg-white/20 transition-colors focus-visible:ring-2 focus-visible:ring-purple-500 overflow-hidden ${className}`}
-      aria-label="Toggle theme"
+      className={`relative w-10 h-10 flex items-center justify-center rounded-full bg-surface-2 hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent overflow-hidden ${className}`}
+      aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
     >
       <motion.div
         animate={{ y: isDark ? 30 : 0, opacity: isDark ? 0 : 1, rotate: isDark ? 90 : 0 }}
         transition={{ duration: 0.2 }}
         className="absolute"
       >
-        <FiSun className="text-lg text-yellow-500" />
+        <FiSun className="text-lg text-yellow-500" aria-hidden="true" />
       </motion.div>
 
       <motion.div
@@ -56,7 +30,7 @@ export default function ThemeToggle({ className = "" }) {
         transition={{ duration: 0.2 }}
         className="absolute"
       >
-        <FiMoon className="text-lg text-cyan-200" />
+        <FiMoon className="text-lg text-accent-light" aria-hidden="true" />
       </motion.div>
     </button>
   );

@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence, useReducedMotion, Variants } from "motion/react";
 import { FiMenu, FiX, FiHome, FiUser, FiBox, FiCpu, FiMail, FiFileText } from "react-icons/fi";
-import api from "@/lib/axios";
+import { useActiveCv } from "../hooks/useActiveCv";
+import ThemeToggle from "./ThemeToggle";
 
 const navLinks = [
   { href: "#home", label: "Home", icon: <FiHome /> },
@@ -15,14 +16,8 @@ const navLinks = [
 
 export default function MobileMenu() {
   const [isOpen, setIsOpen] = useState(false);
-  const [cvUrl, setCvUrl] = useState<string | null>(null);
+  const cvUrl = useActiveCv();
   const shouldReduceMotion = useReducedMotion();
-
-  useEffect(() => {
-    api.get("/cv/active")
-      .then((res) => setCvUrl(res.data?.url ?? null))
-      .catch(() => setCvUrl(null));
-  }, []);
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -72,13 +67,7 @@ export default function MobileMenu() {
         onClick={() => setIsOpen(true)}
         aria-label="Open mobile menu"
         aria-expanded={isOpen}
-        style={{
-          backdropFilter: 'blur(16px)',
-          WebkitBackdropFilter: 'blur(16px)',
-          background: 'rgba(255,255,255,0.15)',
-          border: '1px solid rgba(255,255,255,0.25)'
-        }}
-        className="absolute top-6 right-6 z-50 p-3 rounded-full text-white shadow-xl"
+        className="fixed top-6 right-6 z-50 p-3 rounded-full text-white bg-surface/90 border border-border-strong shadow-xl"
       >
         <FiMenu size={24} />
       </button>
@@ -93,7 +82,7 @@ export default function MobileMenu() {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.25 }}
               onClick={() => setIsOpen(false)}
-              className="fixed inset-0 z-[998] bg-black/40"
+              className="fixed inset-0 z-[998] bg-neutral-950/40"
               aria-hidden="true"
             />
 
@@ -106,9 +95,9 @@ export default function MobileMenu() {
               className="fixed inset-y-0 right-0 w-72 max-w-[85vw] z-[999] shadow-2xl"
               style={{
                 borderRadius: '1.5rem 0 0 1.5rem',
-                background: 'rgba(240, 242, 255, 0.97)',
-                borderLeft: '1px solid rgba(255,255,255,0.80)',
-                boxShadow: '-20px 0 60px rgba(0,0,0,0.15)',
+                background: 'linear-gradient(155deg, var(--color-surface) 8%, var(--color-surface-2) 92%)',
+                borderLeft: '1px solid var(--color-border)',
+                boxShadow: '-20px 0 60px rgba(0,0,0,0.45)',
               }}
             >
 
@@ -119,11 +108,12 @@ export default function MobileMenu() {
                 aria-modal="true"
                 aria-label="Mobile navigation"
               >
-                <div className="flex justify-end items-center mb-8">
+                <div className="flex justify-between items-center mb-8">
+                  <ThemeToggle />
                   <button
                     onClick={() => setIsOpen(false)}
                     aria-label="Close mobile menu"
-                    className="p-3 text-slate-500 hover:text-slate-800 hover:bg-black/5 transition-colors rounded-full"
+                    className="p-3 text-white/60 hover:text-white hover:bg-white/5 transition-colors rounded-full"
                   >
                     <FiX size={24} />
                   </button>
@@ -134,9 +124,9 @@ export default function MobileMenu() {
                     <motion.li key={link.href} variants={shouldReduceMotion ? undefined : itemVariants}>
                       <button
                         onClick={() => handleLinkClick(link.href)}
-                        className="w-full flex items-center gap-4 p-4 text-left text-[clamp(1rem,4vw,1.15rem)] font-semibold text-slate-700 hover:text-slate-900 hover:bg-black/5 rounded-xl transition-all"
+                        className="w-full flex items-center gap-4 p-4 text-left text-[clamp(1rem,4vw,1.15rem)] font-semibold text-white/80 hover:text-white hover:bg-white/5 rounded-xl transition-all"
                       >
-                        <span className="text-slate-400">{link.icon}</span>
+                        <span className="text-white/40">{link.icon}</span>
                         {link.label}
                       </button>
                     </motion.li>
@@ -150,7 +140,7 @@ export default function MobileMenu() {
                   <button
                     onClick={handleResume}
                     disabled={!cvUrl}
-                    className="w-full flex items-center justify-center gap-3 p-4 bg-white hover:bg-white/90 disabled:bg-white/20 disabled:text-white/40 disabled:cursor-not-allowed text-black font-semibold rounded-xl transition-colors shadow-md"
+                    className="btn-primary w-full flex items-center justify-center gap-3 p-4 disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none"
                   >
                     <FiFileText size={20} />
                     View Resume

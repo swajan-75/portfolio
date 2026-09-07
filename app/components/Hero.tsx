@@ -2,13 +2,10 @@
 import { motion, useReducedMotion } from "motion/react";
 import { useProfile } from "../hooks/useProfile";
 import TerminalText from "./TerminalText";
-import SplitText from "./SplitText";
 
 export default function Hero() {
-  const { profile, loading } = useProfile();
+  const { profile } = useProfile();
   const shouldReduceMotion = useReducedMotion();
-
-  if (loading) return <header id="hero" className="min-h-[85vh] w-full"></header>;
 
   const yOffset = shouldReduceMotion ? 0 : 40;
   const smallYOffset = shouldReduceMotion ? 0 : 20;
@@ -24,21 +21,12 @@ export default function Hero() {
           transition={{ duration: shouldReduceMotion ? 0.3 : 1, ease: "easeOut" }}
           className="py-2 relative z-10"
         >
-          <SplitText
-            tag="h1"
-            text={`Hi, I'm ${profile?.name || "Swajan"}`}
-            className="text-[clamp(2.5rem,10vw,5.5rem)] font-bold text-white leading-[1.1] tracking-tight text-center"
-            delay={40}
-            duration={1}
-            ease="power3.out"
-            splitType="words,chars"
-            from={{ opacity: 0, y: 40 }}
-            to={{ opacity: 1, y: 0 }}
-            textAlign="center"
-          />
+          <h1 className="text-[clamp(2rem,6vw,4rem)] font-bold text-white leading-[1.1] tracking-tight text-center">
+            Hi, I&apos;m {profile?.name || "Swajan Barua"}
+          </h1>
 
-          <p className="mt-3 text-[clamp(0.95rem,4vw,1.5rem)] text-sky-200 font-medium max-w-2xl mx-auto text-center whitespace-nowrap">
-            {profile?.subtitle || "Software Developer • Android • Web"}
+          <p className="mt-3 text-[clamp(0.9rem,3vw,1.125rem)] text-accent-light font-medium max-w-2xl mx-auto text-center whitespace-nowrap">
+            {profile?.subtitle || "NestJS • Next.js • FastAPI"}
           </p>
 
           <div className="flex justify-center w-full text-white/65">
@@ -54,14 +42,14 @@ export default function Hero() {
           >
           <a
             href="#projects"
-            className="w-full sm:w-auto px-6 py-2.5 rounded-full bg-white hover:bg-gray-200 transition-colors text-black font-medium text-base text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 shadow-lg shadow-black/10"
+            className="btn-primary w-full sm:w-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
           >
             View Projects
           </a>
 
           <a
             href="#contact"
-            className="w-full sm:w-auto px-6 py-2.5 rounded-full bg-black/30 backdrop-blur-md border border-white/20 hover:bg-black/40 transition-colors text-white font-medium text-base text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
+            className="btn-secondary w-full sm:w-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
           >
             Contact Me
           </a>

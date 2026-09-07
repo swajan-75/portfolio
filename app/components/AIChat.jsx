@@ -17,15 +17,15 @@ function ChatBody({ messages, loading, scrollRef }) {
           key={i}
           className={`max-w-[85%] p-3 rounded-2xl text-sm ${
             msg.role === "user"
-              ? "bg-[#1976D2] text-white self-end rounded-tr-none shadow-sm"
-              : "bg-white/70 text-slate-800 font-medium self-start rounded-tl-none border border-white/60 shadow-sm"
+              ? "bg-accent text-white self-end rounded-tr-none shadow-sm"
+              : "bg-surface-2 text-white/85 font-medium self-start rounded-tl-none border border-border shadow-sm"
           }`}
         >
           {msg.text}
         </div>
       ))}
       {loading && (
-        <div className="text-slate-400 text-xs animate-pulse self-start">
+        <div className="text-white/40 text-xs animate-pulse self-start">
           Mr. Meeseeks is thinking...
         </div>
       )}
@@ -36,17 +36,17 @@ function ChatBody({ messages, loading, scrollRef }) {
 
 function ChatInput({ input, setInput, handleSend }) {
   return (
-    <div className="p-3 border-t border-black/10 flex gap-2 bg-white/60">
+    <div className="p-3 border-t border-border flex gap-2 bg-surface/60">
       <input
         value={input}
         onChange={(e) => setInput(e.target.value)}
         onKeyDown={(e) => e.key === "Enter" && handleSend()}
         placeholder="Type a message..."
-        className="flex-1 bg-white/80 border border-black/10 rounded-xl px-4 py-2.5 text-base md:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:bg-white transition-colors"
+        className="input-dark flex-1 px-4 py-2.5 text-base md:text-sm placeholder-white/30 focus:bg-white/10 transition-colors"
       />
       <button
         onClick={handleSend}
-        className="p-2.5 bg-[#1976D2] hover:bg-[#1565C0] rounded-xl text-white shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 transition-colors shrink-0"
+        className="p-2.5 bg-accent hover:bg-accent-light rounded-xl text-white shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent transition-colors shrink-0"
       >
         <FiSend />
       </button>
@@ -58,24 +58,23 @@ function ChatInput({ input, setInput, handleSend }) {
 function MobileChatModal({ messages, loading, scrollRef, input, setInput, handleSend, onClose }) {
   return (
     <div
-      className="fixed inset-0 z-[9999] flex flex-col"
+      className="fixed inset-0 z-[9999] flex flex-col bg-bg"
       style={{
-        background: 'rgba(240, 242, 255, 0.97)',
         // Use dvh so the layout adjusts when the keyboard opens
         height: '100dvh',
       }}
     >
       {/* Header */}
-      <div className="flex items-center gap-3 px-4 py-4 border-b border-black/10 bg-white/60 shrink-0">
+      <div className="flex items-center gap-3 px-4 py-4 border-b border-border bg-surface/60 shrink-0">
         <button
           onClick={onClose}
-          className="p-2 hover:bg-black/5 rounded-full transition-colors text-slate-600"
+          className="p-2 hover:bg-white/5 rounded-full transition-colors text-white/70"
           aria-label="Close chat"
         >
           <FiArrowLeft size={20} />
         </button>
-        <FiCpu className="animate-pulse text-blue-600" />
-        <span className="font-bold text-sm text-slate-800">Mr. Meeseeks</span>
+        <FiCpu className="animate-pulse text-accent-light" />
+        <span className="font-bold text-sm text-white">Mr. Meeseeks</span>
       </div>
 
       {/* Messages — fills remaining space */}
@@ -97,22 +96,22 @@ function DesktopChatWindow({ messages, loading, scrollRef, input, setInput, hand
       style={{
         backdropFilter: 'blur(40px) saturate(180%)',
         WebkitBackdropFilter: 'blur(40px) saturate(180%)',
-        background: 'rgba(240, 242, 255, 0.97)',
-        border: '1px solid rgba(255,255,255,0.80)',
-        boxShadow: '0 25px 60px rgba(0,0,0,0.20)',
+        background: 'linear-gradient(155deg, var(--color-surface) 8%, var(--color-surface-2) 92%)',
+        border: '1px solid var(--color-border)',
+        boxShadow: '0 25px 60px rgba(0,0,0,0.45)',
       }}
     >
       {/* Header */}
-      <div className="p-4 flex justify-between items-center border-b border-black/10 shrink-0">
+      <div className="p-4 flex justify-between items-center border-b border-border shrink-0">
         <div className="flex items-center gap-2">
-          <FiCpu className="animate-pulse text-blue-600" />
-          <span className="font-bold text-sm text-slate-800">Mr. Meeseeks</span>
+          <FiCpu className="animate-pulse text-accent-light" />
+          <span className="font-bold text-sm text-white">Mr. Meeseeks</span>
         </div>
         <button
           onClick={onClose}
-          className="hover:bg-black/10 p-1.5 rounded-full transition-colors"
+          className="hover:bg-white/10 p-1.5 rounded-full transition-colors"
         >
-          <FiX size={20} className="text-slate-600" />
+          <FiX size={20} className="text-white/70" />
         </button>
       </div>
 
@@ -173,7 +172,7 @@ export default function AIChat() {
       {isOpen && isMobile && <MobileChatModal {...chatProps} />}
 
       {/* Floating button + desktop window */}
-      <div className="absolute bottom-24 right-4 sm:bottom-6 sm:right-6 md:bottom-6 md:right-8 lg:bottom-8 z-50 flex flex-col items-end">
+      <div className="fixed bottom-24 right-4 sm:bottom-6 sm:right-6 md:bottom-6 md:right-8 lg:bottom-8 z-50 flex flex-col items-end">
         {/* Desktop chat window only */}
         {isOpen && !isMobile && (
           <DesktopChatWindow {...chatProps} />
@@ -183,11 +182,7 @@ export default function AIChat() {
         <button
           onClick={() => setIsOpen(prev => !prev)}
           aria-label={isOpen ? "Close chat" : "Open chat"}
-          className="relative w-14 h-14 flex items-center justify-center text-[#1976D2] text-2xl hover:scale-105 transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-full shadow-lg"
-          style={{
-            background: 'rgba(255,255,255,0.85)',
-            border: '1px solid rgba(255,255,255,0.70)',
-          }}
+          className="relative w-14 h-14 flex items-center justify-center text-accent-light text-2xl hover:scale-105 transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-full shadow-lg bg-surface border border-border-strong"
         >
           {isOpen ? <FiX size={22} /> : <FiMessageSquare />}
 

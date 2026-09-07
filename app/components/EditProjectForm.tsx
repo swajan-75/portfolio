@@ -3,6 +3,7 @@ import { useState } from "react";
 import api from "@/lib/axios";
 import { Project } from "./ProjectCard";
 import ImageUpload from "./ImageUpload";
+import { FiCheck, FiImage } from "react-icons/fi";
 
 interface EditProjectFormProps {
   project: Project;
@@ -29,6 +30,25 @@ export default function EditProjectForm({ project, onRefresh, onCancel }: EditPr
     rank:        project.rank?.toString() ?? "",
   });
   const [submitting, setSubmitting] = useState(false);
+  const [setCoverStatus, setSetCoverStatus] = useState<'idle' | 'loading' | 'done'>('idle');
+
+  const handleSetCover = async () => {
+    if (!form.image_link.trim()) {
+      alert("Upload an image first before setting it as cover.");
+      return;
+    }
+    try {
+      setSetCoverStatus('loading');
+      const slug = titleToSlug(project.title);
+      await api.patch(`/admin/projects/${slug}/cover`, { coverUrl: form.image_link.trim() });
+      setSetCoverStatus('done');
+      setTimeout(() => setSetCoverStatus('idle'), 2500);
+      onRefresh();
+    } catch {
+      alert("Failed to set cover photo.");
+      setSetCoverStatus('idle');
+    }
+  };
 
   const handleSubmit = async () => {
     if (!(form.title ?? "").trim() || !(form.category ?? "").trim()) {
@@ -104,12 +124,37 @@ export default function EditProjectForm({ project, onRefresh, onCancel }: EditPr
           </div>
         ))}
 
-        {/* Image Upload — full width */}
-        <div className="sm:col-span-2">
+        {/* Image Upload + Set as Cover — full width */}
+        <div className="sm:col-span-2 space-y-3">
           <ImageUpload
             value={form.image_link}
             onChange={(url) => setForm((f) => ({ ...f, image_link: url }))}
           />
+          {form.image_link && (
+            <button
+              type="button"
+              onClick={handleSetCover}
+              disabled={setCoverStatus === 'loading'}
+              className="flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{
+                background: setCoverStatus === 'done'
+                  ? 'rgba(34,197,94,0.12)'
+                  : 'rgba(108,92,231,0.12)',
+                border: setCoverStatus === 'done'
+                  ? '1px solid rgba(34,197,94,0.3)'
+                  : '1px solid rgba(108,92,231,0.3)',
+                color: setCoverStatus === 'done' ? '#4ade80' : '#a78bfa',
+              }}
+            >
+              {setCoverStatus === 'done' ? (
+                <><FiCheck size={13} /> Cover set!</>
+              ) : setCoverStatus === 'loading' ? (
+                <><div className="w-3 h-3 border border-purple-400/40 border-t-purple-400 rounded-full animate-spin" /> Setting...</>
+              ) : (
+                <><FiImage size={13} /> Set as Cover Photo</>
+              )}
+            </button>
+          )}
         </div>
       </div>
 

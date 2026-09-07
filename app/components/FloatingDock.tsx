@@ -3,11 +3,12 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import {
   FiHome, FiTerminal, FiBox, FiFileText,
-  FiGithub, FiArrowLeft, FiCpu, FiMail
+  FiGithub, FiArrowLeft, FiCpu, FiMail, FiSun, FiMoon
 } from "react-icons/fi";
 import { FaWhatsapp } from "react-icons/fa";
 import logo from "../images/logo.jpg";
-import api from "../../lib/axios";
+import { useActiveCv } from "../hooks/useActiveCv";
+import { useTheme } from "../hooks/useTheme";
 const dockItems = [
   { icon: <FiHome />, label: "Home", id: "home" },
   { icon: <FiCpu />, label: "Skills", id: "skills" },
@@ -19,6 +20,7 @@ const dockItems = [
   { icon: <FiTerminal />, label: "Console", id: "console" },
   { icon: <FiFileText />, label: "Resume", id: "resume" },
   { icon: <FiGithub />, label: "GitHub", id: "github", href: "https://github.com/swajan-75" },
+  { icon: <FiSun />, label: "Theme", id: "theme" },
 ];
 
 // FIX: All dynamic command prefixes listed here so autocomplete can suggest them
@@ -41,18 +43,14 @@ const DYNAMIC_COMMAND_PREFIXES = [
 
 export default function FloatingDock() {
   const [isTerminalOpen, setIsTerminalOpen] = useState(false);
-  const [cvUrl, setCvUrl] = useState<string | null>(null);
-
-  useEffect(() => {
-    api.get("/cv/active")
-      .then((res) => setCvUrl(res.data?.url ?? null))
-      .catch(() => setCvUrl(null));
-  }, []);
+  const cvUrl = useActiveCv();
+  const { theme, toggleTheme } = useTheme();
 
   // FIX: wrapped in useCallback so DockItem children don't re-render on unrelated state changes
   const handleItemClick = useCallback((item: typeof dockItems[number]) => {
     switch (item.id) {
       case "console": setIsTerminalOpen(true); break;
+      case "theme": toggleTheme(); break;
       case "home":
         document.getElementById("hero")?.scrollIntoView({ behavior: "smooth" });
         break;
@@ -77,7 +75,7 @@ export default function FloatingDock() {
         window.history.back();
         break;
     }
-  }, [cvUrl]);
+  }, [cvUrl, toggleTheme]);
 
   return (
     <>
@@ -86,13 +84,13 @@ export default function FloatingDock() {
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0, type: "spring", stiffness: 500, damping: 25 }}
-          style={{ backdropFilter: 'blur(150px) saturate(200%)', WebkitBackdropFilter: 'blur(150px) saturate(200%)', background: 'rgba(255,255,255,0.22)', border: '1px solid rgba(255,255,255,0.25)' }}
-          className="flex items-center gap-3 px-4 py-2 rounded-full shadow-2xl"
+          className="flex items-center gap-3 px-4 py-2 rounded-full shadow-2xl bg-surface/95 border border-border-strong"
         >
           {dockItems.map((item) => (
             <DockItem
               key={item.id}
               item={item}
+              theme={theme}
               onClick={() => handleItemClick(item)}
               disabled={item.id === "resume" && !cvUrl}
             />
@@ -109,7 +107,17 @@ export default function FloatingDock() {
   );
 }
 
-function DockItem({ item, onClick, disabled }: { item: any; onClick: () => void; disabled: boolean }) {
+function DockItem({
+  item,
+  theme,
+  onClick,
+  disabled,
+}: {
+  item: any;
+  theme: "dark" | "light";
+  onClick: () => void;
+  disabled: boolean;
+}) {
   const baseClass = "relative flex items-center justify-center cursor-pointer group";
   const ultraFast = { duration: 0.1 };
 
@@ -126,6 +134,10 @@ function DockItem({ item, onClick, disabled }: { item: any; onClick: () => void;
     );
   }
 
+  const isThemeItem = item.id === "theme";
+  const icon = isThemeItem ? (theme === "dark" ? <FiSun /> : <FiMoon />) : item.icon;
+  const label = isThemeItem ? (theme === "dark" ? "Light mode" : "Dark mode") : item.label;
+
   return (
     <motion.div
       whileHover={!disabled ? { scale: 1.2 } : {}}
@@ -134,15 +146,15 @@ function DockItem({ item, onClick, disabled }: { item: any; onClick: () => void;
       onClick={!disabled ? onClick : undefined}
       className={`${baseClass} w-8 h-8 rounded-full ${disabled ? "text-white/30 cursor-not-allowed" : "text-white/75 hover:text-white hover:bg-white/10 transition-colors"}`}
     >
-      <div className="text-lg">{item.icon}</div>
-      <Tooltip label={disabled ? "No CV uploaded" : item.label} />
+      <div className="text-lg">{icon}</div>
+      <Tooltip label={disabled ? "No CV uploaded" : label} />
     </motion.div>
   );
 }
 
 function Tooltip({ label }: { label: string }) {
   return (
-    <span style={{ backdropFilter: 'blur(150px) saturate(200%)', WebkitBackdropFilter: 'blur(150px) saturate(200%)', background: 'rgba(255,255,255,0.22)', border: '1px solid rgba(255,255,255,0.25)' }} className="absolute -top-10 left-1/2 -translate-x-1/2 px-2 py-1 text-white text-xs rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-75 pointer-events-none whitespace-nowrap shadow-lg">
+    <span className="absolute -top-10 left-1/2 -translate-x-1/2 px-2 py-1 text-white text-xs rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-75 pointer-events-none whitespace-nowrap shadow-lg bg-surface-2 border border-border-strong">
       {label}
     </span>
   );
@@ -572,7 +584,7 @@ function TerminalWindow({ onClose }: { onClose: () => void }) {
     <div
       ref={overlayRef}
       onClick={handleOverlayClick}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-neutral-950/50 p-4"
     >
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 10 }}

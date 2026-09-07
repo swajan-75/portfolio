@@ -11,9 +11,9 @@ const texts = [
 
 export default function TerminalText() {
   return (
-    <div className="font-sans text-white text-2xl sm:text-4xl md:text-5xl font-bold mt-2 h-[48px] sm:h-[56px] flex items-center justify-center w-full">
+    <div className="font-sans text-white text-xl sm:text-2xl font-bold mt-1 mb-2 h-[36px] sm:h-[44px] flex items-center justify-center w-full">
       <div className="flex items-center justify-center whitespace-nowrap flex-nowrap">
-        <span className="mr-3">Creative</span>
+        <span className="mr-2">Creative</span>
         
         <RotatingText
           texts={texts}
