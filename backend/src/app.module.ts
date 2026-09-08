@@ -12,6 +12,9 @@ import { CvModule } from './cv/cv.module';
 import { TrackingModule } from './tracking/tracking.module';
 import { SkillsModule } from './skills/skills.module';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
+import { WinstonModule } from 'nest-winston';
+import { winstonConfig } from './common/logger/winston.config';
+import { LogsModule } from './logs/logs.module';
 
 @Module({
   imports: [
@@ -24,6 +27,8 @@ import { GlobalExceptionFilter } from './common/filters/global-exception.filter'
     CvModule,
     TrackingModule,
     SkillsModule,
+    WinstonModule.forRoot(winstonConfig),
+    LogsModule,
   ],
   controllers: [AppController],
   providers: [

@@ -8,9 +8,10 @@ import AdminCV from "../../components/AdminCV";
 import AdminSkills from "../../components/AdminSkills";
 import AdminContacts from "../../components/AdminContacts";
 import AdminAbout from "../../components/AdminAbout";
+import AdminLogs from "../../components/AdminLogs";
 import {
   FiLogOut, FiShield, FiLayers,
-  FiHome, FiBox, FiCpu, FiFileText, FiPhone, FiUser,
+  FiHome, FiBox, FiCpu, FiFileText, FiPhone, FiUser, FiTerminal
 } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -24,7 +25,7 @@ interface Project {
   live_url?: string;
 }
 
-type Section = "home" | "projects" | "skills" | "cv" | "contacts" | "about";
+type Section = "home" | "projects" | "skills" | "cv" | "contacts" | "about" | "logs";
 
 interface NavItem {
   id: Section;
@@ -39,6 +40,7 @@ const NAV_ITEMS: NavItem[] = [
   { id: "skills",   label: "Skills",    icon: <FiCpu /> },
   { id: "cv",       label: "Update CV", icon: <FiFileText /> },
   { id: "contacts", label: "Contacts",  icon: <FiPhone /> },
+  { id: "logs",     label: "Logs",      icon: <FiTerminal /> },
 ];
 
 const PAGE_TRANSITION = { duration: 0.2 };
@@ -133,6 +135,7 @@ export default function AdminDashboard() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={PAGE_TRANSITION}
+            className="h-full"
           >
             {activeSection === "home" && (
               <AdminHome projectsCount={projects.length} />
@@ -163,7 +166,11 @@ export default function AdminDashboard() {
               <AdminAbout />
             )}
             
-            {activeSection !== "home" && activeSection !== "projects" && activeSection !== "cv" && activeSection !== "skills" && activeSection !== "contacts" && activeSection !== "about" && (
+            {activeSection === "logs" && (
+              <AdminLogs />
+            )}
+            
+            {activeSection !== "home" && activeSection !== "projects" && activeSection !== "cv" && activeSection !== "skills" && activeSection !== "contacts" && activeSection !== "about" && activeSection !== "logs" && (
               <div className="h-[60vh] flex flex-col items-center justify-center text-gray-600 select-none">
                 <FiLayers size={40} className="mb-4 opacity-20" />
                 <p className="font-mono text-xs uppercase tracking-widest">
