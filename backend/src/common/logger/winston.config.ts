@@ -1,6 +1,10 @@
 import { WinstonModuleOptions, utilities as nestWinstonModuleUtilities } from 'nest-winston';
 import * as winston from 'winston';
 import DailyRotateFile from 'winston-daily-rotate-file';
+import * as path from 'path';
+import * as os from 'os';
+
+const logDir = process.env.VERCEL ? path.join(os.tmpdir(), 'logs') : 'logs';
 
 export const winstonConfig: WinstonModuleOptions = {
   transports: [
@@ -17,7 +21,7 @@ export const winstonConfig: WinstonModuleOptions = {
       ),
     }),
     new DailyRotateFile({
-      filename: 'logs/error-%DATE%.log',
+      filename: path.join(logDir, 'error-%DATE%.log'),
       datePattern: 'YYYY-MM-DD',
       zippedArchive: true,
       maxSize: '20m',
@@ -29,7 +33,7 @@ export const winstonConfig: WinstonModuleOptions = {
       ),
     }),
     new DailyRotateFile({
-      filename: 'logs/combined-%DATE%.log',
+      filename: path.join(logDir, 'combined-%DATE%.log'),
       datePattern: 'YYYY-MM-DD',
       zippedArchive: true,
       maxSize: '20m',
