@@ -14,9 +14,6 @@ interface EditProjectFormProps {
 const inputClass =
   "w-full bg-black/40 border border-white/[0.07] rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-purple-500/50 transition-colors";
 
-function titleToSlug(title: string): string {
-  return title.toLowerCase().replace(/\s+/g, "-");
-}
 
 export default function EditProjectForm({ project, onRefresh, onCancel }: EditProjectFormProps) {
   const [form, setForm] = useState({
@@ -39,8 +36,7 @@ export default function EditProjectForm({ project, onRefresh, onCancel }: EditPr
     }
     try {
       setSetCoverStatus('loading');
-      const slug = titleToSlug(project.title);
-      await api.patch(`/admin/projects/${slug}/cover`, { coverUrl: form.image_link.trim() });
+      await api.patch(`/admin/projects/${project.id}/cover`, { coverUrl: form.image_link.trim() });
       setSetCoverStatus('done');
       setTimeout(() => setSetCoverStatus('idle'), 2500);
       onRefresh();
@@ -57,8 +53,7 @@ export default function EditProjectForm({ project, onRefresh, onCancel }: EditPr
     }
     try {
       setSubmitting(true);
-      const slug = titleToSlug(project.title);
-      await api.put(`/admin/projects/${slug}`, {
+      await api.put(`/admin/projects/${project.id}`, {
         title:       (form.title       ?? "").trim(),
         category:    (form.category    ?? "").trim(),
         description: (form.description ?? "").trim(),

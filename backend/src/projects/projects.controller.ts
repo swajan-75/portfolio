@@ -37,26 +37,26 @@ export class ProjectsController {
     return this.projectsService.create(dto);
   }
 
-  @Put('admin/projects/:slug')
+  @Put('admin/projects/:id')
   @UseGuards(JwtAuthGuard)
-  @ApiOperation({ summary: 'Update a project by slug' })
-  update(@Param('slug') slug: string, @Body() dto: CreateProjectDto) {
-    return this.projectsService.update(slug, dto);
+  @ApiOperation({ summary: 'Update a project by id' })
+  update(@Param('id') id: string, @Body() dto: CreateProjectDto) {
+    return this.projectsService.update(id, dto);
   }
 
-  @Delete('admin/projects/:slug')
+  @Delete('admin/projects/:id')
   @UseGuards(JwtAuthGuard)
-  @ApiOperation({ summary: 'Delete a project by slug' })
-  remove(@Param('slug') slug: string) {
-    return this.projectsService.remove(slug);
+  @ApiOperation({ summary: 'Delete a project by id' })
+  remove(@Param('id') id: string) {
+    return this.projectsService.remove(id);
   }
 
-  @Patch('admin/projects/:slug/cover')
+  @Patch('admin/projects/:id/cover')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: 'Set the cover photo for a project from an existing image URL',
   })
-  setCover(@Param('slug') slug: string, @Body() dto: SetCoverDto) {
-    return this.projectsService.setCover(slug, dto.coverUrl);
+  setCover(@Param('id') id: string, @Body() dto: SetCoverDto) {
+    return this.projectsService.setCover(id, dto.coverUrl);
   }
 }

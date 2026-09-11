@@ -36,15 +36,11 @@ const glassInner = {
   border: '1px solid rgba(255,255,255,0.15)',
 };
 
-function titleToSlug(title: string): string {
-  return title.toLowerCase().replace(/\s+/g, "-");
-}
-
 export default function ProjectCard({ project, onRefresh, onEdit }: ProjectCardProps) {
   const handleDelete = async () => {
     if (!confirm(`Delete "${project.title}"?`)) return;
     try {
-      await api.delete(`/admin/projects/${titleToSlug(project.title)}`);
+      await api.delete(`/admin/projects/${project.id}`);
       onRefresh();
     } catch {
       alert("Failed to delete project.");

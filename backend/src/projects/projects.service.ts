@@ -59,13 +59,16 @@ export class ProjectsService {
     return this.toResponse(project);
   }
 
-  async update(slug: string, dto: CreateProjectDto) {
-    const project = await this.prisma.project.findUnique({ where: { slug } });
+  async update(id: string, dto: CreateProjectDto) {
+    const project = await this.prisma.project.findUnique({ where: { id } });
     if (!project) throw new ProjectNotFoundException();
 
-    // Regenerate the slug from the new title so the *next* client-computed
-    // slug (from the freshly refetched title after this save) still resolves.
     const newSlug = this.slugify(dto.title);
+    if (newSlug !== project.slug) {
+      const existing = await this.prisma.project.findUnique({ where: { slug: newSlug } });
+      if (existing) throw new ProjectSlugConflictException();
+    }
+
     const updated = await this.prisma.project.update({
       where: { id: project.id },
       data: {
@@ -83,14 +86,14 @@ export class ProjectsService {
     return this.toResponse(updated);
   }
 
-  async remove(slug: string) {
-    const project = await this.prisma.project.findUnique({ where: { slug } });
+  async remove(id: string) {
+    const project = await this.prisma.project.findUnique({ where: { id } });
     if (!project) throw new ProjectNotFoundException();
     await this.prisma.project.delete({ where: { id: project.id } });
   }
 
-  async setCover(slug: string, coverUrl: string) {
-    const project = await this.prisma.project.findUnique({ where: { slug } });
+  async setCover(id: string, coverUrl: string) {
+    const project = await this.prisma.project.findUnique({ where: { id } });
     if (!project) throw new ProjectNotFoundException();
     const updated = await this.prisma.project.update({
       where: { id: project.id },
