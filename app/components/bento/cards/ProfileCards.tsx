@@ -136,7 +136,7 @@ export function EducationCard() {
   );
 }
 
-const CV_DOWNLOAD_FILENAME = "Swajan_cv.pdf";
+const CV_DOWNLOAD_FILENAME = "Swajan_Cv.pdf";
 
 export function ResumeCard() {
   const cvUrl = useActiveCv();

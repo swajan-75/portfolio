@@ -14,11 +14,35 @@ export default function About() {
   const { profile, loading: profileLoading } = useProfile();
   const shouldReduceMotion = useReducedMotion();
 
-  const handleDownload = async () => {
+  const [isCvPreparing, setIsCvPreparing] = React.useState(false);
+
+  const handleDownload = async (e) => {
+    e.preventDefault();
+    if (!cvUrl || isCvPreparing) return;
+
+    // Best-effort tracking
     try {
       await api.post("/track/downloads");
     } catch (err) {
       console.error("Download tracking failed:", err?.response?.status, err?.message);
+    }
+
+    // Preview first — open a renamed blob in a new tab
+    setIsCvPreparing(true);
+    try {
+      const response = await fetch(cvUrl);
+      const blob = await response.blob();
+      const renamedBlob = new File([blob], "Swajan_Cv.pdf", {
+        type: blob.type || "application/pdf",
+      });
+      const blobUrl = URL.createObjectURL(renamedBlob);
+      window.open(blobUrl, "_blank", "noopener,noreferrer");
+    } catch (err) {
+      // CORS / fetch failure — fall back to direct link
+      console.error("CV preview failed, falling back to direct link:", err);
+      window.open(cvUrl, "_blank", "noopener,noreferrer");
+    } finally {
+      setIsCvPreparing(false);
     }
   };
 
@@ -77,15 +101,13 @@ export default function About() {
             </div>
 
             {cvUrl ? (
-              <a
+            <a
                 href={cvUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                download
                 onClick={handleDownload}
+                aria-busy={isCvPreparing}
                 className="btn-primary w-full sm:w-fit focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
               >
-                <FiDownload /> Download Resume
+                <FiDownload /> {isCvPreparing ? "Opening…" : "Download Resume"}
               </a>
             ) : (
               <button
