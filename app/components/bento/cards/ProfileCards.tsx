@@ -140,7 +140,6 @@ const CV_DOWNLOAD_FILENAME = "Swajan_Cv.pdf";
 
 export function ResumeCard() {
   const cvUrl = useActiveCv();
-  const [isPreparing, setIsPreparing] = useState(false);
 
   const trackDownload = async () => {
     try {
@@ -151,31 +150,16 @@ export function ResumeCard() {
     }
   };
 
-  const handleDownload = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+  const handleDownload = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
-    if (!cvUrl || isPreparing) return;
+    if (!cvUrl) return;
 
     void trackDownload();
 
-    // Preview first: open in a new tab. Rename the blob before opening it
-    // so the tab's own save control offers "Swajan_cv.pdf" instead of
-    // Cloudinary's random public id.
-    setIsPreparing(true);
-    try {
-      const response = await fetch(cvUrl);
-      const blob = await response.blob();
-      const renamedBlob = new File([blob], CV_DOWNLOAD_FILENAME, {
-        type: blob.type || "application/pdf",
-      });
-      const blobUrl = URL.createObjectURL(renamedBlob);
-      window.open(blobUrl, "_blank", "noopener,noreferrer");
-    } catch (err) {
-      // Fetch/CORS failure — fall back to opening the original URL directly.
-      console.error("CV preview failed, falling back to direct link:", err);
-      window.open(cvUrl, "_blank", "noopener,noreferrer");
-    } finally {
-      setIsPreparing(false);
-    }
+    // Route through our server-side proxy to avoid CORS and ensure the
+    // browser receives Content-Disposition: inline with the correct filename.
+    const previewUrl = `/api/cv-preview?url=${encodeURIComponent(cvUrl)}`;
+    window.open(previewUrl, "_blank", "noopener,noreferrer");
   };
 
   return (
@@ -188,10 +172,9 @@ export function ResumeCard() {
         <a
           href={cvUrl}
           onClick={handleDownload}
-          aria-busy={isPreparing}
           className="btn-primary w-full mt-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
         >
-          <FiDownload aria-hidden="true" /> {isPreparing ? "Opening…" : "Download CV"}
+          <FiDownload aria-hidden="true" /> Download CV
         </a>
       ) : (
         <button disabled className="btn-secondary w-full mt-auto opacity-50 cursor-not-allowed">

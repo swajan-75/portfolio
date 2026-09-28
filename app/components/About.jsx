@@ -14,36 +14,18 @@ export default function About() {
   const { profile, loading: profileLoading } = useProfile();
   const shouldReduceMotion = useReducedMotion();
 
-  const [isCvPreparing, setIsCvPreparing] = React.useState(false);
-
-  const handleDownload = async (e) => {
+  const handleDownload = (e) => {
     e.preventDefault();
-    if (!cvUrl || isCvPreparing) return;
+    if (!cvUrl) return;
 
     // Best-effort tracking
-    try {
-      await api.post("/track/downloads");
-    } catch (err) {
-      console.error("Download tracking failed:", err?.response?.status, err?.message);
-    }
+    api.post("/track/downloads").catch((err) =>
+      console.error("Download tracking failed:", err?.response?.status, err?.message)
+    );
 
-    // Preview first — open a renamed blob in a new tab
-    setIsCvPreparing(true);
-    try {
-      const response = await fetch(cvUrl);
-      const blob = await response.blob();
-      const renamedBlob = new File([blob], "Swajan_Cv.pdf", {
-        type: blob.type || "application/pdf",
-      });
-      const blobUrl = URL.createObjectURL(renamedBlob);
-      window.open(blobUrl, "_blank", "noopener,noreferrer");
-    } catch (err) {
-      // CORS / fetch failure — fall back to direct link
-      console.error("CV preview failed, falling back to direct link:", err);
-      window.open(cvUrl, "_blank", "noopener,noreferrer");
-    } finally {
-      setIsCvPreparing(false);
-    }
+    // Route through the server-side proxy — no CORS, correct filename in Save dialog
+    const previewUrl = `/api/cv-preview?url=${encodeURIComponent(cvUrl)}`;
+    window.open(previewUrl, "_blank", "noopener,noreferrer");
   };
 
   if (profileLoading) return <section className="min-h-[85vh] w-full"></section>;
@@ -101,13 +83,12 @@ export default function About() {
             </div>
 
             {cvUrl ? (
-            <a
-                href={cvUrl}
+              <a
+                href={`/api/cv-preview?url=${encodeURIComponent(cvUrl)}`}
                 onClick={handleDownload}
-                aria-busy={isCvPreparing}
                 className="btn-primary w-full sm:w-fit focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
               >
-                <FiDownload /> {isCvPreparing ? "Opening…" : "Download Resume"}
+                <FiDownload /> Download Resume
               </a>
             ) : (
               <button
