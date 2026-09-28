@@ -58,8 +58,11 @@ export class CvController {
     return this.cvService.remove(id);
   }
 
+  // No caching here: the admin can flip the active CV at any time, and a
+  // stale CDN-cached response (Vercel caches public GETs at the edge) would
+  // keep serving the old/null value until it expired on its own.
   @Get('cv/active')
-  @Header('Cache-Control', 'public, max-age=60, s-maxage=3600, stale-while-revalidate=86400')
+  @Header('Cache-Control', 'no-store')
   @ApiOperation({ summary: 'Get the currently active CV URL (public)' })
   getActive() {
     return this.cvService.getActiveUrl();

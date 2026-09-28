@@ -17,7 +17,7 @@ export default function TerminalText() {
         
         <RotatingText
           texts={texts}
-          mainClassName="px-2 sm:px-3 bg-purple-500 text-white overflow-hidden py-0.5 sm:py-1 rounded-lg"
+          mainClassName="px-2 sm:px-3 bg-purple-500 text-white light:bg-[#d9772b] light:text-[#fffdf8] overflow-hidden py-0.5 sm:py-1 rounded-lg"
           staggerFrom={"last"}
           initial={{ y: "100%" }}
           animate={{ y: 0 }}

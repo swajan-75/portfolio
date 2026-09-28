@@ -17,7 +17,12 @@ const prisma = new PrismaClient({ adapter });
 
 async function seedAdmin() {
   const email = 'swajanbarua09@gmail.com';
-  const plainPassword = '348025@niceNice';
+  const plainPassword = process.env.ADMIN_SEED_PASSWORD;
+  if (!plainPassword) {
+    throw new Error(
+      'ADMIN_SEED_PASSWORD is not set. Add it to backend/.env before running the seed script.',
+    );
+  }
 
   const hashedPassword = await bcrypt.hash(plainPassword, 10);
 
