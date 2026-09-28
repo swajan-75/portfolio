@@ -1,4 +1,5 @@
 "use client";
+import React, { useState } from "react";
 import Image from "next/image";
 import { FiUser, FiTrendingUp, FiBookOpen, FiDownload } from "react-icons/fi";
 import { useProfile } from "../../../hooks/useProfile";
@@ -135,15 +136,45 @@ export function EducationCard() {
   );
 }
 
+const CV_DOWNLOAD_FILENAME = "Swajan_cv.pdf";
+
 export function ResumeCard() {
   const cvUrl = useActiveCv();
+  const [isPreparing, setIsPreparing] = useState(false);
 
-  const handleDownload = async () => {
+  const trackDownload = async () => {
     try {
       await api.post("/track/downloads");
     } catch (err) {
       // Tracking is best-effort; never block the actual download.
       console.error("Download tracking failed:", err);
+    }
+  };
+
+  const handleDownload = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    if (!cvUrl || isPreparing) return;
+
+    void trackDownload();
+
+    // Preview first: open in a new tab. Rename the blob before opening it
+    // so the tab's own save control offers "Swajan_cv.pdf" instead of
+    // Cloudinary's random public id.
+    setIsPreparing(true);
+    try {
+      const response = await fetch(cvUrl);
+      const blob = await response.blob();
+      const renamedBlob = new File([blob], CV_DOWNLOAD_FILENAME, {
+        type: blob.type || "application/pdf",
+      });
+      const blobUrl = URL.createObjectURL(renamedBlob);
+      window.open(blobUrl, "_blank", "noopener,noreferrer");
+    } catch (err) {
+      // Fetch/CORS failure — fall back to opening the original URL directly.
+      console.error("CV preview failed, falling back to direct link:", err);
+      window.open(cvUrl, "_blank", "noopener,noreferrer");
+    } finally {
+      setIsPreparing(false);
     }
   };
 
@@ -156,13 +187,11 @@ export function ResumeCard() {
       {cvUrl ? (
         <a
           href={cvUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          download
           onClick={handleDownload}
+          aria-busy={isPreparing}
           className="btn-primary w-full mt-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
         >
-          <FiDownload aria-hidden="true" /> Download CV
+          <FiDownload aria-hidden="true" /> {isPreparing ? "Opening…" : "Download CV"}
         </a>
       ) : (
         <button disabled className="btn-secondary w-full mt-auto opacity-50 cursor-not-allowed">
