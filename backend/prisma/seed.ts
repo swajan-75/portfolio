@@ -107,6 +107,18 @@ async function seedProfile() {
             url: 'mailto:swajanbarua09@gmail.com',
             order: 3,
           },
+          {
+            platform: 'Facebook',
+            url: 'https://www.facebook.com/swajan.09',
+            icon: 'FiFacebook',
+            order: 4,
+          },
+          {
+            platform: 'Instagram',
+            url: 'https://www.instagram.com/swajan_baruah',
+            icon: 'FiInstagram',
+            order: 5,
+          },
         ],
       },
       skillCategories: {
@@ -291,7 +303,8 @@ const SKILLS: SkillSeed[] = [
   {
     name: 'React.js',
     category: SkillCategory.FRONTEND,
-    description: 'A component-based UI library for building fast, interactive interfaces.',
+    description:
+      'A component-based UI library for building fast, interactive interfaces.',
     url: 'https://react.dev/',
     proficiency: 4,
     featured: true,
@@ -343,7 +356,8 @@ const SKILLS: SkillSeed[] = [
   {
     name: 'MySQL',
     category: SkillCategory.DATABASE,
-    description: 'A widely used open-source relational database for structured application data.',
+    description:
+      'A widely used open-source relational database for structured application data.',
     url: 'https://www.mysql.com/',
     proficiency: 3,
     featured: false,
@@ -351,7 +365,8 @@ const SKILLS: SkillSeed[] = [
   {
     name: 'Redis',
     category: SkillCategory.DATABASE,
-    description: 'An in-memory data store used for caching, rate limiting, and real-time features.',
+    description:
+      'An in-memory data store used for caching, rate limiting, and real-time features.',
     url: 'https://redis.io/',
     proficiency: 4,
     featured: true,
@@ -368,7 +383,8 @@ const SKILLS: SkillSeed[] = [
   {
     name: 'Firebase',
     category: SkillCategory.DATABASE,
-    description: 'A managed backend platform used for auth, storage, and real-time data in smaller projects.',
+    description:
+      'A managed backend platform used for auth, storage, and real-time data in smaller projects.',
     url: 'https://firebase.google.com/',
     proficiency: 3,
     featured: false,
@@ -376,7 +392,8 @@ const SKILLS: SkillSeed[] = [
   {
     name: 'SQLite',
     category: SkillCategory.DATABASE,
-    description: 'A lightweight, file-based SQL database ideal for local development and small apps.',
+    description:
+      'A lightweight, file-based SQL database ideal for local development and small apps.',
     url: 'https://www.sqlite.org/',
     proficiency: 3,
     featured: false,
@@ -384,7 +401,8 @@ const SKILLS: SkillSeed[] = [
   {
     name: 'Docker',
     category: SkillCategory.DEVOPS,
-    description: 'A containerization platform used to package and deploy applications consistently.',
+    description:
+      'A containerization platform used to package and deploy applications consistently.',
     url: 'https://www.docker.com/',
     proficiency: 4,
     featured: true,
@@ -392,7 +410,8 @@ const SKILLS: SkillSeed[] = [
   {
     name: 'Git',
     category: SkillCategory.DEVOPS,
-    description: 'A distributed version control system used to track and collaborate on every project.',
+    description:
+      'A distributed version control system used to track and collaborate on every project.',
     url: 'https://git-scm.com/',
     proficiency: 5,
     featured: false,
@@ -400,7 +419,8 @@ const SKILLS: SkillSeed[] = [
   {
     name: 'GitHub',
     category: SkillCategory.DEVOPS,
-    description: 'A hosting platform for Git repositories, code review, and CI/CD workflows.',
+    description:
+      'A hosting platform for Git repositories, code review, and CI/CD workflows.',
     url: 'https://github.com/',
     proficiency: 5,
     featured: false,
@@ -424,7 +444,8 @@ const SKILLS: SkillSeed[] = [
   {
     name: 'Postman',
     category: SkillCategory.TOOLING,
-    description: 'An API client used to design, test, and document REST endpoints.',
+    description:
+      'An API client used to design, test, and document REST endpoints.',
     url: 'https://www.postman.com/',
     proficiency: 4,
     featured: false,
@@ -440,7 +461,8 @@ const SKILLS: SkillSeed[] = [
   {
     name: 'Retrofit',
     category: SkillCategory.OTHER,
-    description: 'A type-safe HTTP client for Android used to consume REST APIs.',
+    description:
+      'A type-safe HTTP client for Android used to consume REST APIs.',
     url: 'https://square.github.io/retrofit/',
     proficiency: 2,
     featured: false,
@@ -448,7 +470,8 @@ const SKILLS: SkillSeed[] = [
   {
     name: 'REST API Design',
     category: SkillCategory.OTHER,
-    description: 'Designing clean, predictable, and well-documented REST APIs for real-world products.',
+    description:
+      'Designing clean, predictable, and well-documented REST APIs for real-world products.',
     proficiency: 5,
     featured: true,
   },
@@ -463,7 +486,8 @@ const SKILLS: SkillSeed[] = [
   {
     name: 'Socket.io',
     category: SkillCategory.OTHER,
-    description: 'A library for building real-time, bidirectional communication between client and server.',
+    description:
+      'A library for building real-time, bidirectional communication between client and server.',
     url: 'https://socket.io/',
     proficiency: 3,
     featured: false,
@@ -471,14 +495,16 @@ const SKILLS: SkillSeed[] = [
   {
     name: 'JWT Authentication',
     category: SkillCategory.OTHER,
-    description: 'Stateless, token-based authentication used to secure APIs and admin sessions.',
+    description:
+      'Stateless, token-based authentication used to secure APIs and admin sessions.',
     proficiency: 4,
     featured: false,
   },
   {
     name: 'OAuth 2.0',
     category: SkillCategory.OTHER,
-    description: 'An industry-standard authorization protocol used for secure third-party login flows.',
+    description:
+      'An industry-standard authorization protocol used for secure third-party login flows.',
     url: 'https://oauth.net/2/',
     proficiency: 4,
     featured: false,
@@ -486,21 +512,24 @@ const SKILLS: SkillSeed[] = [
   {
     name: 'RBAC',
     category: SkillCategory.OTHER,
-    description: 'Role-based access control used to restrict features and data by user role.',
+    description:
+      'Role-based access control used to restrict features and data by user role.',
     proficiency: 3,
     featured: false,
   },
   {
     name: 'MVVM',
     category: SkillCategory.OTHER,
-    description: 'An architectural pattern separating UI, state, and business logic for maintainable apps.',
+    description:
+      'An architectural pattern separating UI, state, and business logic for maintainable apps.',
     proficiency: 3,
     featured: false,
   },
   {
     name: 'OTP/SMTP',
     category: SkillCategory.OTHER,
-    description: 'One-time password flows delivered over SMTP email for secure, passwordless verification.',
+    description:
+      'One-time password flows delivered over SMTP email for secure, passwordless verification.',
     proficiency: 3,
     featured: false,
   },
