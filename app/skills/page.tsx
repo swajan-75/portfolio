@@ -1,41 +1,16 @@
 "use client";
-import { useEffect, useState } from "react";
 import Link from "next/link";
-import { FiArrowLeft, FiArrowUpRight, FiCpu } from "react-icons/fi";
-import api from "@/lib/axios";
+import { FiArrowLeft, FiCpu } from "react-icons/fi";
 import { resolveIconSmart } from "@/app/lib/resolveIcon";
 import { Skeleton } from "@/app/components/bento/cards/primitives";
+import { useProfile, type SkillCategory, type SkillItem } from "@/app/hooks/useProfile";
 
-interface Skill {
-  id: string;
-  name: string;
-  category: string;
-  description: string;
-  icon: string;
-  url?: string;
-  proficiency: number;
-  featured: boolean;
-}
-
-const SKELETON_COUNT = 6;
+const SKELETON_SECTIONS = 3;
+const SKELETON_TILES = 5;
 
 export default function SkillsPage() {
-  const [skills, setSkills] = useState<Skill[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const controller = new AbortController();
-
-    api
-      .get("/skills", { signal: controller.signal })
-      .then(({ data }) => setSkills(Array.isArray(data) ? data : []))
-      .catch((err) => {
-        if (err?.name !== "CanceledError") console.error("Failed to fetch skills:", err);
-      })
-      .finally(() => setLoading(false));
-
-    return () => controller.abort();
-  }, []);
+  const { profile, loading } = useProfile();
+  const categories = (profile?.skill_categories ?? []).filter((c) => (c.skills ?? []).length > 0);
 
   return (
     <main className="min-h-screen w-full bg-bg px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
@@ -49,7 +24,7 @@ export default function SkillsPage() {
           <FiArrowLeft aria-hidden="true" /> Back to home
         </Link>
 
-        <header className="mb-10">
+        <header className="mb-12">
           <span className="eyebrow mb-2 block">What I work with</span>
           <h1 className="text-[clamp(2rem,5vw,3rem)] font-bold tracking-tight text-white">Skills</h1>
           <p className="mt-3 max-w-2xl font-medium text-white/65">
@@ -58,17 +33,24 @@ export default function SkillsPage() {
         </header>
 
         {loading ? (
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {Array.from({ length: SKELETON_COUNT }).map((_, i) => (
-              <Skeleton key={i} className="h-48 rounded-3xl" />
+          <div className="flex flex-col gap-12">
+            {Array.from({ length: SKELETON_SECTIONS }).map((_, i) => (
+              <div key={i}>
+                <Skeleton className="mb-5 h-8 w-64 rounded-xl" />
+                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+                  {Array.from({ length: SKELETON_TILES }).map((__, j) => (
+                    <Skeleton key={j} className="h-28 rounded-2xl" />
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
-        ) : skills.length === 0 ? (
+        ) : categories.length === 0 ? (
           <p className="py-16 text-center text-sm font-medium text-white/50">No skills to show yet.</p>
         ) : (
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {skills.map((skill) => (
-              <SkillTile key={skill.id} skill={skill} />
+          <div className="flex flex-col gap-14">
+            {categories.map((category, i) => (
+              <CategorySection key={`${category.title}-${i}`} category={category} index={i} />
             ))}
           </div>
         )}
@@ -77,31 +59,44 @@ export default function SkillsPage() {
   );
 }
 
-function SkillTile({ skill }: { skill: Skill }) {
+function CategorySection({ category, index }: { category: SkillCategory; index: number }) {
+  const headingId = `skill-category-${index}`;
+
   return (
-    <article className="card-dark card-dark-hover flex h-full flex-col rounded-3xl p-6">
-      <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-accent/15 text-3xl text-accent-light">
-        {resolveIconSmart(skill.icon, skill.name, { size: 28 }) ?? <FiCpu size={28} />}
+    <section aria-labelledby={headingId}>
+      <div className="mb-6 flex items-start gap-4">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-accent/15 text-accent-light">
+          {resolveIconSmart(category.icon, category.title, { size: 22 }) ?? <FiCpu size={22} />}
+        </div>
+        <div className="min-w-0">
+          <h2 id={headingId} className="flex flex-wrap items-baseline gap-x-3 text-xl font-bold tracking-tight text-white sm:text-2xl">
+            {category.title}
+            <span className="text-sm font-semibold text-white/40">
+              {category.skills.length} {category.skills.length === 1 ? "skill" : "skills"}
+            </span>
+          </h2>
+          {category.description && (
+            <p className="mt-1 max-w-3xl text-sm leading-relaxed text-white/60">{category.description}</p>
+          )}
+        </div>
       </div>
 
-      <h2 className="mb-2 text-lg font-bold text-white">{skill.name}</h2>
-      <p className="flex-1 text-sm leading-relaxed text-white/65">
-        {skill.description || "No description yet."}
-      </p>
+      <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+        {category.skills.map((skill, i) => (
+          <SkillTile key={`${skill.name}-${i}`} skill={skill} />
+        ))}
+      </ul>
+    </section>
+  );
+}
 
-      {skill.url && (
-        <a
-          href={skill.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={`Learn more about ${skill.name}`}
-          className="mt-5 flex h-9 w-9 items-center justify-center self-start rounded-full bg-white/10
-                     text-white/70 transition-colors hover:bg-accent hover:text-white
-                     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-        >
-          <FiArrowUpRight aria-hidden="true" />
-        </a>
-      )}
-    </article>
+function SkillTile({ skill }: { skill: SkillItem }) {
+  return (
+    <li className="card-dark card-dark-hover flex flex-col items-center justify-center gap-3 rounded-2xl p-5 text-center">
+      <span className="text-3xl text-white/85" aria-hidden="true">
+        {resolveIconSmart(skill.icon, skill.name, { size: 30 }) ?? <FiCpu size={30} />}
+      </span>
+      <span className="text-sm font-bold text-white">{skill.name}</span>
+    </li>
   );
 }

@@ -23,8 +23,10 @@ import { SkillItemDto } from './dto/skill-item.dto';
 export class ProfileController {
   constructor(private readonly profileService: ProfileService) {}
 
+  // No edge caching: admin edits (e.g. new skills) must show up immediately,
+  // same reasoning as GET /projects and GET /cv/active.
   @Get('profile')
-  @Header('Cache-Control', 'public, max-age=60, s-maxage=3600, stale-while-revalidate=86400')
+  @Header('Cache-Control', 'no-store')
   @ApiOperation({ summary: 'Get the public profile document' })
   getProfile() {
     return this.profileService.getPublicProfile();
