@@ -60,9 +60,9 @@ function prettyCategory(category: string): string {
 
 function SkeletonCard() {
   return (
-    <div className="card-dark rounded-3xl overflow-hidden flex flex-col animate-pulse">
-      <div className="w-full aspect-[4/3] bg-white/[0.06]" />
-      <div className="p-6 flex flex-col gap-4">
+    <div className="card-dark rounded-3xl overflow-hidden flex flex-col animate-pulse sm:aspect-square">
+      <div className="w-full aspect-video sm:aspect-auto sm:h-[45%] bg-white/[0.06]" />
+      <div className="flex-1 p-6 flex flex-col gap-4">
         <div className="h-5 w-2/3 rounded-lg bg-white/[0.07]" />
         <div className="h-3 w-full rounded bg-white/[0.05]" />
         <div className="h-3 w-4/5 rounded bg-white/[0.05]" />
@@ -90,10 +90,10 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: index * 0.06, ease: "easeOut" }}
-      className="card-dark card-dark-hover group rounded-3xl overflow-hidden flex flex-col"
+      className="card-dark card-dark-hover group rounded-3xl overflow-hidden flex flex-col sm:aspect-square"
     >
       {/* ── Thumbnail ── */}
-      <div className="relative w-full shrink-0 overflow-hidden aspect-[4/3]">
+      <div className="relative w-full shrink-0 overflow-hidden aspect-video sm:aspect-auto sm:h-[45%]">
         {project.image_link ? (
           <img
             src={project.image_link}
@@ -122,20 +122,24 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
       </div>
 
       {/* ── Content ── */}
-      <div className="flex-1 p-6 flex flex-col min-w-0">
+      <div className="flex-1 min-h-0 p-6 flex flex-col min-w-0">
         {/* Title */}
-        <h2 className="text-xl font-bold text-white mb-2 leading-tight">
+        <h2 className="text-xl font-bold text-white mb-2 leading-tight shrink-0">
           {project.title}
         </h2>
 
-        {/* Description */}
-        <p className="text-sm leading-relaxed text-white/65 line-clamp-3 mb-5 flex-1">
+        {/* Description — scrolls when longer than the space left in the card */}
+        <p
+          tabIndex={0}
+          aria-label={`${project.title} description`}
+          className="custom-scrollbar text-sm leading-relaxed text-white/65 mb-5 pr-2 overflow-y-auto max-h-40 sm:max-h-none sm:flex-1 sm:min-h-0 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+        >
           {project.description || "No description provided."}
         </p>
 
         {/* Tech-stack icons */}
         {project.tech_stack && project.tech_stack.length > 0 && (
-          <div className="flex flex-wrap items-center gap-2 mb-5">
+          <div className="flex flex-wrap items-center gap-2 mb-5 shrink-0">
             {project.tech_stack.slice(0, 6).map((tech) => {
               const icon = resolveIconSmart(undefined, tech, { size: 18 });
               return icon ? (
@@ -166,7 +170,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
 
         {/* Bottom row: links + category + date */}
         <div
-          className="flex items-center justify-between gap-3 pt-4"
+          className="flex items-center justify-between gap-3 pt-4 shrink-0"
           style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}
         >
           {/* Link buttons */}
@@ -262,7 +266,7 @@ export default function ProjectsPage() {
 
   return (
     <main className="min-h-screen w-full bg-bg px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
-      <div className="mx-auto max-w-5xl">
+      <div className="mx-auto max-w-6xl">
 
         {/* Back link */}
         <Link
@@ -276,7 +280,7 @@ export default function ProjectsPage() {
 
         {/* Header */}
         <header className="mb-12">
-          <span className="eyebrow mb-2 block">What I've built</span>
+          <span className="eyebrow mb-2 block">What I&apos;ve built</span>
           <h1 className="text-[clamp(2rem,5vw,3rem)] font-bold tracking-tight text-white">
             Projects
           </h1>
@@ -287,7 +291,7 @@ export default function ProjectsPage() {
 
         {/* Grid */}
         {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
             {Array.from({ length: SKELETON_COUNT }).map((_, i) => (
               <SkeletonCard key={i} />
             ))}
@@ -299,7 +303,7 @@ export default function ProjectsPage() {
           </div>
         ) : (
           <AnimatePresence>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
               {projects.map((project, i) => (
                 <ProjectCard key={project.id} project={project} index={i} />
               ))}

@@ -1,16 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-/**
- * GET /api/cv-preview?url=<cloudinary-url>
- *
- * Server-side proxy that fetches the CV from Cloudinary (no CORS issues)
- * and streams it back to the browser with:
- *   Content-Disposition: inline; filename="Swajan_Cv.pdf"
- *
- * "inline" tells the browser to render/preview the PDF instead of
- * triggering an immediate download. The user can then Save As from the
- * browser PDF viewer and will see "Swajan_Cv.pdf" as the suggested name.
- */
+
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const cvUrl = searchParams.get("url");
