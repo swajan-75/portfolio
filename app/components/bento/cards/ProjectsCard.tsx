@@ -23,15 +23,6 @@ const THUMB_LAYOUT = [
   { top: "74%", left: "22%", w: 138, h: 86,  rotate: 4  },
 ];
 
-function sortProjects(list: Project[]): Project[] {
-  return [...list].sort((a, b) => {
-    const ra = a.rank || Number.MAX_SAFE_INTEGER;
-    const rb = b.rank || Number.MAX_SAFE_INTEGER;
-    if (ra !== rb) return ra - rb;
-    return (b.created_at ?? 0) - (a.created_at ?? 0);
-  });
-}
-
 export function ProjectsCard() {
   const router = useRouter();
   const pointerStart = useRef<{ x: number; y: number } | null>(null);
@@ -43,7 +34,8 @@ export function ProjectsCard() {
       .get("/projects", { signal: controller.signal })
       .then(({ data }) => {
         const list: Project[] = Array.isArray(data) ? data : Object.values(data ?? {});
-        setProjects(sortProjects(list));
+        // Server returns projects in the admin's drag-and-drop order.
+        setProjects(list);
       })
       .catch((err) => {
         if (err?.name !== "CanceledError") console.error("Failed to fetch projects:", err);

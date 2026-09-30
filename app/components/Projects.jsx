@@ -33,15 +33,10 @@ export default function Projects() {
             ? projectsRes.value.data
             : Object.values(projectsRes.value.data ?? {});
           
-          setProjects(prev => {
-             const newList = [...list].sort((a, b) => {
-               const rankA = a.rank || Number.MAX_SAFE_INTEGER;
-               const rankB = b.rank || Number.MAX_SAFE_INTEGER;
-               if (rankA !== rankB) return rankA - rankB;
-               return (b.created_at ?? 0) - (a.created_at ?? 0);
-             });
-             return JSON.stringify(prev) === JSON.stringify(newList) ? prev : newList;
-          });
+          // Server returns projects in the admin's drag-and-drop order.
+          setProjects(prev =>
+            JSON.stringify(prev) === JSON.stringify(list) ? prev : list
+          );
         }
       } catch (err) {
         if (err.name !== 'CanceledError') {

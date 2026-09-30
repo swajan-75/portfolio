@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import {
@@ -33,7 +33,7 @@ export class ProjectsService {
 
   async list() {
     const projects = await this.prisma.project.findMany({
-      orderBy: { order: 'asc' },
+      orderBy: [{ order: 'asc' }, { createdAt: 'desc' }],
     });
     return projects.map((p) => this.toResponse(p));
   }
@@ -42,6 +42,10 @@ export class ProjectsService {
     const slug = this.slugify(dto.title);
     const existing = await this.prisma.project.findUnique({ where: { slug } });
     if (existing) throw new ProjectSlugConflictException();
+
+    const { _max } = await this.prisma.project.aggregate({
+      _max: { order: true },
+    });
 
     const project = await this.prisma.project.create({
       data: {
@@ -52,7 +56,7 @@ export class ProjectsService {
         githubUrl: dto.github_url,
         liveUrl: dto.live_url,
         thumbnailUrl: dto.image_link,
-        order: dto.rank ?? 0,
+        order: (_max.order ?? 0) + 1,
         techStack: dto.tech_stack ?? [],
       },
     });
@@ -65,7 +69,9 @@ export class ProjectsService {
 
     const newSlug = this.slugify(dto.title);
     if (newSlug !== project.slug) {
-      const existing = await this.prisma.project.findUnique({ where: { slug: newSlug } });
+      const existing = await this.prisma.project.findUnique({
+        where: { slug: newSlug },
+      });
       if (existing) throw new ProjectSlugConflictException();
     }
 
@@ -79,11 +85,34 @@ export class ProjectsService {
         githubUrl: dto.github_url,
         liveUrl: dto.live_url,
         thumbnailUrl: dto.image_link,
-        order: dto.rank ?? 0,
         techStack: dto.tech_stack ?? [],
       },
     });
     return this.toResponse(updated);
+  }
+
+  async reorder(ids: string[]) {
+    const existing = await this.prisma.project.findMany({
+      select: { id: true },
+    });
+    const existingIds = new Set(existing.map((p) => p.id));
+    const isFullPermutation =
+      ids.length === existingIds.size && ids.every((id) => existingIds.has(id));
+    if (!isFullPermutation) {
+      throw new BadRequestException(
+        'ids must contain every project exactly once — refresh and try again',
+      );
+    }
+
+    await this.prisma.$transaction(
+      ids.map((id, index) =>
+        this.prisma.project.update({
+          where: { id },
+          data: { order: index + 1 },
+        }),
+      ),
+    );
+    return this.list();
   }
 
   async remove(id: string) {

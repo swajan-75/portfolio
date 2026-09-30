@@ -1,6 +1,8 @@
 "use client";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import api from "@/lib/axios";
-import { FiEdit2, FiTrash2, FiImage } from "react-icons/fi";
+import { FiEdit2, FiTrash2, FiImage, FiMove } from "react-icons/fi";
 
 export interface Project {
   id: string;
@@ -16,6 +18,7 @@ export interface Project {
 
 interface ProjectCardProps {
   project: Project;
+  position: number;
   onRefresh: () => void;
   onEdit: (project: Project) => void;
 }
@@ -36,7 +39,10 @@ const glassInner = {
   border: '1px solid rgba(255,255,255,0.15)',
 };
 
-export default function ProjectCard({ project, onRefresh, onEdit }: ProjectCardProps) {
+export default function ProjectCard({ project, position, onRefresh, onEdit }: ProjectCardProps) {
+  const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging } =
+    useSortable({ id: project.id });
+
   const handleDelete = async () => {
     if (!confirm(`Delete "${project.title}"?`)) return;
     try {
@@ -49,8 +55,16 @@ export default function ProjectCard({ project, onRefresh, onEdit }: ProjectCardP
 
   return (
     <div
-      style={glass}
-      className="group flex flex-col overflow-hidden rounded-3xl hover:bg-white/5 transition-all duration-300"
+      ref={setNodeRef}
+      style={{
+        ...glass,
+        transform: CSS.Transform.toString(transform),
+        transition,
+        zIndex: isDragging ? 10 : undefined,
+      }}
+      className={`group flex flex-col overflow-hidden rounded-3xl hover:bg-white/5 transition-colors duration-300 ${
+        isDragging ? "opacity-80 shadow-2xl ring-2 ring-purple-500/50" : ""
+      }`}
     >
       {/* Cover image */}
       <div className="relative aspect-video overflow-hidden">
@@ -67,11 +81,22 @@ export default function ProjectCard({ project, onRefresh, onEdit }: ProjectCardP
           </div>
         )}
 
-        {project.rank ? (
-          <div className="absolute top-3 left-3 px-2.5 py-1 flex items-center justify-center bg-sky-500/20 text-sky-200 font-bold rounded-xl text-xs border border-sky-500/30 backdrop-blur-md">
-            #{project.rank}
+        <div className="absolute top-3 left-3 flex items-center gap-2">
+          <button
+            ref={setActivatorNodeRef}
+            {...attributes}
+            {...listeners}
+            type="button"
+            aria-label={`Reorder ${project.title} (position ${position})`}
+            style={glassInner}
+            className="p-2.5 text-white/70 hover:text-white rounded-xl cursor-grab active:cursor-grabbing touch-none"
+          >
+            <FiMove size={15} />
+          </button>
+          <div className="px-2.5 py-1 bg-sky-500/20 text-sky-200 font-bold rounded-xl text-xs border border-sky-500/30 backdrop-blur-md">
+            #{position}
           </div>
-        ) : null}
+        </div>
 
         {/* Hover actions */}
         <div className="absolute top-3 right-3 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">

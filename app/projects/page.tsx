@@ -60,9 +60,9 @@ function prettyCategory(category: string): string {
 
 function SkeletonCard() {
   return (
-    <div className="card-dark rounded-3xl overflow-hidden flex flex-col sm:flex-row animate-pulse">
-      <div className="w-full sm:w-[220px] shrink-0 h-44 sm:h-auto bg-white/[0.06]" />
-      <div className="flex-1 p-6 flex flex-col gap-4">
+    <div className="card-dark rounded-3xl overflow-hidden flex flex-col animate-pulse">
+      <div className="w-full aspect-[4/3] bg-white/[0.06]" />
+      <div className="p-6 flex flex-col gap-4">
         <div className="h-5 w-2/3 rounded-lg bg-white/[0.07]" />
         <div className="h-3 w-full rounded bg-white/[0.05]" />
         <div className="h-3 w-4/5 rounded bg-white/[0.05]" />
@@ -90,38 +90,35 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: index * 0.06, ease: "easeOut" }}
-      className="card-dark card-dark-hover group rounded-3xl overflow-hidden flex flex-col sm:flex-row"
+      className="card-dark card-dark-hover group rounded-3xl overflow-hidden flex flex-col"
     >
       {/* ── Thumbnail ── */}
-      <div className="relative w-full sm:w-[220px] shrink-0 overflow-hidden">
-        {/* aspect-ratio for mobile, full height on desktop */}
-        <div className="aspect-[4/3] sm:aspect-auto sm:h-full">
-          {project.image_link ? (
-            <img
-              src={project.image_link}
-              alt={`${project.title} preview`}
-              loading="lazy"
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-            />
-          ) : (
-            <div
-              className="w-full h-full flex items-center justify-center"
-              style={{
-                background: `linear-gradient(135deg, ${color.bg} 0%, rgba(255,255,255,0.02) 100%)`,
-              }}
-            >
-              <FiFolder size={36} style={{ color: color.text }} className="opacity-40" />
-            </div>
-          )}
-          {/* subtle gradient overlay on bottom of thumbnail */}
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background:
-                "linear-gradient(to right, transparent 80%, rgba(21,21,28,0.6) 100%)",
-            }}
+      <div className="relative w-full shrink-0 overflow-hidden aspect-[4/3]">
+        {project.image_link ? (
+          <img
+            src={project.image_link}
+            alt={`${project.title} preview`}
+            loading="lazy"
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           />
-        </div>
+        ) : (
+          <div
+            className="w-full h-full flex items-center justify-center"
+            style={{
+              background: `linear-gradient(135deg, ${color.bg} 0%, rgba(255,255,255,0.02) 100%)`,
+            }}
+          >
+            <FiFolder size={36} style={{ color: color.text }} className="opacity-40" />
+          </div>
+        )}
+        {/* subtle gradient overlay on bottom of thumbnail */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              "linear-gradient(to top, rgba(21,21,28,0.5) 0%, transparent 40%)",
+          }}
+        />
       </div>
 
       {/* ── Content ── */}
@@ -252,13 +249,8 @@ export default function ProjectsPage() {
         const list: Project[] = Array.isArray(data)
           ? data
           : Object.values(data ?? {});
-        const sorted = [...list].sort((a, b) => {
-          const ra = a.rank || Number.MAX_SAFE_INTEGER;
-          const rb = b.rank || Number.MAX_SAFE_INTEGER;
-          if (ra !== rb) return ra - rb;
-          return (b.created_at ?? 0) - (a.created_at ?? 0);
-        });
-        setProjects(sorted);
+        // Server returns projects in the admin's drag-and-drop order.
+        setProjects(list);
       })
       .catch((err) => {
         if (err?.name !== "CanceledError") console.error("Failed to load projects:", err);
@@ -295,7 +287,7 @@ export default function ProjectsPage() {
 
         {/* Grid */}
         {loading ? (
-          <div className="flex flex-col gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {Array.from({ length: SKELETON_COUNT }).map((_, i) => (
               <SkeletonCard key={i} />
             ))}
@@ -307,7 +299,7 @@ export default function ProjectsPage() {
           </div>
         ) : (
           <AnimatePresence>
-            <div className="flex flex-col gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {projects.map((project, i) => (
                 <ProjectCard key={project.id} project={project} index={i} />
               ))}

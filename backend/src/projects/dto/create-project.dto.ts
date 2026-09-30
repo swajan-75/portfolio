@@ -1,13 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import {
-  IsArray,
-  IsEnum,
-  IsInt,
-  IsOptional,
-  IsString,
-  Min,
-} from 'class-validator';
+import { IsArray, IsEnum, IsOptional, IsString } from 'class-validator';
 import { ProjectCategory } from '../../../generated/prisma/client';
 
 // AddProjectForm/EditProjectForm render category as free-text, not a
@@ -54,12 +47,6 @@ export class CreateProjectDto {
   @IsOptional()
   @IsString()
   image_link?: string;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsInt()
-  @Min(0)
-  rank?: number;
 
   @ApiPropertyOptional({ type: [String] })
   @IsOptional()

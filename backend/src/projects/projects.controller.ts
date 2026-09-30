@@ -15,6 +15,7 @@ import { ProjectsService } from './projects.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { SetCoverDto } from './dto/set-cover.dto';
+import { ReorderProjectsDto } from './dto/reorder-projects.dto';
 
 @ApiTags('projects')
 @Controller()
@@ -39,6 +40,13 @@ export class ProjectsController {
   @ApiOperation({ summary: 'Create a project' })
   create(@Body() dto: CreateProjectDto) {
     return this.projectsService.create(dto);
+  }
+
+  @Patch('admin/projects/reorder')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Set the display order of all projects' })
+  reorder(@Body() dto: ReorderProjectsDto) {
+    return this.projectsService.reorder(dto.ids);
   }
 
   @Put('admin/projects/:id')

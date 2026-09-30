@@ -24,7 +24,6 @@ export default function EditProjectForm({ project, onRefresh, onCancel }: EditPr
     github_url:  project.github_url  ?? "",
     live_url:    project.live_url    ?? "",
     image_link:  project.image_link  ?? "",
-    rank:        project.rank?.toString() ?? "",
   });
   const [submitting, setSubmitting] = useState(false);
   const [setCoverStatus, setSetCoverStatus] = useState<'idle' | 'loading' | 'done'>('idle');
@@ -60,7 +59,6 @@ export default function EditProjectForm({ project, onRefresh, onCancel }: EditPr
         github_url:  (form.github_url  ?? "").trim(),
         live_url:    (form.live_url    ?? "").trim(),
         image_link:  (form.image_link  ?? "").trim(),
-        rank:        Number(form.rank) || 0,
         tech_stack:  (form.tech_stack  ?? "").split(",").map((t) => t.trim()).filter(Boolean),
       });
       onRefresh();
@@ -82,7 +80,6 @@ export default function EditProjectForm({ project, onRefresh, onCancel }: EditPr
   }[] = [
     { key: "title",       label: "Title",       placeholder: "My Awesome Project" },
     { key: "category",    label: "Category",    placeholder: "Web / Mobile / AI ..." },
-    { key: "rank",        label: "Visibility Rank", placeholder: "1 for top, 0 for default", type: "number" },
     { key: "github_url",  label: "GitHub URL",  placeholder: "https://github.com/..." },
     { key: "live_url",    label: "Live URL",    placeholder: "https://yourproject.com" },
     { key: "description", label: "Description", placeholder: "What does it do?",               span: true, textarea: true },
