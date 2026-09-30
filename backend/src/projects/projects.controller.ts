@@ -21,8 +21,12 @@ import { SetCoverDto } from './dto/set-cover.dto';
 export class ProjectsController {
   constructor(private readonly projectsService: ProjectsService) {}
 
+  // No caching here: the admin dashboard refetches this same endpoint right
+  // after edits (title/cover/etc.), and a stale CDN-cached response (Vercel
+  // caches public GETs at the edge) would keep serving old data until it
+  // expired on its own — see eb26131 for the identical bug on GET /cv/active.
   @Get('projects')
-  @Header('Cache-Control', 'public, max-age=60, s-maxage=3600, stale-while-revalidate=86400')
+  @Header('Cache-Control', 'no-store')
   @ApiOperation({
     summary: 'List all projects (public; also used by the admin dashboard)',
   })
