@@ -65,12 +65,12 @@ export default function AdminProjects({ projects, isAdding, setIsAdding, onRefre
         )}
       </AnimatePresence>
 
-      <div className="space-y-3">
-        {projects.length === 0 && !isAdding && (
-          <div className="py-20 text-center text-gray-600 font-mono text-xs uppercase tracking-widest">
-            No_Projects_Found
-          </div>
-        )}
+      {projects.length === 0 && !isAdding && (
+        <div className="py-20 text-center text-gray-600 font-mono text-xs uppercase tracking-widest">
+          No_Projects_Found
+        </div>
+      )}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
         {projects.map((project) => (
           <ProjectCard key={project.id} project={project} onRefresh={onRefresh} onEdit={handleEdit} />
         ))}
