@@ -22,6 +22,15 @@ function extractReply(data: unknown): string {
 }
 
 export async function sendChatMessage(message: string): Promise<string> {
-  const response = await axios.post(CHAT_ENDPOINT, { message }, { timeout: REQUEST_TIMEOUT_MS });
-  return extractReply(response.data);
+  try {
+    const response = await axios.post(CHAT_ENDPOINT, { message }, { timeout: REQUEST_TIMEOUT_MS });
+    return extractReply(response.data);
+  } catch (err: unknown) {
+    // Rate-limit (429) and validation (422) responses carry a message meant for the visitor.
+    const data = axios.isAxiosError(err) ? err.response?.data : undefined;
+    if (data && typeof data === "object" && typeof (data as { text?: unknown }).text === "string") {
+      return (data as { text: string }).text;
+    }
+    throw err;
+  }
 }

@@ -1,7 +1,7 @@
 import { forwardRef, useState, type FormEvent, type KeyboardEvent } from "react";
 import { FiArrowUp } from "react-icons/fi";
 
-const MAX_LENGTH = 1000;
+const MAX_LENGTH = 500; // Matches the chat backend's MAX_MESSAGE_CHARS.
 
 interface ChatComposerProps {
   isSending: boolean;
