@@ -1,314 +1,178 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import {
-  FiArrowLeft,
-  FiArrowUpRight,
-  FiGithub,
-  FiExternalLink,
-  FiFolder,
-} from "react-icons/fi";
-import { motion, AnimatePresence } from "motion/react";
+import { useReducedMotion } from "motion/react";
+import { FiArrowLeft } from "react-icons/fi";
 import api from "@/lib/axios";
-import { resolveIconSmart } from "@/app/lib/resolveIcon";
+import ProjectFilters from "./_components/ProjectFilters";
+import ProjectGrid from "./_components/ProjectGrid";
+import ProjectDetails from "./_components/ProjectDetails";
+import { ProjectsEmpty, ProjectsError, ProjectsSkeleton } from "./_components/ProjectStates";
+import {
+  ALL_CATEGORIES,
+  categoryKey,
+  countByCategory,
+  normalizeProjects,
+  padNumber,
+  type Project,
+} from "./_components/projectModel";
 
-interface Project {
-  id: string;
-  title: string;
-  category: string;
-  description: string;
-  tech_stack: string[];
-  github_url?: string;
-  live_url?: string;
-  image_link?: string;
-  rank?: number;
-  created_at?: number;
+type LoadStatus = "loading" | "ready" | "error";
+
+/** How long the cards take to settle into the single column (matches the grid's layout animation). */
+const LAYOUT_SETTLE_MS = 460;
+
+interface Selection {
+  id: Project["id"];
+  /** "open" = the panel just appeared (focus moves into it); "switch" = another card was picked while open. */
+  source: "open" | "switch";
 }
 
-// ─── helpers ─────────────────────────────────────────────────────────────────
-
-function formatDate(epochMs?: number): string {
-  if (!epochMs) return "";
-  const d = new Date(epochMs);
-  return d.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+/** Puts keyboard focus back on the "Read more" button that opened the details. */
+function focusProjectTrigger(id: Project["id"]) {
+  requestAnimationFrame(() => {
+    document
+      .querySelector<HTMLElement>(`[data-project-trigger="${CSS.escape(String(id))}"]`)
+      ?.focus();
+  });
 }
-
-function categoryColor(category: string): { bg: string; text: string } {
-  const map: Record<string, { bg: string; text: string }> = {
-    FRONTEND:   { bg: "rgba(108,92,231,0.12)", text: "#a78bfa" },
-    BACKEND:    { bg: "rgba(14,165,233,0.12)",  text: "#38bdf8" },
-    FULLSTACK:  { bg: "rgba(142,247,212,0.12)", text: "#6ee7b7" },
-    WEB_APP:    { bg: "rgba(251,146,60,0.12)",  text: "#fb923c" },
-    MOBILE:     { bg: "rgba(232,121,249,0.12)", text: "#e879f9" },
-    AI_ML:      { bg: "rgba(250,204,21,0.12)",  text: "#facc15" },
-    API:        { bg: "rgba(34,211,238,0.12)",  text: "#22d3ee" },
-    CLI_TOOL:   { bg: "rgba(74,222,128,0.12)",  text: "#4ade80" },
-    LIBRARY:    { bg: "rgba(248,113,113,0.12)", text: "#f87171" },
-    OTHER:      { bg: "rgba(148,163,184,0.12)", text: "#94a3b8" },
-  };
-  return map[category?.toUpperCase()] ?? map.OTHER;
-}
-
-function prettyCategory(category: string): string {
-  return category
-    ?.replace(/_/g, " ")
-    .toLowerCase()
-    .replace(/\b\w/g, (c) => c.toUpperCase()) ?? category;
-}
-
-// ─── skeletons ───────────────────────────────────────────────────────────────
-
-function SkeletonCard() {
-  return (
-    <div className="card-dark rounded-3xl overflow-hidden flex flex-col animate-pulse sm:aspect-square">
-      <div className="w-full aspect-video sm:aspect-auto sm:h-[45%] bg-white/[0.06]" />
-      <div className="flex-1 p-6 flex flex-col gap-4">
-        <div className="h-5 w-2/3 rounded-lg bg-white/[0.07]" />
-        <div className="h-3 w-full rounded bg-white/[0.05]" />
-        <div className="h-3 w-4/5 rounded bg-white/[0.05]" />
-        <div className="flex gap-2 mt-auto">
-          <div className="h-7 w-7 rounded-full bg-white/[0.06]" />
-          <div className="h-7 w-7 rounded-full bg-white/[0.06]" />
-          <div className="h-7 w-7 rounded-full bg-white/[0.06]" />
-        </div>
-        <div className="flex justify-between items-center pt-3 border-t border-white/[0.06]">
-          <div className="h-5 w-20 rounded-full bg-white/[0.07]" />
-          <div className="h-4 w-24 rounded bg-white/[0.05]" />
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ─── project card ─────────────────────────────────────────────────────────────
-
-function ProjectCard({ project, index }: { project: Project; index: number }) {
-  const color = categoryColor(project.category);
-
-  return (
-    <motion.article
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: index * 0.06, ease: "easeOut" }}
-      className="card-dark card-dark-hover group rounded-3xl overflow-hidden flex flex-col sm:aspect-square"
-    >
-      {/* ── Thumbnail ── */}
-      <div className="relative w-full shrink-0 overflow-hidden aspect-video sm:aspect-auto sm:h-[45%]">
-        {project.image_link ? (
-          <img
-            src={project.image_link}
-            alt={`${project.title} preview`}
-            loading="lazy"
-            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-          />
-        ) : (
-          <div
-            className="w-full h-full flex items-center justify-center"
-            style={{
-              background: `linear-gradient(135deg, ${color.bg} 0%, rgba(255,255,255,0.02) 100%)`,
-            }}
-          >
-            <FiFolder size={36} style={{ color: color.text }} className="opacity-40" />
-          </div>
-        )}
-        {/* subtle gradient overlay on bottom of thumbnail */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background:
-              "linear-gradient(to top, rgba(21,21,28,0.5) 0%, transparent 40%)",
-          }}
-        />
-      </div>
-
-      {/* ── Content ── */}
-      <div className="flex-1 min-h-0 p-6 flex flex-col min-w-0">
-        {/* Title */}
-        <h2 className="text-xl font-bold text-white mb-2 leading-tight shrink-0">
-          {project.title}
-        </h2>
-
-        {/* Description — scrolls when longer than the space left in the card */}
-        <p
-          tabIndex={0}
-          aria-label={`${project.title} description`}
-          className="custom-scrollbar text-sm leading-relaxed text-white/65 mb-5 pr-2 overflow-y-auto max-h-40 sm:max-h-none sm:flex-1 sm:min-h-0 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
-        >
-          {project.description || "No description provided."}
-        </p>
-
-        {/* Tech-stack icons */}
-        {project.tech_stack && project.tech_stack.length > 0 && (
-          <div className="flex flex-wrap items-center gap-2 mb-5 shrink-0">
-            {project.tech_stack.slice(0, 6).map((tech) => {
-              const icon = resolveIconSmart(undefined, tech, { size: 18 });
-              return icon ? (
-                <span
-                  key={tech}
-                  title={tech}
-                  className="flex items-center justify-center w-8 h-8 rounded-xl"
-                  style={{ background: "rgba(255,255,255,0.07)", color: "rgba(255,255,255,0.7)" }}
-                >
-                  {icon}
-                </span>
-              ) : (
-                <span
-                  key={tech}
-                  className="text-[11px] font-semibold px-2.5 py-1 rounded-lg"
-                  style={{
-                    background: "rgba(255,255,255,0.06)",
-                    color: "rgba(255,255,255,0.55)",
-                    border: "1px solid rgba(255,255,255,0.1)",
-                  }}
-                >
-                  {tech}
-                </span>
-              );
-            })}
-          </div>
-        )}
-
-        {/* Bottom row: links + category + date */}
-        <div
-          className="flex items-center justify-between gap-3 pt-4 shrink-0"
-          style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}
-        >
-          {/* Link buttons */}
-          <div className="flex items-center gap-2">
-            {/* External link */}
-            {project.live_url && project.live_url !== "#" && (
-              <a
-                href={project.live_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={`Open ${project.title} live demo`}
-                className="flex items-center justify-center w-8 h-8 rounded-xl transition-all hover:scale-110"
-                style={{
-                  background: "rgba(255,255,255,0.07)",
-                  border: "1px solid rgba(255,255,255,0.12)",
-                  color: "rgba(255,255,255,0.6)",
-                }}
-                title="Live demo"
-              >
-                <FiArrowUpRight size={15} />
-              </a>
-            )}
-            {/* GitHub */}
-            {project.github_url && project.github_url !== "#" && (
-              <a
-                href={project.github_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={`${project.title} on GitHub`}
-                className="flex items-center justify-center w-8 h-8 rounded-xl transition-all hover:scale-110"
-                style={{
-                  background: "rgba(255,255,255,0.07)",
-                  border: "1px solid rgba(255,255,255,0.12)",
-                  color: "rgba(255,255,255,0.6)",
-                }}
-                title="GitHub"
-              >
-                <FiGithub size={15} />
-              </a>
-            )}
-          </div>
-
-          {/* Right side: category + date */}
-          <div className="flex items-center gap-3 shrink-0">
-            <span
-              className="text-xs font-bold px-3 py-1 rounded-full"
-              style={{
-                background: color.bg,
-                color: color.text,
-                border: `1px solid ${color.text}33`,
-              }}
-            >
-              {prettyCategory(project.category)}
-            </span>
-            {project.created_at && (
-              <span className="text-xs font-medium text-white/35 whitespace-nowrap">
-                {formatDate(project.created_at)}
-              </span>
-            )}
-          </div>
-        </div>
-      </div>
-    </motion.article>
-  );
-}
-
-// ─── page ─────────────────────────────────────────────────────────────────────
-
-const SKELETON_COUNT = 6;
 
 export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [status, setStatus] = useState<LoadStatus>("loading");
+  const [attempt, setAttempt] = useState(0);
+  const [activeCategory, setActiveCategory] = useState(ALL_CATEGORIES);
+  const [selection, setSelection] = useState<Selection | null>(null);
+  const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
     const controller = new AbortController();
     api
       .get("/projects", { signal: controller.signal })
       .then(({ data }) => {
-        const list: Project[] = Array.isArray(data)
-          ? data
-          : Object.values(data ?? {});
         // Server returns projects in the admin's drag-and-drop order.
-        setProjects(list);
+        setProjects(normalizeProjects(data));
+        setStatus("ready");
       })
       .catch((err) => {
-        if (err?.name !== "CanceledError") console.error("Failed to load projects:", err);
-      })
-      .finally(() => setLoading(false));
+        if (err?.name === "CanceledError") return;
+        console.error("Failed to load projects:", err);
+        setStatus("error");
+      });
 
     return () => controller.abort();
-  }, []);
+  }, [attempt]);
+
+  const categories = useMemo(() => countByCategory(projects), [projects]);
+
+  const numberById = useMemo(
+    () => new Map(projects.map((project, i) => [project.id, i + 1])),
+    [projects],
+  );
+
+  const visibleProjects = useMemo(
+    () =>
+      activeCategory === ALL_CATEGORIES
+        ? projects
+        : projects.filter((project) => categoryKey(project.category) === activeCategory),
+    [projects, activeCategory],
+  );
+
+  const selectedProject = selection
+    ? projects.find((project) => project.id === selection.id) ?? null
+    : null;
+
+  const selectProject = useCallback(
+    (id: Project["id"]) => setSelection((current) => ({ id, source: current ? "switch" : "open" })),
+    [],
+  );
+
+  // Once the cards have narrowed into one column, bring the clicked card back into view beside the panel.
+  const selectedId = selection?.id;
+  useEffect(() => {
+    if (selectedId === undefined) return;
+    const timer = window.setTimeout(() => {
+      document
+        .querySelector(`[data-project-card="${CSS.escape(String(selectedId))}"]`)
+        ?.scrollIntoView({ behavior: shouldReduceMotion ? "auto" : "smooth", block: "nearest" });
+    }, shouldReduceMotion ? 0 : LAYOUT_SETTLE_MS);
+    return () => window.clearTimeout(timer);
+  }, [selectedId, shouldReduceMotion]);
+
+  const closeDetails = useCallback(() => {
+    if (!selection) return;
+    setSelection(null);
+    focusProjectTrigger(selection.id);
+  }, [selection]);
+
+  const retry = () => {
+    setStatus("loading");
+    setAttempt((value) => value + 1);
+  };
+
+  const numberOf = (project: Project) => numberById.get(project.id) ?? 0;
+  const isReady = status === "ready" && projects.length > 0;
 
   return (
-    <main className="min-h-screen w-full bg-bg px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+    <main className="min-h-screen w-full bg-bg px-4 pt-10 pb-32 sm:px-6 sm:pt-14 lg:px-8">
       <div className="mx-auto max-w-6xl">
-
-        {/* Back link */}
         <Link
           href="/"
-          className="mb-10 inline-flex items-center gap-2 rounded-lg text-sm font-bold text-white/50
+          className="mb-10 inline-flex items-center gap-2 rounded-lg text-sm font-bold text-white/55
                      transition-colors hover:text-accent-light focus-visible:outline-none focus-visible:ring-2
                      focus-visible:ring-accent"
         >
           <FiArrowLeft aria-hidden="true" /> Back to home
         </Link>
 
-        {/* Header */}
-        <header className="mb-12">
-          <span className="eyebrow mb-2 block">What I&apos;ve built</span>
-          <h1 className="text-[clamp(2rem,5vw,3rem)] font-bold tracking-tight text-white">
+        <header className="mb-10 flex flex-col gap-6 sm:mb-12 lg:flex-row lg:items-end lg:justify-between">
+          <h1 className="flex items-start gap-3 text-[clamp(2.75rem,8vw,5rem)] font-black leading-[0.9] tracking-tighter text-white">
             Projects
+            {isReady && (
+              <span className="mt-1.5 rounded-full border border-border-strong px-2.5 py-1 font-mono text-xs font-semibold tracking-normal text-white/55">
+                <span aria-hidden="true">{padNumber(projects.length)}</span>
+                <span className="sr-only">{projects.length} projects</span>
+              </span>
+            )}
           </h1>
-          <p className="mt-3 max-w-2xl text-sm font-medium text-white/60 leading-relaxed">
-            A complete list of my technical projects, side experiments, and design work.
-          </p>
+
+          {isReady && categories.length > 1 && (
+            <ProjectFilters
+              categories={categories}
+              total={projects.length}
+              active={activeCategory}
+              onChange={setActiveCategory}
+            />
+          )}
         </header>
 
-        {/* Grid */}
-        {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-            {Array.from({ length: SKELETON_COUNT }).map((_, i) => (
-              <SkeletonCard key={i} />
-            ))}
+        {status === "loading" && <ProjectsSkeleton />}
+        {status === "error" && <ProjectsError onRetry={retry} />}
+        {status === "ready" && projects.length === 0 && <ProjectsEmpty />}
+        {isReady && (
+          <div
+            className={
+              selectedProject
+                ? "md:grid md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] md:items-start md:gap-6"
+                : ""
+            }
+          >
+            <ProjectGrid
+              projects={visibleProjects}
+              numberOf={numberOf}
+              onSelect={selectProject}
+              selectedId={selectedProject?.id}
+            />
+            {selectedProject && (
+              <ProjectDetails
+                key={selectedProject.id}
+                project={selectedProject}
+                number={numberOf(selectedProject)}
+                focusOnMount={selection?.source === "open"}
+                onClose={closeDetails}
+              />
+            )}
           </div>
-        ) : projects.length === 0 ? (
-          <div className="py-24 text-center">
-            <FiFolder size={40} className="mx-auto mb-4 text-white/20" />
-            <p className="text-sm font-medium text-white/40">No projects to show yet.</p>
-          </div>
-        ) : (
-          <AnimatePresence>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-              {projects.map((project, i) => (
-                <ProjectCard key={project.id} project={project} index={i} />
-              ))}
-            </div>
-          </AnimatePresence>
         )}
       </div>
     </main>
