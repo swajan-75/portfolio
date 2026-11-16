@@ -3,11 +3,15 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence, useReducedMotion, Variants } from "motion/react";
 import { FiMenu, FiX, FiHome, FiUser, FiBox, FiCpu, FiMail, FiFileText } from "react-icons/fi";
+import { useRouter } from "next/navigation";
 import { useActiveCv } from "../hooks/useActiveCv";
+import { navigateToSection } from "../lib/navigateToSection";
 import ThemeToggle from "./ThemeToggle";
 
+const DRAWER_CLOSE_DELAY_MS = 300;
+
 const navLinks = [
-  { href: "#home", label: "Home", icon: <FiHome /> },
+  { href: "#hero", label: "Home", icon: <FiHome /> },
   { href: "#about", label: "About", icon: <FiUser /> },
   { href: "#projects", label: "Projects", icon: <FiBox /> },
   { href: "#skills", label: "Skills", icon: <FiCpu /> },
@@ -18,6 +22,7 @@ export default function MobileMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const cvUrl = useActiveCv();
   const shouldReduceMotion = useReducedMotion();
+  const router = useRouter();
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -37,12 +42,8 @@ export default function MobileMenu() {
 
   const handleLinkClick = (href: string) => {
     setIsOpen(false);
-    const element = document.querySelector(href);
-    if (element) {
-      setTimeout(() => element.scrollIntoView({ behavior: "smooth" }), 300);
-    } else if (href === "#home") {
-      setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 300);
-    }
+    const sectionId = href.replace(/^#/, "");
+    setTimeout(() => navigateToSection(sectionId, router.push), DRAWER_CLOSE_DELAY_MS);
   };
 
   const handleResume = () => {

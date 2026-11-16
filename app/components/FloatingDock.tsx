@@ -6,7 +6,9 @@ import {
   FiGithub, FiArrowLeft, FiCpu, FiMail, FiSun, FiMoon
 } from "react-icons/fi";
 import { FaWhatsapp } from "react-icons/fa";
+import { useRouter } from "next/navigation";
 import logo from "../images/logo.jpg";
+import { navigateToSection } from "../lib/navigateToSection";
 import { useActiveCv } from "../hooks/useActiveCv";
 import { useTheme } from "../hooks/useTheme";
 const dockItems = [
@@ -45,6 +47,7 @@ export default function FloatingDock() {
   const [isTerminalOpen, setIsTerminalOpen] = useState(false);
   const cvUrl = useActiveCv();
   const { theme, toggleTheme } = useTheme();
+  const router = useRouter();
 
   // FIX: wrapped in useCallback so DockItem children don't re-render on unrelated state changes
   const handleItemClick = useCallback((item: typeof dockItems[number]) => {
@@ -52,17 +55,13 @@ export default function FloatingDock() {
       case "console": setIsTerminalOpen(true); break;
       case "theme": toggleTheme(); break;
       case "home":
-        document.getElementById("hero")?.scrollIntoView({ behavior: "smooth" });
+        navigateToSection("hero", router.push);
         break;
       case "profile": window.scrollTo({ top: 0, behavior: "smooth" }); break;
       case "skills":
-        document.getElementById("skills")?.scrollIntoView({ behavior: "smooth" });
-        break;
       case "projects":
-        document.getElementById("projects")?.scrollIntoView({ behavior: "smooth" });
-        break;
       case "contact":
-        document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
+        navigateToSection(item.id, router.push);
         break;
       case "resume":
         if (cvUrl) window.open(cvUrl, "_blank", "noopener,noreferrer");
@@ -75,7 +74,7 @@ export default function FloatingDock() {
         window.history.back();
         break;
     }
-  }, [cvUrl, toggleTheme]);
+  }, [cvUrl, toggleTheme, router]);
 
   return (
     <>

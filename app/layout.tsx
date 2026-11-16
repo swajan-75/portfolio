@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import SiteNav from "./components/SiteNav";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -49,6 +50,7 @@ export default function RootLayout({
   {/* Layer 2 — content, must be isolated with isolation-isolate */}
   <div style={{ isolation: 'isolate', position: 'relative' }}>
     {children}
+    <SiteNav />
   </div>
 
 </body>
