@@ -489,3 +489,33 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .chat-caret { animation: none; }
 }
+
+/* ── Terminal (always dark, in both site themes) ── */
+.term-window {
+  box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(0, 0, 0, 0.45);
+}
+
+.term-cursor {
+  animation: term-blink 1.06s steps(1) infinite;
+}
+
+@keyframes term-blink {
+  50% { background-color: transparent; color: #d7dae0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .term-cursor { animation: none; }
+}
+
+.term-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #3a3b3f transparent;
+}
+
+.term-scroll::-webkit-scrollbar { width: 10px; }
+.term-scroll::-webkit-scrollbar-track { background: transparent; }
+.term-scroll::-webkit-scrollbar-thumb {
+  background: #3a3b3f;
+  border: 3px solid #121314;
+  border-radius: 9999px;
+}
