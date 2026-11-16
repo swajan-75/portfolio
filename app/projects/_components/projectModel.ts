@@ -1,3 +1,5 @@
+import type { ThemeColor } from "@/app/lib/themeColor";
+
 export interface Project {
   id: string | number;
   title: string;
@@ -21,17 +23,18 @@ export const ALL_CATEGORIES = "ALL";
 
 const FALLBACK_CATEGORY = "OTHER";
 
-const CATEGORY_COLORS: Record<string, string> = {
-  FRONTEND: "#a78bfa",
-  BACKEND: "#38bdf8",
-  FULLSTACK: "#34d399",
-  WEB_APP: "#fb923c",
-  MOBILE: "#e879f9",
-  AI_ML: "#facc15",
-  API: "#22d3ee",
-  CLI_TOOL: "#4ade80",
-  LIBRARY: "#f87171",
-  OTHER: "#94a3b8",
+/** Bright shades read well on the dark theme; deeper ones keep contrast on white. */
+const CATEGORY_COLORS: Record<string, ThemeColor> = {
+  FRONTEND: { dark: "#a78bfa", light: "#7c3aed" },
+  BACKEND: { dark: "#38bdf8", light: "#0369a1" },
+  FULLSTACK: { dark: "#34d399", light: "#047857" },
+  WEB_APP: { dark: "#fb923c", light: "#c2410c" },
+  MOBILE: { dark: "#e879f9", light: "#a21caf" },
+  AI_ML: { dark: "#facc15", light: "#a16207" },
+  API: { dark: "#22d3ee", light: "#0e7490" },
+  CLI_TOOL: { dark: "#4ade80", light: "#15803d" },
+  LIBRARY: { dark: "#f87171", light: "#b91c1c" },
+  OTHER: { dark: "#94a3b8", light: "#475569" },
 };
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -66,7 +69,7 @@ export function categoryKey(category?: string): string {
   return category?.trim() ? category.trim().toUpperCase() : FALLBACK_CATEGORY;
 }
 
-export function categoryColor(category?: string): string {
+export function categoryColor(category?: string): ThemeColor {
   return CATEGORY_COLORS[categoryKey(category)] ?? CATEGORY_COLORS[FALLBACK_CATEGORY];
 }
 

@@ -1,3 +1,4 @@
+import { TC, themeColorStyle } from "@/app/lib/themeColor";
 import { ALL_CATEGORIES, categoryColor, type CategoryCount } from "./projectModel";
 
 interface ProjectFiltersProps {
@@ -28,7 +29,11 @@ export default function ProjectFilters({ categories, total, active, onChange }: 
                           : "border-border-strong bg-surface-tint text-white/70 hover:bg-surface-tint-hover hover:text-white"}`}
           >
             {option.key !== ALL_CATEGORIES && (
-              <span aria-hidden="true" className="h-2 w-2 rounded-full" style={{ background: categoryColor(option.key) }} />
+              <span
+                aria-hidden="true"
+                className={`h-2 w-2 rounded-full ${isActive ? "bg-[#fff]" : "theme-color"}`}
+                style={isActive ? undefined : themeColorStyle(categoryColor(option.key), { background: TC })}
+              />
             )}
             {option.label}
             <span className={`font-mono text-xs ${isActive ? "text-[#fff]/75" : "text-white/40"}`}>{option.count}</span>

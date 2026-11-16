@@ -1,3 +1,4 @@
+import { TC, tcAlpha, themeColorStyle, type ThemeColor } from "@/app/lib/themeColor";
 import { categoryColor, initialsOf, type Project } from "./projectModel";
 
 interface ProjectCoverProps {
@@ -30,14 +31,14 @@ export default function ProjectCover({ project, className }: ProjectCoverProps) 
   );
 }
 
-function GeneratedCover({ title, color }: { title: string; color: string }) {
+function GeneratedCover({ title, color }: { title: string; color: ThemeColor }) {
   return (
     <div
       aria-hidden="true"
-      className="absolute inset-0 bg-surface-2"
-      style={{
-        backgroundImage: `radial-gradient(120% 90% at 12% 8%, ${color}55 0%, transparent 55%), radial-gradient(90% 80% at 100% 100%, ${color}2e 0%, transparent 60%)`,
-      }}
+      className="theme-color absolute inset-0 bg-surface-2"
+      style={themeColorStyle(color, {
+        backgroundImage: `radial-gradient(120% 90% at 12% 8%, ${tcAlpha(30)} 0%, transparent 55%), radial-gradient(90% 80% at 100% 100%, ${tcAlpha(16)} 0%, transparent 60%)`,
+      })}
     >
       {/* Dot texture */}
       <div
@@ -50,7 +51,7 @@ function GeneratedCover({ title, color }: { title: string; color: string }) {
       />
       <span
         className="absolute bottom-3 left-5 select-none text-[clamp(4.5rem,10vw,7.5rem)] font-black leading-none tracking-tighter motion-safe:transition-transform motion-safe:duration-500 motion-safe:group-hover:translate-x-1.5"
-        style={{ color, opacity: 0.9 }}
+        style={{ color: TC, opacity: 0.9 }}
       >
         {initialsOf(title)}
       </span>

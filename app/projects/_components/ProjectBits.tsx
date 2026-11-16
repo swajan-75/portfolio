@@ -1,15 +1,19 @@
 import { FiArrowUpRight, FiGithub } from "react-icons/fi";
 import { resolveIconSmart } from "@/app/lib/resolveIcon";
+import { TC, themeColorStyle } from "@/app/lib/themeColor";
 import { categoryColor, categoryLabel, hasLink, type Project } from "./projectModel";
 
 export const FOCUS_RING =
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg";
 
 export function CategoryBadge({ category }: { category?: string }) {
-  const color = categoryColor(category);
   return (
     <span className="inline-flex items-center gap-2 rounded-full border border-border bg-surface-tint px-3 py-1 text-xs font-semibold text-white/75">
-      <span aria-hidden="true" className="h-2 w-2 rounded-full" style={{ background: color, boxShadow: `0 0 10px ${color}` }} />
+      <span
+        aria-hidden="true"
+        className="theme-color h-2 w-2 rounded-full"
+        style={themeColorStyle(categoryColor(category), { background: TC, boxShadow: `0 0 10px ${TC}` })}
+      />
       {categoryLabel(category)}
     </span>
   );

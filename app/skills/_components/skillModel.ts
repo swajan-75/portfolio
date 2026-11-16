@@ -1,18 +1,29 @@
 import type { SkillCategory, SkillItem } from "@/app/hooks/useProfile";
+import type { ThemeColor } from "@/app/lib/themeColor";
 
-/** One accent per category, assigned by position so colors stay stable while searching. */
-const CATEGORY_PALETTE = ["#8b7cf6", "#38bdf8", "#34d399", "#fb923c", "#e879f9", "#facc15"] as const;
+/**
+ * One accent per category, assigned by position so colors stay stable while searching.
+ * Bright shades for the dark theme; deeper ones keep contrast on white.
+ */
+const CATEGORY_PALETTE: readonly ThemeColor[] = [
+  { dark: "#8b7cf6", light: "#6d28d9" },
+  { dark: "#38bdf8", light: "#0369a1" },
+  { dark: "#34d399", light: "#047857" },
+  { dark: "#fb923c", light: "#c2410c" },
+  { dark: "#e879f9", light: "#a21caf" },
+  { dark: "#facc15", light: "#a16207" },
+];
 
 export interface VisibleCategory {
   category: SkillCategory;
   /** Position in the full list (drives the number and color). */
   index: number;
-  color: string;
+  color: ThemeColor;
   /** Skills left after the search filter. */
   skills: SkillItem[];
 }
 
-export function categoryColorAt(index: number): string {
+export function categoryColorAt(index: number): ThemeColor {
   return CATEGORY_PALETTE[index % CATEGORY_PALETTE.length];
 }
 

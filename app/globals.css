@@ -50,134 +50,144 @@
  * theme toggle; absence of the attribute keeps the dark defaults above.
  */
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   LIGHT THEME — Warm Cream, Teal & Amber
-   Design language: soft warm-linen neutrals (no pure white glare), ink
-   typography, a calm deep-teal accent with a warm amber counterpoint, and
-   low, warm-tinted shadows for gentle depth.
+   LIGHT THEME — neutral surfaces, same violet brand accent as dark
+   White cards on a soft gray page, near-black text, hairline borders and
+   small neutral shadows. The accent is the dark theme's violet, deepened a
+   step where it is used as text so it stays readable on white.
    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 [data-theme="light"] {
   color-scheme: light;
 
   /* ── Tailwind white/black flip — reverses text-white / bg-black utilities ── */
-  --color-white: #24211d;
-  --color-black: #fcfbf8;
+  --color-white: #18181b;
+  --color-black: #ffffff;
 
   /* ── Page & surface hierarchy ── */
-  --color-bg: #f3f0ea;
-  --color-surface: #fcfbf8;
-  --color-surface-2: #f6f3ee;
+  --color-bg: #e4e4e9;
+  --color-surface: #f4f4f6;
+  --color-surface-2: #ececf0;
+  /* Card face, recessed inset, and small raised elements (tiles, chips) */
+  --light-card: #f4f4f6;
+  --light-inset: #eaeaee;
+  --light-raised: #fafafb;
 
-  /* ── Borders — warm stone instead of blue-gray ── */
-  --color-border: rgba(90, 75, 50, 0.1);
-  --color-border-strong: rgba(90, 75, 50, 0.18);
+  /* ── Borders ── */
+  --color-border: rgba(24, 24, 27, 0.09);
+  --color-border-strong: rgba(24, 24, 27, 0.16);
 
-  /* ── Accent — deep teal; mint slot becomes warm amber ── */
-  --color-accent: #0f766e;
-  --color-accent-light: #14968a;
-  --color-mint: #d9772b;
+  /* ── Accent — brand violet; accent-light is the text-safe shade ── */
+  --color-accent: #6c5ce7;
+  --color-accent-light: #5442d4;
+  --color-mint: #047857;
 
-  /* ── Typography — warm ink, never pure black ── */
-  --color-text-primary: #1f1d1a;
-  --color-text-secondary: rgba(31, 29, 26, 0.74);
-  --color-text-muted: #7a736a;
+  /* ── Typography ── */
+  --color-text-primary: #18181b;
+  --color-text-secondary: rgba(24, 24, 27, 0.78);
+  --color-text-muted: #71717a;
 
   /* ── Surface tints ── */
-  --color-surface-tint: rgba(90, 75, 50, 0.04);
-  --color-surface-tint-hover: rgba(15, 118, 110, 0.08);
-  --color-surface-tint-strong: rgba(90, 75, 50, 0.06);
+  --color-surface-tint: rgba(24, 24, 27, 0.03);
+  --color-surface-tint-hover: rgba(24, 24, 27, 0.06);
+  --color-surface-tint-strong: rgba(24, 24, 27, 0.04);
 
   /* ── Misc ── */
-  --color-placeholder: #a39b90;
-  --color-scrollbar-thumb: rgba(90, 75, 50, 0.18);
-  --color-scrollbar-thumb-hover: rgba(90, 75, 50, 0.32);
+  --color-placeholder: #a1a1aa;
+  --color-scrollbar-thumb: rgba(24, 24, 27, 0.16);
+  --color-scrollbar-thumb-hover: rgba(24, 24, 27, 0.28);
 
-  /* ── SVG topography — warm stone lines ── */
-  --topo-pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'%3E%3Cg fill='none' stroke='%23b8ad9c' stroke-width='1.2'%3E%3Ccircle cx='120' cy='120' r='24'/%3E%3Ccircle cx='120' cy='120' r='52'/%3E%3Ccircle cx='120' cy='120' r='80'/%3E%3Ccircle cx='120' cy='120' r='108'/%3E%3Ccircle cx='120' cy='120' r='136'/%3E%3C/g%3E%3C/svg%3E");
+  /* ── SVG topography — faint gray lines ── */
+  --topo-pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'%3E%3Cg fill='none' stroke='%23c9c9d0' stroke-width='1'%3E%3Ccircle cx='120' cy='120' r='24'/%3E%3Ccircle cx='120' cy='120' r='52'/%3E%3Ccircle cx='120' cy='120' r='80'/%3E%3Ccircle cx='120' cy='120' r='108'/%3E%3Ccircle cx='120' cy='120' r='136'/%3E%3C/g%3E%3C/svg%3E");
 }
 
-/* ── Card elevation — soft, warm-tinted depth ── */
+/* ── Per-theme category colors ──
+   Components set --tc-dark / --tc-light inline and read var(--tc); the
+   light shade is deeper so tints and dots hold up on white. */
+.theme-color {
+  --tc: var(--tc-dark);
+}
+
+[data-theme="light"] .theme-color {
+  --tc: var(--tc-light);
+}
+
+/* ── Cards — off-white on a gray page, hairline border, small shadow ── */
 [data-theme="light"] .card-dark {
-  background: #fcfbf8;
-  border-color: rgba(90, 75, 50, 0.1);
+  background: var(--light-card);
+  border-color: rgba(24, 24, 27, 0.07);
   box-shadow:
-    0 1px 2px 0 rgba(60, 45, 20, 0.04),
-    0 6px 20px -6px rgba(60, 45, 20, 0.08);
+    0 1px 2px 0 rgba(16, 24, 40, 0.05),
+    0 2px 6px -2px rgba(16, 24, 40, 0.06);
 }
 
 [data-theme="light"] .card-dark-hover:hover {
-  border-color: rgba(15, 118, 110, 0.3);
+  border-color: rgba(108, 92, 231, 0.32);
   box-shadow:
-    0 2px 4px 0 rgba(60, 45, 20, 0.05),
-    0 12px 28px -8px rgba(15, 118, 110, 0.16);
-  transform: translateY(-1px);
+    0 1px 2px 0 rgba(16, 24, 40, 0.04),
+    0 8px 24px -8px rgba(16, 24, 40, 0.12);
 }
 
 [data-theme="light"] .card-inset {
-  background: #f6f3ee;
-  border-color: rgba(90, 75, 50, 0.08);
+  background: var(--light-inset);
+  border-color: rgba(24, 24, 27, 0.07);
 }
 
-/* ── Ambient orbs — a faint color wash behind the paper ── */
+/* ── Ambient orbs — a barely-there violet wash ── */
 [data-theme="light"] .bg-orb {
-  opacity: 0.18;
-  filter: blur(150px);
+  opacity: 0.08;
+  filter: blur(160px);
 }
 
-/* Orb colors are inline styles in layout.tsx, so !important is needed to
-   retint them from purple/mint to the light palette's teal/amber */
-[data-theme="light"] .bg-orb:nth-child(odd) {
-  background: radial-gradient(circle, rgba(20, 150, 138, 0.5) 0%, rgba(20, 150, 138, 0) 70%) !important;
-}
-
+[data-theme="light"] .bg-orb:nth-child(odd),
 [data-theme="light"] .bg-orb:nth-child(even) {
-  background: radial-gradient(circle, rgba(217, 119, 43, 0.45) 0%, rgba(217, 119, 43, 0) 70%) !important;
+  background: radial-gradient(circle, rgba(108, 92, 231, 0.6) 0%, rgba(108, 92, 231, 0) 70%) !important;
 }
 
 /* ── Badge/pill ── */
 [data-theme="light"] .badge-pill {
-  background: rgba(217, 119, 43, 0.08);
-  border-color: rgba(217, 119, 43, 0.22);
-  color: #b45f1c;
+  background: rgba(108, 92, 231, 0.07);
+  border-color: rgba(108, 92, 231, 0.2);
+  color: #5442d4;
 }
 
 [data-theme="light"] .tag-pill {
-  background: #f6f3ee;
-  border-color: rgba(90, 75, 50, 0.16);
-  color: #2a2723;
+  background: var(--light-card);
+  border-color: rgba(24, 24, 27, 0.12);
+  color: #27272a;
 }
 
 [data-theme="light"] .tag-pill:hover {
-  background: #e6f3f0;
-  border-color: rgba(15, 118, 110, 0.35);
-  color: #0b5f59;
+  background: rgba(108, 92, 231, 0.06);
+  border-color: rgba(108, 92, 231, 0.32);
+  color: #18181b;
 }
 
 /* ── Buttons ── */
 [data-theme="light"] .btn-primary {
-  background: linear-gradient(150deg, #0f766e 0%, #14968a 100%);
-  box-shadow: 0 4px 14px -2px rgba(15, 118, 110, 0.32), 0 1px 2px rgba(60, 45, 20, 0.08);
+  background: #6c5ce7;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.08), 0 4px 12px -4px rgba(108, 92, 231, 0.45);
 }
 
 [data-theme="light"] .btn-primary:hover {
-  box-shadow: 0 8px 22px -4px rgba(15, 118, 110, 0.42), 0 2px 4px rgba(60, 45, 20, 0.08);
+  background: #5f4fe0;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.08), 0 8px 18px -6px rgba(108, 92, 231, 0.5);
 }
 
 [data-theme="light"] .btn-secondary {
-  background: #fcfbf8;
-  border-color: rgba(90, 75, 50, 0.18);
-  color: #24211d;
-  box-shadow: 0 1px 2px rgba(60, 45, 20, 0.05);
+  background: var(--light-raised);
+  border-color: rgba(24, 24, 27, 0.14);
+  color: #18181b;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
 }
 
 [data-theme="light"] .btn-secondary:hover {
-  background: #f6f3ee;
-  border-color: rgba(15, 118, 110, 0.35);
-  color: #1f1d1a;
+  background: var(--light-card);
+  border-color: rgba(24, 24, 27, 0.22);
+  color: #18181b;
 }
 
-/* ── Gradient text — teal into amber ── */
+/* ── Gradient text — stays within the violet family ── */
 [data-theme="light"] .gradient-text {
-  background: linear-gradient(130deg, #0b5f59 0%, #0f8a7f 50%, #d9772b 100%);
+  background: linear-gradient(130deg, #4c3bc9 0%, #6c5ce7 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -185,35 +195,31 @@
 
 /* ── Eyebrow label ── */
 [data-theme="light"] .eyebrow {
-  color: #0f766e;
-  background: rgba(15, 118, 110, 0.07);
-  padding: 2px 8px;
-  border-radius: 9999px;
-  border: 1px solid rgba(15, 118, 110, 0.14);
+  color: #5442d4;
 }
 
 /* ── Form inputs ── */
 [data-theme="light"] .input-dark {
-  background: #fffefb;
-  border-color: rgba(90, 75, 50, 0.2);
-  color: #1f1d1a;
-  box-shadow: 0 1px 2px rgba(60, 45, 20, 0.04);
+  background: var(--light-card);
+  border-color: rgba(24, 24, 27, 0.14);
+  color: #18181b;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
 }
 
 [data-theme="light"] .input-dark::placeholder {
-  color: #a39b90;
+  color: #a1a1aa;
 }
 
 [data-theme="light"] .input-dark:focus {
-  background: #fffefb;
-  border-color: #0f766e;
-  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.14), 0 1px 2px rgba(60, 45, 20, 0.04);
+  background: var(--light-raised);
+  border-color: #6c5ce7;
+  box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.15);
 }
 
 /* ── Skeleton loader ── */
 [data-theme="light"] .card-dark [class*="bg-white/[0.06]"],
 [data-theme="light"] [class*="animate-pulse"] {
-  background-color: #ece7de;
+  background-color: #dedee3;
 }
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -223,54 +229,47 @@
    .bento-arrow        = bottom-left arrow circle
    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 
-/* Card face — warm paper with a faint teal glow in the corner */
 [data-theme="light"] .bento-interactive {
-  background:
-    radial-gradient(120% 90% at 100% 0%, rgba(20, 150, 138, 0.1) 0%, rgba(20, 150, 138, 0) 55%),
-    linear-gradient(150deg, #fdfcf9 0%, #f6f2eb 55%, #eee8de 100%);
+  background: linear-gradient(160deg, var(--light-card) 0%, #eeeef1 100%);
 }
 
-/* Floating icon tiles — paper white with soft warm shadows */
 [data-theme="light"] .bento-tile {
-  background-color: #fffefb !important;
-  color: #1f1d1a !important;
-  box-shadow: 0 10px 24px -6px rgba(60, 45, 20, 0.16), 0 2px 6px rgba(60, 45, 20, 0.06) !important;
+  background-color: var(--light-raised) !important;
+  color: #18181b !important;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.06), 0 6px 16px -6px rgba(16, 24, 40, 0.14) !important;
 }
 
-/* Arrow button — warm ink circle */
 [data-theme="light"] .bento-arrow {
-  background: #24211d !important;
-  color: #fcfbf8 !important;
-  box-shadow: 0 4px 12px -2px rgba(60, 45, 20, 0.25) !important;
+  background: #18181b !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px -2px rgba(16, 24, 40, 0.3) !important;
 }
 
-/* Topo background pattern */
 [data-theme="light"] .bento-topo {
-  opacity: 0.45 !important;
+  opacity: 0.6 !important;
 }
 
-/* Hover overlay — frosted paper wash; its label is text-white, which the
-   flip above renders as ink, so the wash must stay light to keep contrast */
+/* Hover overlay — its label is text-white, which the flip above renders as
+   ink, so the wash must stay light to keep contrast */
 [data-theme="light"] .bento-interactive:hover .bento-overlay {
-  background: rgba(252, 251, 248, 0.72) !important;
+  background: rgba(244, 244, 246, 0.82) !important;
 }
 
-/* ── Dragging state ring in light mode ── */
+/* ── Dragging state ring ── */
 [data-theme="light"] .ring-accent\/50 {
-  --tw-ring-color: rgba(15, 118, 110, 0.45);
+  --tw-ring-color: rgba(108, 92, 231, 0.45);
 }
 
 /* ── Modal backdrop & panel ── */
 [data-theme="light"] [class*="bg-black\/60"][class*="backdrop-blur"] {
-  background: rgba(36, 33, 29, 0.4) !important;
+  background: rgba(24, 24, 27, 0.35) !important;
 }
 
 [data-theme="light"] [class*="bg-bg"][class*="border-white\/10"] {
-  background: #fcfbf8 !important;
-  border-color: rgba(90, 75, 50, 0.12) !important;
-  box-shadow: 0 24px 60px -12px rgba(60, 45, 20, 0.25), 0 0 0 1px rgba(90, 75, 50, 0.04);
+  background: var(--light-card) !important;
+  border-color: rgba(24, 24, 27, 0.1) !important;
+  box-shadow: 0 24px 60px -12px rgba(16, 24, 40, 0.22), 0 0 0 1px rgba(24, 24, 27, 0.03);
 }
-
 
 body {
   background: var(--color-bg);

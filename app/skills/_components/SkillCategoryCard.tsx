@@ -1,5 +1,6 @@
 import type { SkillItem } from "@/app/hooks/useProfile";
 import { resolveIconSmart } from "@/app/lib/resolveIcon";
+import { TC, tcAlpha, themeColorStyle } from "@/app/lib/themeColor";
 import { monogramOf, padNumber, splitOnMatch, type VisibleCategory } from "./skillModel";
 
 interface SkillCategoryCardProps {
@@ -12,17 +13,20 @@ export default function SkillCategoryCard({ visible, query }: SkillCategoryCardP
   const number = index + 1;
 
   return (
-    <article className="card-dark card-dark-hover relative flex h-full flex-col overflow-hidden p-6 sm:p-7">
+    <article
+      className="theme-color card-dark card-dark-hover relative flex h-full flex-col overflow-hidden p-6 sm:p-7"
+      style={themeColorStyle(color)}
+    >
       {/* Category glow and oversized number (decorative) */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0"
-        style={{ backgroundImage: `radial-gradient(80% 60% at 0% 0%, ${color}26 0%, transparent 60%)` }}
+        style={{ backgroundImage: `radial-gradient(80% 60% at 0% 0%, ${tcAlpha(15)} 0%, transparent 60%)` }}
       />
       <span
         aria-hidden="true"
         className="pointer-events-none absolute -bottom-8 -right-2 select-none text-[8rem] font-black leading-none tracking-tighter"
-        style={{ color, opacity: 0.08 }}
+        style={{ color: TC, opacity: 0.08 }}
       >
         {padNumber(number)}
       </span>
@@ -36,14 +40,15 @@ export default function SkillCategoryCard({ visible, query }: SkillCategoryCardP
 
       <ul aria-label={`${category.title} skills`} className="relative flex flex-wrap gap-2">
         {skills.map((skill) => (
-          <SkillTile key={skill.name} skill={skill} color={color} query={query} />
+          <SkillTile key={skill.name} skill={skill} query={query} />
         ))}
       </ul>
     </article>
   );
 }
 
-function SkillTile({ skill, color, query }: { skill: SkillItem; color: string; query: string }) {
+/** Reads the category color from the card's `theme-color` scope. */
+function SkillTile({ skill, query }: { skill: SkillItem; query: string }) {
   const icon = resolveIconSmart(skill.icon, skill.name, { size: 17 });
 
   return (
@@ -53,7 +58,7 @@ function SkillTile({ skill, color, query }: { skill: SkillItem; color: string; q
       <span
         aria-hidden="true"
         className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg motion-safe:transition-transform motion-safe:duration-200 motion-safe:group-hover/tile:scale-110"
-        style={{ background: `${color}1f`, color }}
+        style={{ background: tcAlpha(12), color: TC }}
       >
         {icon ?? <span className="text-[10px] font-black tracking-tight">{monogramOf(skill.name)}</span>}
       </span>
